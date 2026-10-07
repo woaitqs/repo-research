@@ -1,0 +1,67 @@
+{
+  "P1_middleware_stack": [
+    "FilesystemMiddleware",
+    "SubAgentMiddleware",
+    "SummarizationMiddleware",
+    "PatchToolCallsMiddleware",
+    "AnthropicPromptCachingMiddleware",
+    "UnsupportedContentMiddleware"
+  ],
+  "P2_tools_visible_to_main_model": [
+    "ls",
+    "read_file",
+    "write_file",
+    "edit_file",
+    "delete",
+    "glob",
+    "grep",
+    "task",
+    "big_search"
+  ],
+  "P2_execute_hidden_with_StateBackend": true,
+  "P3_offloaded_files": [
+    "/large_tool_results/call_big_1"
+  ],
+  "P3_offloaded_size_chars": 169889,
+  "P3_model_sees_stub_chars": 1812,
+  "P3_stub_head": "Tool result too large, the result of this tool call call_big_1 was saved in the filesystem at this path: /large_tool_res",
+  "P4_subagent_first_call_message_types": [
+    "SystemMessage",
+    "HumanMessage"
+  ],
+  "P4_subagent_human_content": [
+    "Write a short report to /report.md"
+  ],
+  "P4_subagent_tools": [
+    "ls",
+    "read_file",
+    "write_file",
+    "edit_file",
+    "delete",
+    "glob",
+    "grep",
+    "big_search"
+  ],
+  "P4_report_file_in_parent_state": true,
+  "P4_parent_sees_only_final_text": "Report written to /report.md",
+  "P4_parent_message_count": 6,
+  "P5_summary_seen_at_model_call": [
+    23
+  ],
+  "P5_state_message_count": 44,
+  "P5_event_cutoff_index": 39,
+  "P5_event_file_path": "/conversation_history/session_7e77c5abd316490d878ec5357eedd612.md",
+  "P5_history_file_in_state": true,
+  "P5_last_model_call_message_count": 6,
+  "P5_first_state_message_still_original": "read chunks until done",
+  "P6_file_content_after_edit": "user likes rust",
+  "P6_turn2_system_prompt_has_python": true,
+  "P6_turn2_system_prompt_has_rust": false,
+  "P7_subagent_delete_tool_result": [
+    "Deleted /old.md"
+  ],
+  "P7_parent_files_after": [
+    "/keep.md",
+    "/old.md"
+  ]
+}
