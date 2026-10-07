@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="428" viewBox="0 0 1200 428" role="img" aria-labelledby="title desc">
+  <title id="title">Anatomy of a study</title>
+  <desc id="desc">One target repository, langchain-ai/deepagents, pinned at commit 16e84d9 and cloned outside this repo. Three artifacts cite it: research/deepagents.md through path:line references, diagrams/deepagents/ through SRC badges, and experiments/deepagents/ through probes. The study and the diagrams are published on GitHub Pages; the experiment lives on GitHub.</desc>
+  <!-- Light colours are presentation attributes; dark colours are the site's dark tokens. -->
+  <style>
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #18191c; }
+      .surface { fill: #222429; stroke: #383b43; }
+      .card { fill: #18191c; stroke: #383b43; }
+      .ink { fill: #eeeef0; }
+      .muted { fill: #aaadb6; }
+      .accent { fill: #aac7ff; }
+      .accent-ink { fill: #243d66; }
+      .green { fill: #aac7ff; }
+      .wire { stroke: #6582b3; }
+      .head { fill: #6582b3; }
+      .outline { stroke: #aaadb6; }
+    }
+  </style>
+
+  <rect class="bg" width="1200" height="428" rx="10" fill="#fcfcf9"/>
+
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif">
+    <!-- the pinned target -->
+    <g id="target">
+      <rect class="surface" x="64.5" y="56.5" width="300" height="316" rx="6" fill="#f2f3ed" stroke="#dedfd7"/>
+      <text class="muted" x="92" y="98" font-size="16" font-weight="700" letter-spacing="2.2" fill="#62675d">PINNED TARGET</text>
+      <text class="ink" x="92" y="150" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="22" fill="#20231e">langchain-ai/</text>
+      <text class="ink" x="92" y="180" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="22" fill="#20231e">deepagents</text>
+      <rect class="accent" x="92" y="204" width="124" height="36" fill="#d8ed7a"/>
+      <text class="accent-ink" x="154" y="229" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="20" font-weight="700" fill="#293019">@16e84d9</text>
+      <text class="muted" x="92" y="306" font-size="19" fill="#62675d">Cloned to a temp dir,</text>
+      <text class="muted" x="92" y="334" font-size="19" fill="#62675d">never into this repo.</text>
+    </g>
+
+    <!-- citations: every artifact points back at the pinned commit -->
+    <g id="citations" fill="none" stroke-width="2">
+      <path class="wire" d="M548 102 C 462 102, 462 150, 378 150" stroke="#a9ba6f"/>
+      <path class="wire" d="M548 214 L 378 214" stroke="#a9ba6f"/>
+      <path class="wire" d="M548 326 C 462 326, 462 278, 378 278" stroke="#a9ba6f"/>
+    </g>
+    <g id="arrowheads">
+      <path class="head" d="M366 150 L 380 143 L 380 157 Z" fill="#a9ba6f"/>
+      <path class="head" d="M366 214 L 380 207 L 380 221 Z" fill="#a9ba6f"/>
+      <path class="head" d="M366 278 L 380 271 L 380 285 Z" fill="#a9ba6f"/>
+    </g>
+    <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="18" text-anchor="end">
+      <text class="green" x="536" y="90" fill="#5c761d">path:line</text>
+      <text class="green" x="536" y="202" fill="#5c761d">SRC badges</text>
+      <text class="green" x="536" y="356" fill="#5c761d">probes</text>
+    </g>
+
+    <!-- the artifacts -->
+    <g id="artifact-research">
+      <rect class="card" x="548.5" y="56.5" width="587" height="91" rx="6" fill="#fcfcf9" stroke="#dedfd7"/>
+      <text class="ink" x="576" y="96" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="21" fill="#20231e">research/deepagents.md</text>
+      <text class="muted" x="576" y="126" font-size="19" fill="#62675d">The study, in English and Chinese</text>
+      <rect class="outline" x="1020.75" y="74.75" width="91.5" height="28.5" fill="none" stroke="#62675d" stroke-width="1.5"/>
+      <text class="muted" x="1066.5" y="95" text-anchor="middle" font-size="16" font-weight="700" letter-spacing="1.4" fill="#62675d">PAGES</text>
+    </g>
+    <g id="artifact-diagrams">
+      <rect class="card" x="548.5" y="168.5" width="587" height="91" rx="6" fill="#fcfcf9" stroke="#dedfd7"/>
+      <text class="ink" x="576" y="208" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="21" fill="#20231e">diagrams/deepagents/</text>
+      <text class="muted" x="576" y="238" font-size="19" fill="#62675d">8 interactive Archify diagrams</text>
+      <rect class="outline" x="1020.75" y="186.75" width="91.5" height="28.5" fill="none" stroke="#62675d" stroke-width="1.5"/>
+      <text class="muted" x="1066.5" y="207" text-anchor="middle" font-size="16" font-weight="700" letter-spacing="1.4" fill="#62675d">PAGES</text>
+    </g>
+    <g id="artifact-experiment">
+      <rect class="card" x="548.5" y="280.5" width="587" height="91" rx="6" fill="#fcfcf9" stroke="#dedfd7"/>
+      <text class="ink" x="576" y="320" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="21" fill="#20231e">experiments/deepagents/</text>
+      <text class="muted" x="576" y="350" font-size="19" fill="#62675d">Minimal reproduction, run with ./run.sh</text>
+      <rect class="outline" x="1020.75" y="298.75" width="91.5" height="28.5" fill="none" stroke="#62675d" stroke-width="1.5"/>
+      <text class="muted" x="1066.5" y="319" text-anchor="middle" font-size="16" font-weight="700" letter-spacing="1.4" fill="#62675d">GITHUB</text>
+    </g>
+  </g>
+</svg>

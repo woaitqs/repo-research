@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="150" viewBox="0 0 1200 150" role="img" aria-labelledby="title desc">
+  <title id="title">01 Library</title>
+  <desc id="desc">01 Library: every study is pinned to a commit and ships a runnable reproduction.</desc>
+  <!-- Section title in the style of the site's section heads (assets/css/site.css: .section-head).
+       Light colours are presentation attributes; dark colours are the site's dark tokens. -->
+  <style>
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #18191c; }
+      .rule { fill: #383b43; }
+      .ink { fill: #eeeef0; }
+      .muted { fill: #aaadb6; }
+      .accent { fill: #aac7ff; }
+      .accent-ink { fill: #243d66; }
+      .dot { fill: #aac7ff; }
+    }
+  </style>
+
+  <rect class="bg" width="1200" height="150" rx="10" fill="#fcfcf9"/>
+  <rect class="rule" x="64" y="24" width="1072" height="1" fill="#dedfd7"/>
+
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif">
+    <rect class="accent" x="64" y="66" width="54" height="48" fill="#d8ed7a"/>
+    <text class="accent-ink" x="91" y="98" text-anchor="middle" font-size="21" font-weight="700" fill="#293019">01</text>
+
+    <text class="ink" x="142" y="66" font-size="16" font-weight="700" letter-spacing="2.4" fill="#20231e">RESEARCH LIBRARY</text>
+    <text class="ink" x="139" y="122" font-size="54" font-weight="600" letter-spacing="-1.8" fill="#20231e">Library<tspan class="dot" fill="#94a949">.</tspan></text>
+
+    <text class="muted" x="1136" y="92" text-anchor="end" font-size="20" fill="#62675d">Pinned commits.</text>
+    <text class="muted" x="1136" y="120" text-anchor="end" font-size="20" fill="#62675d">Runnable reproductions.</text>
+  </g>
+</svg>
