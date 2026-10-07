@@ -43,6 +43,7 @@ permalink: /research/deepagents.html
   The `execute` tool is hidden from the model when the backend has no shell.
 - **Memory is explicit:** `AGENTS.md` files are injected into the system prompt and edited by the agent through `edit_file`.
   Verified at runtime: memory is loaded **once per thread**, so edits made mid-thread are not re-injected until a new thread starts.
+- **Checked with a real model** (`deepseek-v4.1-flash`, 3 runs): the model followed the offload pointer with `grep` and `read_file`, wrote self-contained sub-agent briefs, saved a user preference to `AGENTS.md` unprompted, and recalled a fact that had been summarized away. See [Verification](#verification).
 - The `dcode` CLI does **not** run the agent in-process. It starts `langgraph dev` as a subprocess
   and streams to it over HTTP/SSE through LangGraph's `RemoteGraph`.
 
@@ -736,11 +737,22 @@ cd experiments/deepagents && ./run.sh
 
 After restoring the code, all 21 tests passed again.
 
-**5. Diagrams.** All 8 Archify diagrams passed `finalize --quality showcase --repo-root <clone>`, which runs schema validation, verified delivery, strict provenance check, and a headless-Chromium browser check. The 1440×900 captures were inspected by eye. See [`assets/deepagents/archify/README.md`](https://github.com/woaitqs/repo-research/blob/main/assets/deepagents/archify/README.md).
+**5. Real-model runs** (`experiments/deepagents/real_model/run_ark.py`). These drive the real SDK at the pinned commit with `deepseek-v4.1-flash` (served as `deepseek-v4-1-flash-260910`) through Volcano Engine Ark's OpenAI-compatible endpoint, using `ChatOpenAI(use_responses_api=False)`. The four scenarios were run 3 times; each full run took 46–63 s.
+
+| Scenario | What it tests | Result (3/3 runs) |
+|---|---|---|
+| S1 large result | does a real model follow the offload pointer? | ✅ It ran `grep` on `/large_tool_results/<tool_call_id>` with several patterns (`FAILED`, `ERROR`, `failed`, …) to confirm there was a single failure. It then called `read_file` with an offset to inspect context (offset 1730 in two runs; 2995, the end of the log, in one) and named `tests/test_1734.py::test_case` correctly |
+| S2 delegation | how does it brief an isolated sub-agent? | ✅ The `task` descriptions were 706 / 772 / 941 chars and self-contained (file contents inlined, exact output format, "you are stateless and cannot see my conversation"). The child wrote `/summary.md` |
+| S3 memory | does it persist a stated preference itself? | ✅ It called `edit_file` on `/AGENTS.md`, adding a "User preferences" bullet ("always provide them in Rust") |
+| S4 summarization | is a fact from a summarized span still usable? | ✅ `max_input_tokens=12000` forced compaction. The fact-bearing chunk was state message #2, before `cutoff_index=11`, so it was summarized away. The fact survived *inside the summary text*, and the model answered correctly **without** reading `/conversation_history/*.md` |
+
+What this does and does not show: the model-side assumptions behind the context design held for one current model on small, unambiguous tasks. These are paging offloaded data back, writing complete briefs, and writing memory without being asked. S4 did not exercise the fallback path, where the summary loses a detail and the model has to open the history file, so that path is still untested with a real model. With n=3 and one model, this is evidence, not a benchmark.
+
+**6. Diagrams.** All 8 Archify diagrams passed `finalize --quality showcase --repo-root <clone>`, which runs schema validation, verified delivery, strict provenance check, and a headless-Chromium browser check. The 1440×900 captures were inspected by eye. See [`assets/deepagents/archify/README.md`](https://github.com/woaitqs/repo-research/blob/main/assets/deepagents/archify/README.md).
 
 **Known limitations of the verification:**
-- No real LLM was called. Model-quality claims (e.g. "the model will page offloaded files") are not tested.
-- The CLI's TUI was not run, because it needs a provider key. The CLI path was verified by reading source only.
+- Real-model evidence covers one model (`deepseek-v4.1-flash`), four simple scenarios and 3 runs each. Behavior on long, ambiguous tasks, and on the path where the model must read the history file back after a lossy summary, is untested.
+- The CLI's TUI (`dcode`) was not run. The CLI path was verified by reading source only. Running `dcode` against an OpenAI-compatible endpoint would need extra configuration, because string `openai:` specs default to the Responses API (`profiles/provider/_openai.py`).
 - `minideep` runs tool calls sequentially and has no checkpointer.
 
 ## What I Would Reuse

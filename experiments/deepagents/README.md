@@ -76,6 +76,23 @@ ANTHROPIC_API_KEY=dummy /tmp/da/bin/python upstream_probe/probe_deepagents.py
 | P6 memory | after `edit_file` changes AGENTS.md to "likes rust", turn 2's system prompt still says "likes python" |
 | P7 delete inside isolated sub-agent | child reports `Deleted /old.md`, yet `/old.md` is still in the parent's `files` |
 
+## Real-model runs
+
+`real_model/run_ark.py` drives the real SDK with a real model through any OpenAI-compatible endpoint.
+It was used with Volcano Engine Ark's plan endpoint and `deepseek-v4.1-flash`. The key comes only from the
+environment and is never written to disk by the script.
+
+```bash
+export ARK_API_KEY=...                                                  # never commit this
+export ARK_BASE_URL=https://ark.cn-beijing.volces.com/api/plan/v3       # default
+export ARK_MODEL=deepseek-v4.1-flash
+python real_model/run_ark.py --check       # verify key + one tiny completion
+python real_model/run_ark.py --scenarios   # S1 offload pointer, S2 delegation brief, S3 memory write, S4 recall after summary
+```
+
+`results_run{1,2,3}.json` hold three recorded runs. All 4 scenarios passed in each run; the research doc's
+[Verification](../../research/deepagents.md#verification) section has the details.
+
 ## Limitations
 
 - Tool calls in one model turn run **sequentially**. Upstream fans them out in parallel,
