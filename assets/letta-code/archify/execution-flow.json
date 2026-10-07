@@ -1,0 +1,386 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "letta-code — one headless turn with one tool step (local backend)",
+    "output": "diagrams/letta-code/execution-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "viewBox": [
+      1080,
+      690
+    ],
+    "column_fit": "spread",
+    "repository": {
+      "url": "https://github.com/letta-ai/letta-code.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "4b028fab07c69edaac2ddb4f7b9a43573ff20d81"
+    }
+  },
+  "participants": [
+    {
+      "id": "user",
+      "type": "external",
+      "label": "User",
+      "sublabel": "letta -p"
+    },
+    {
+      "id": "loop",
+      "type": "frontend",
+      "label": "Client loop",
+      "sublabel": "headless.ts",
+      "sources": [
+        {
+          "path": "src/headless.ts",
+          "line": 2176,
+          "end_line": 2244,
+          "label": "turn loop + send"
+        },
+        {
+          "path": "src/headless.ts",
+          "line": 2578,
+          "end_line": 2667,
+          "label": "requires_approval"
+        },
+        {
+          "path": "src/reminders/engine.ts",
+          "line": 548,
+          "end_line": 606,
+          "label": "reminder parts"
+        }
+      ]
+    },
+    {
+      "id": "perms",
+      "type": "security",
+      "label": "Permissions",
+      "sublabel": "classifyApprovals",
+      "sources": [
+        {
+          "path": "src/cli/helpers/approval-classification.ts",
+          "line": 124,
+          "end_line": 230,
+          "label": "classifyApprovals"
+        },
+        {
+          "path": "src/tools/manager.ts",
+          "line": 1005,
+          "end_line": 1064,
+          "label": "checkToolPermission"
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "type": "backend",
+      "label": "Tool manager",
+      "sublabel": "executeTool",
+      "sources": [
+        {
+          "path": "src/agent/approval-execution.ts",
+          "line": 324,
+          "end_line": 440,
+          "label": "executeApprovalBatch"
+        },
+        {
+          "path": "src/tools/manager.ts",
+          "line": 2447,
+          "end_line": 2511,
+          "label": "executeTool"
+        }
+      ]
+    },
+    {
+      "id": "backend",
+      "type": "backend",
+      "label": "LocalBackend",
+      "sublabel": "run per model step",
+      "sources": [
+        {
+          "path": "src/backend/dev/fake-headless-backend.ts",
+          "line": 469,
+          "end_line": 565,
+          "label": "executeConversationTurn"
+        },
+        {
+          "path": "src/backend/dev/fake-headless-backend.ts",
+          "line": 691,
+          "end_line": 776,
+          "label": "persistExecutorStream"
+        },
+        {
+          "path": "src/backend/dev/provider-turn-executor.ts",
+          "line": 496,
+          "end_line": 528,
+          "label": "tool call → approval_request"
+        }
+      ]
+    },
+    {
+      "id": "store",
+      "type": "database",
+      "label": "Local store",
+      "sublabel": "messages.jsonl",
+      "sources": [
+        {
+          "path": "src/backend/local/local-store.ts",
+          "line": 927,
+          "end_line": 1012,
+          "label": "appendTurnInput / appendStreamChunk"
+        },
+        {
+          "path": "src/backend/local/local-store.ts",
+          "line": 1507,
+          "end_line": 1548,
+          "label": "applyApprovalResults"
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "type": "external",
+      "label": "Model",
+      "sublabel": "pi-ai streamSimple",
+      "sources": [
+        {
+          "path": "src/backend/dev/pi-stream-adapter.ts",
+          "line": 574,
+          "end_line": 606,
+          "label": "Context = system + messages + tools"
+        },
+        {
+          "path": "src/backend/dev/pi-stream-adapter.ts",
+          "line": 535,
+          "end_line": 572,
+          "label": "preflight compaction"
+        }
+      ]
+    }
+  ],
+  "segments": [
+    {
+      "from": 150,
+      "to": 222,
+      "label": "Turn start"
+    },
+    {
+      "from": 236,
+      "to": 334,
+      "label": "Model step"
+    },
+    {
+      "from": 348,
+      "to": 418,
+      "label": "Client tools"
+    },
+    {
+      "from": 432,
+      "to": 530,
+      "label": "Next run"
+    },
+    {
+      "from": 544,
+      "to": 586,
+      "label": "Finish"
+    }
+  ],
+  "messages": [
+    {
+      "id": "prompt",
+      "from": "user",
+      "to": "loop",
+      "y": 160,
+      "label": "prompt",
+      "variant": "emphasis"
+    },
+    {
+      "id": "send-user",
+      "from": "loop",
+      "to": "backend",
+      "y": 188,
+      "label": "user msg + client_tools",
+      "variant": "emphasis",
+      "note": "<system-reminder> parts prepended to the user content"
+    },
+    {
+      "id": "append-input",
+      "from": "backend",
+      "to": "store",
+      "y": 216,
+      "label": "settle orphans, append"
+    },
+    {
+      "id": "model-call",
+      "from": "backend",
+      "to": "model",
+      "y": 244,
+      "label": "cached prompt + view + tools",
+      "variant": "emphasis",
+      "note": "compacts first if over window − reserve"
+    },
+    {
+      "id": "model-toolcall",
+      "from": "model",
+      "to": "backend",
+      "y": 272,
+      "label": "toolcall_end",
+      "variant": "return"
+    },
+    {
+      "id": "persist-assistant",
+      "from": "backend",
+      "to": "store",
+      "y": 300,
+      "label": "persist assistant msg"
+    },
+    {
+      "id": "requires-approval",
+      "from": "backend",
+      "to": "loop",
+      "y": 328,
+      "label": "approval_request + requires_approval",
+      "variant": "return",
+      "note": "the run ends here; no tool ran"
+    },
+    {
+      "id": "classify",
+      "from": "loop",
+      "to": "perms",
+      "y": 356,
+      "label": "classify: allow / deny / ask",
+      "variant": "security"
+    },
+    {
+      "id": "execute",
+      "from": "loop",
+      "to": "tools",
+      "y": 384,
+      "label": "execute batch"
+    },
+    {
+      "id": "tool-return",
+      "from": "tools",
+      "to": "loop",
+      "y": 412,
+      "label": "tool_return (clamped, scrubbed)",
+      "variant": "return"
+    },
+    {
+      "id": "send-approval",
+      "from": "loop",
+      "to": "backend",
+      "y": 440,
+      "label": "{type: approval, approvals}",
+      "variant": "emphasis"
+    },
+    {
+      "id": "append-result",
+      "from": "backend",
+      "to": "store",
+      "y": 468,
+      "label": "append toolResult"
+    },
+    {
+      "id": "next-call",
+      "from": "backend",
+      "to": "model",
+      "y": 496,
+      "label": "next model step"
+    },
+    {
+      "id": "final-text",
+      "from": "model",
+      "to": "backend",
+      "y": 524,
+      "label": "text, no tool calls",
+      "variant": "return"
+    },
+    {
+      "id": "end-turn",
+      "from": "backend",
+      "to": "loop",
+      "y": 552,
+      "label": "assistant + end_turn",
+      "variant": "return"
+    },
+    {
+      "id": "result",
+      "from": "loop",
+      "to": "user",
+      "y": 580,
+      "label": "result",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "loop",
+      "from": 156,
+      "to": 586,
+      "type": "frontend"
+    },
+    {
+      "participant": "backend",
+      "from": 184,
+      "to": 334,
+      "type": "backend"
+    },
+    {
+      "participant": "model",
+      "from": 240,
+      "to": 272,
+      "type": "external"
+    },
+    {
+      "participant": "perms",
+      "from": 352,
+      "to": 362,
+      "type": "security"
+    },
+    {
+      "participant": "tools",
+      "from": 380,
+      "to": 414,
+      "type": "backend"
+    },
+    {
+      "participant": "backend",
+      "from": 436,
+      "to": 558,
+      "type": "backend"
+    },
+    {
+      "participant": "model",
+      "from": 492,
+      "to": 524,
+      "type": "external"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "One run = one model step",
+      "items": [
+        "every tool call ends the run with requires_approval",
+        "the client starts the next run with an approval message"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Execution stays client-side",
+      "items": [
+        "permission classification before execution",
+        "headless one-shot denies 'ask' decisions"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Cloud mode",
+      "items": [
+        "same client loop; APIBackend streams the same chunk types from Letta Cloud",
+        "server-side tools (web_search) never reach the client"
+      ]
+    }
+  ]
+}

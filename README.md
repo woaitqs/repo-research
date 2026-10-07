@@ -11,6 +11,7 @@ This repository is not a collection of README summaries. Each study should trace
 | [langchain-ai/deepagents](https://github.com/langchain-ai/deepagents) | `16e84d9` (SDK 0.7.22) | [research/deepagents.md](research/deepagents.md) · [web](https://woaitqs.github.io/repo-research/research/deepagents.html) · 中文: [deepagents.zh.md](research/deepagents.zh.md) · [web](https://woaitqs.github.io/repo-research/research/deepagents.zh.html) | [8 Archify diagrams](diagrams/deepagents/) | [experiments/deepagents](experiments/deepagents/) |
 | [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands) + [software-agent-sdk](https://github.com/OpenHands/software-agent-sdk) | `7ea83ba` (Canvas 1.25.0) + `54daf05` (SDK `v1.53.0`) | [research/openhands.md](research/openhands.md) · [web](https://woaitqs.github.io/repo-research/research/openhands.html) · 中文: [openhands.zh.md](research/openhands.zh.md) · [web](https://woaitqs.github.io/repo-research/research/openhands.zh.html) | [10 Archify diagrams](diagrams/openhands/) | [experiments/openhands](experiments/openhands/) |
 | [openai/openai-agents-python](https://github.com/openai/openai-agents-python) | `71c2da4` (0.23.1 + 22) | [research/openai-agents-python.md](research/openai-agents-python.md) · [web](https://woaitqs.github.io/repo-research/research/openai-agents-python.html) · 中文: [openai-agents-python.zh.md](research/openai-agents-python.zh.md) · [web](https://woaitqs.github.io/repo-research/research/openai-agents-python.zh.html) | [8 Archify diagrams](diagrams/openai-agents-python/) | [experiments/openai-agents-python](experiments/openai-agents-python/) |
+| [letta-ai/letta-code](https://github.com/letta-ai/letta-code) | `4b028fa` (v0.34.4) | [research/letta-code.md](research/letta-code.md) · [web](https://woaitqs.github.io/repo-research/research/letta-code.html) · 中文: [letta-code.zh.md](research/letta-code.zh.md) · [web](https://woaitqs.github.io/repo-research/research/letta-code.zh.html) | [8 Archify diagrams](diagrams/letta-code/) | [experiments/letta-code](experiments/letta-code/) |
 
 ## What each repository study should contain
 
@@ -32,8 +33,8 @@ For every target repository:
 1. **Pin the target.** Clone it into a temporary directory, never into this repo. Record `git rev-parse HEAD` and cite every source reference against that commit.
 2. **Map, then trace.** Read the manifests, entry points (console scripts, servers) and the composition root. Then follow real call sites end to end. Read the dependency source too when the target delegates to a framework. For deepagents that meant reading LangChain's `create_agent`.
 3. **Separate fact from interpretation.** Facts are backed by `path:line`, a test, or observed runtime behavior. Interpretations are labelled as such, and open questions stay explicit.
-4. **Verify claims at runtime when it is cheap.** For example, drive the real library with a scripted fake model. The deepagents probe found two behaviors that were not obvious from reading alone. If the target ships its own scripted model (openai-agents-python has `agents.testing.ScriptedModel`), use it.
-5. **Run the target's own tests** with its locked dependencies, so environment noise is not mistaken for findings. Check failures against the environment before reporting them: in the openai-agents-python study, 62 redaction tests failed only because the checkout path contained the word `user`, which the tests treat as a leaked credential.
+4. **Verify claims at runtime when it is cheap.** For example, drive the real library with a scripted fake model. The deepagents probe found two behaviors that were not obvious from reading alone. If the target ships its own scripted model (openai-agents-python has `agents.testing.ScriptedModel`), use it. When the target is a CLI, run its published build against a real model through a small logging proxy, so every request body is recorded. The letta-code study used this to check what actually entered the model's context, and to measure prompt-cache hits per call.
+5. **Run the target's own tests** with its locked dependencies, so environment noise is not mistaken for findings. Check failures against the environment before reporting them: trace each failure to a cause and re-run it with that cause removed. In the openai-agents-python study, 62 redaction tests failed only because the checkout path contained the word `user`, which the tests treat as a leaked credential.
 6. **Reproduce the architecture, not the product.** Build a small dependency-light version, test its architectural invariants, and mutation-test the tests.
 7. **Check model-side assumptions with real models when the design depends on them** (for example: does the model follow a pointer, write a good brief, recover from an error?). Read API keys from the environment only; never write them into the repository.
 8. **Diagram from evidence.** Every Archify node carries `sources` pinned to the commit.
@@ -157,7 +158,7 @@ How it is used here:
   ```
 
 - Optional perceptual review: `archify.mjs visual-check diagrams/<project>/<name>.html --summary --require-provenance` captures screenshots. Look at them before claiming visual quality.
-- `*.delivery.json`, `*.finalize*.json` and `*.browser-check.json` sidecars contain absolute local paths and are git-ignored.
+- `*.delivery.json`, `*.finalize*.json` and `*.browser-check.json` sidecars contain absolute local paths and are git-ignored. Delete a diagram's old `*.browser-check.json` before re-finalizing it.
 - Schema limits to remember: only nodes and participants take `sources` (at most 3 each); a showcase canvas must have a width/height ratio of at least 1.55 or fit a 900 px viewport; in dataflow diagrams, two edges on one side of a node offset the port by 7 px, which can trip the 8 px micro-segment rule (fix with `yOffset`). Details in `assets/openai-agents-python/archify/README.md`.
 
 ## Running experiments
@@ -176,6 +177,12 @@ The OpenHands study is bilingual: `research/openhands.md` (English) and `researc
 Experiments that call real models read API keys from environment variables only. Never commit keys: `.env` files are git-ignored, and published logs and reports are sanitized.
 
 The openai-agents-python study is bilingual too: `research/openai-agents-python.md` (English) and `research/openai-agents-python.zh.md` (Chinese), with `experiments/openai-agents-python/README.zh.md` for the reproduction; the Archify diagrams are shared and English-only. Its experiment (`miniagents`) is also stdlib-only, with the same `run.sh` contract. It adds `mutation_check.py` (injects 11 architectural regressions), `upstream_probe/` (17 probes of the real SDK, no network) and `real_model/` (scripts that drive both the real SDK and the reproduction against an OpenAI-compatible endpoint; keys come from environment variables).
+
+The letta-code study is bilingual: `research/letta-code.md` (English) and `research/letta-code.zh.md` (Chinese), with `experiments/letta-code/README.zh.md` for the reproduction; the Archify diagrams are shared and English-only. Its experiment (`minilc`) is stdlib-only Python at runtime (pytest for tests) and needs `git` on `PATH`. The extra checks need the target's toolchain:
+
+- `./run.sh probe <letta-code clone>` runs a TypeScript probe against the real `LocalBackend` with Bun. It needs no network.
+- `real_model/run_letta_real.py` drives the built `letta.js` with Node against an OpenAI-compatible model. It reads the API key from `ARK_API_KEY`.
+- `python3 mutation_check.py` injects architectural regressions and checks that the tests catch each one.
 
 ## Research principle
 

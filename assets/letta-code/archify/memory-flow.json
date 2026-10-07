@@ -1,0 +1,361 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "letta-code — memory lifecycle: writers → git → prompt",
+    "output": "diagrams/letta-code/memory-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "viewBox": [
+      1080,
+      560
+    ],
+    "repository": {
+      "url": "https://github.com/letta-ai/letta-code.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "4b028fab07c69edaac2ddb4f7b9a43573ff20d81"
+    },
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "dashed": {
+          "label": "conditional (cloud mode / one call)"
+        }
+      }
+    }
+  },
+  "stages": [
+    {
+      "label": "Writers"
+    },
+    {
+      "label": "Write gates"
+    },
+    {
+      "label": "MemFS state"
+    },
+    {
+      "label": "Compile"
+    },
+    {
+      "label": "Context"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "agent",
+      "type": "frontend",
+      "label": "Primary agent",
+      "sublabel": "Edit + git commit",
+      "stage": 0,
+      "row": 0,
+      "width": 140,
+      "sources": [
+        {
+          "path": "src/agent/prompts/letta_root_memfs.md",
+          "line": 60,
+          "end_line": 77,
+          "label": "editing memory directly"
+        },
+        {
+          "path": "src/permissions/memory-write-allowance.ts",
+          "line": 37,
+          "end_line": 62,
+          "label": "own-memory writes allowed"
+        }
+      ]
+    },
+    {
+      "id": "worker",
+      "type": "backend",
+      "label": "Memory worker",
+      "sublabel": "background sub-agent",
+      "stage": 0,
+      "row": 1,
+      "width": 140,
+      "sources": [
+        {
+          "path": "src/agent/subagents/memory-worker.ts",
+          "line": 146,
+          "end_line": 216,
+          "label": "update + settle"
+        }
+      ]
+    },
+    {
+      "id": "reflection",
+      "type": "backend",
+      "label": "Reflection",
+      "sublabel": "reads transcript slice",
+      "stage": 0,
+      "row": 2,
+      "width": 140,
+      "sources": [
+        {
+          "path": "src/cli/helpers/reflection-launcher.ts",
+          "line": 831,
+          "end_line": 953,
+          "label": "clean parent → spawn"
+        }
+      ]
+    },
+    {
+      "id": "hook",
+      "type": "security",
+      "label": "Pre-commit hook",
+      "sublabel": "frontmatter · limits",
+      "stage": 1,
+      "row": 0,
+      "width": 140,
+      "sources": [
+        {
+          "path": "src/agent/memory-git-hooks.ts",
+          "line": 38,
+          "end_line": 211,
+          "label": "hook script"
+        },
+        {
+          "path": "src/memory-frontmatter.ts",
+          "line": 18,
+          "end_line": 122,
+          "label": "frontmatter rules"
+        }
+      ]
+    },
+    {
+      "id": "worktree",
+      "type": "database",
+      "label": "Private worktree",
+      "sublabel": "merged under lock",
+      "stage": 1,
+      "row": 1,
+      "width": 140,
+      "sources": [
+        {
+          "path": "src/agent/memory-worktree.ts",
+          "line": 125,
+          "end_line": 156,
+          "label": "create worktree"
+        },
+        {
+          "path": "src/agent/memory-operation.ts",
+          "line": 5,
+          "end_line": 59,
+          "label": "checkout lock"
+        }
+      ]
+    },
+    {
+      "id": "repo",
+      "type": "database",
+      "label": "memory/ (main)",
+      "sublabel": "git HEAD",
+      "stage": 2,
+      "row": 1,
+      "width": 140,
+      "sources": [
+        {
+          "path": "src/agent/memory-filesystem.ts",
+          "line": 46,
+          "end_line": 57,
+          "label": "per-agent path"
+        }
+      ]
+    },
+    {
+      "id": "remote",
+      "type": "cloud",
+      "label": "Letta Cloud git",
+      "sublabel": "push after turn",
+      "stage": 2,
+      "row": 2,
+      "width": 140,
+      "sources": [
+        {
+          "path": "src/reminders/memory-git-sync.ts",
+          "line": 162,
+          "end_line": 242,
+          "label": "runPostTurnMemorySync"
+        },
+        {
+          "path": "src/agent/memory-git.ts",
+          "line": 1837,
+          "end_line": 1981,
+          "label": "sync statuses"
+        }
+      ]
+    },
+    {
+      "id": "compiled",
+      "type": "backend",
+      "label": "Compiled prompt",
+      "sublabel": "core files + index",
+      "stage": 3,
+      "row": 1,
+      "width": 140,
+      "sources": [
+        {
+          "path": "src/backend/local/system-prompt-compilation.ts",
+          "line": 154,
+          "end_line": 199,
+          "label": "v2 projection"
+        }
+      ]
+    },
+    {
+      "id": "delta",
+      "type": "backend",
+      "label": "<memory_update>",
+      "sublabel": "next call only",
+      "stage": 3,
+      "row": 2,
+      "width": 140,
+      "sources": [
+        {
+          "path": "src/backend/local/local-backend.ts",
+          "line": 917,
+          "end_line": 939,
+          "label": "revision moved"
+        }
+      ]
+    },
+    {
+      "id": "llm",
+      "type": "external",
+      "label": "Model",
+      "sublabel": "system + messages",
+      "stage": 4,
+      "row": 1,
+      "width": 140,
+      "sources": [
+        {
+          "path": "src/backend/dev/pi-stream-adapter.ts",
+          "line": 594,
+          "end_line": 606,
+          "label": "delta appended as system msg"
+        }
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "id": "agent-commit",
+      "from": "agent",
+      "to": "hook",
+      "label": "git commit",
+      "variant": "emphasis"
+    },
+    {
+      "id": "hook-repo",
+      "from": "hook",
+      "to": "repo",
+      "label": "valid commit",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "top",
+      "via": [
+        [
+          530,
+          157
+        ]
+      ]
+    },
+    {
+      "id": "worker-wt",
+      "from": "worker",
+      "to": "worktree",
+      "label": "edit + commit"
+    },
+    {
+      "id": "refl-wt",
+      "from": "reflection",
+      "to": "worktree",
+      "label": "edit + commit",
+      "fromSide": "right",
+      "toSide": "bottom",
+      "via": [
+        [
+          315,
+          385
+        ]
+      ]
+    },
+    {
+      "id": "wt-repo",
+      "from": "worktree",
+      "to": "repo",
+      "label": "merge"
+    },
+    {
+      "id": "repo-remote",
+      "from": "repo",
+      "to": "remote",
+      "label": "cloud mode",
+      "variant": "dashed",
+      "labelDy": 25
+    },
+    {
+      "id": "repo-compiled",
+      "from": "repo",
+      "to": "compiled",
+      "label": "HEAD",
+      "variant": "emphasis"
+    },
+    {
+      "id": "compiled-delta",
+      "from": "compiled",
+      "to": "delta",
+      "label": "new revision",
+      "labelDy": 25
+    },
+    {
+      "id": "compiled-llm",
+      "from": "compiled",
+      "to": "llm",
+      "label": "system",
+      "variant": "emphasis"
+    },
+    {
+      "id": "delta-llm",
+      "from": "delta",
+      "to": "llm",
+      "label": "once",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "bottom",
+      "via": [
+        [
+          960,
+          385
+        ]
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "violet",
+      "title": "What is memory",
+      "items": [
+        "committed Markdown in a per-agent git repo (MemFS)",
+        "root files = core (in prompt); child MEMORY.md dirs = deferred index"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "When the prompt changes",
+      "items": [
+        "worker / reflection merges recompile the prompt (cache break)",
+        "the primary's own commits only add a one-shot <memory_update>"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Not memory",
+      "items": [
+        "conversation history = recall (search via recall sub-agent)",
+        "uncommitted edits never reach the prompt"
+      ]
+    }
+  ]
+}

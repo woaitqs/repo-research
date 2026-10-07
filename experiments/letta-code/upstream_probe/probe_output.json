@@ -1,0 +1,131 @@
+{
+  "storageDir": "/tmp/lc-probe-twmMpM",
+  "results": [
+    {
+      "id": "P1",
+      "claim": "A tool call ends the run with requires_approval; the client's approval becomes a toolResult that the next provider call sees",
+      "observed": {
+        "run1StopReasons": [
+          "requires_approval"
+        ],
+        "run2Chunks": 2,
+        "executorCalls": 2,
+        "call2Roles": [
+          "user",
+          "assistant",
+          "toolResult"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "id": "P2",
+      "claim": "An uncommitted memory edit does not reach the model",
+      "observed": {
+        "inSystemPrompt": false,
+        "inMidConversationPrompt": false,
+        "inMessages": false
+      },
+      "pass": true
+    },
+    {
+      "id": "P3a",
+      "claim": "The first provider call after a memory commit carries a <memory_update> delta; the system prompt is unchanged",
+      "observed": {
+        "firstCall": {
+          "inSystemPrompt": false,
+          "inMidConversationPrompt": true,
+          "inMessages": false
+        },
+        "systemPromptUnchanged": [
+          true,
+          true,
+          true
+        ]
+      },
+      "pass": true
+    },
+    {
+      "id": "P3b",
+      "claim": "(staleness check) Later provider calls in the same conversation still see the committed memory",
+      "observed": {
+        "laterCalls": [
+          {
+            "inSystemPrompt": false,
+            "inMidConversationPrompt": false,
+            "inMessages": false
+          },
+          {
+            "inSystemPrompt": false,
+            "inMidConversationPrompt": false,
+            "inMessages": false
+          }
+        ]
+      },
+      "pass": false
+    },
+    {
+      "id": "P4a",
+      "claim": "Compaction appends a compaction entry; every earlier transcript row is kept on disk",
+      "observed": {
+        "rowsBefore": 13,
+        "rowsAfter": 14,
+        "lastRowType": "compaction",
+        "priorRowsUnchanged": true,
+        "modelViewBefore": 12,
+        "modelViewAfter": 1,
+        "numMessagesAfter": 1
+      },
+      "pass": true
+    },
+    {
+      "id": "P4b",
+      "claim": "After compaction the next call sees the summary as a user-role system_alert, and a recompiled system prompt that now includes the committed memory",
+      "observed": {
+        "firstMessageRole": "user",
+        "summaryVisible": true,
+        "systemAlert": true,
+        "committedMemoryInSystemPrompt": true
+      },
+      "pass": true
+    },
+    {
+      "id": "P5",
+      "claim": "A dangling tool call is answered with a synthetic error toolResult before the next user turn",
+      "observed": {
+        "tailRoles": [
+          "user",
+          "assistant",
+          "toolResult",
+          "user"
+        ],
+        "settledText": "[{\"type\":\"text\",\"text\":\"Turn did not complete\"}]"
+      },
+      "pass": true
+    },
+    {
+      "id": "P6",
+      "claim": "A second turn while a run is active is rejected",
+      "observed": {
+        "concurrentError": "Conversation local-conv-1 already has an active run (local-run-10)"
+      },
+      "pass": true
+    },
+    {
+      "id": "P7",
+      "claim": "Preflight compaction fires above window - min(16384, 20% of window)",
+      "observed": {
+        "thresholds": {
+          "8192": 6554,
+          "32768": 26215,
+          "128000": 111616,
+          "200000": 183616,
+          "1000000": 983616
+        },
+        "at200k_180k": false,
+        "at200k_185k": true
+      },
+      "pass": true
+    }
+  ]
+}

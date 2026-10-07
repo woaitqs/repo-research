@@ -252,3 +252,79 @@
       question:
         en: Handoff (control moves) vs `Agent.as_tool` (control stays)
         zh: Handoff（控制权转移）与 `Agent.as_tool`（控制权保留）
+
+- id: letta-code
+  number: "04"
+  name: letta-code
+  category:
+    en: Stateful agent harness
+    zh: 有状态 Agent 框架（harness）
+  pins:
+    - label: letta-ai/letta-code
+      rev: 4b028fa
+      url: https://github.com/letta-ai/letta-code/tree/4b028fab07c69edaac2ddb4f7b9a43573ff20d81
+  studied: 2026-10-07
+  tagline:
+    en: >-
+      letta-code splits the agent loop across a protocol. A stateful backend (Letta Cloud,
+      or an in-process local backend) runs one model step per run and stops at every tool
+      call; the client harness executes tools on the user's machine and resumes. Memory is
+      a per-agent git repository compiled into a cache-stable system prompt.
+    zh: "letta-code 把 agent 循环拆在一个协议的两侧：有状态的后端（Letta Cloud 或进程内的本地后端）每个 run 只执行一步模型调用，遇到工具调用就停下；客户端 harness 在用户机器上执行工具后再续跑。记忆是每个 agent 一个 git 仓库，编译进一个保持缓存稳定的 system prompt。"
+  status: "24 tests + demo 11/11 · mutation 9/9 · upstream unit tests 8,778 pass · probe 9 claims (1 disproved) · real-model 6 scenarios × 3 runs"
+  pages:
+    en: /research/letta-code.html
+    zh: /research/letta-code.zh.html
+  diagrams_url: /diagrams/letta-code/
+  experiment:
+    en: https://github.com/woaitqs/repo-research/tree/main/experiments/letta-code
+    zh: https://github.com/woaitqs/repo-research/blob/main/experiments/letta-code/README.zh.md
+  diagrams:
+    - slug: architecture
+      title: Architecture
+      type: architecture
+      question:
+        en: "System architecture: client harness ⇄ `Backend` contract ⇄ model"
+        zh: 系统架构：客户端 harness ⇄ `Backend` 契约 ⇄ 模型
+    - slug: execution-flow
+      title: Execution flow
+      type: sequence
+      question:
+        en: One headless turn with one tool step (local backend)
+        zh: 一次 headless 回合，含一步工具调用（本地后端）
+    - slug: core-abstractions
+      title: Core abstractions
+      type: architecture
+      question:
+        en: The core abstractions and who depends on whom
+        zh: 核心抽象及其依赖关系
+    - slug: context-flow
+      title: Context flow
+      type: dataflow
+      question:
+        en: What enters each provider call, and what stays out
+        zh: 每次模型调用带入了什么、排除了什么
+    - slug: memory-flow
+      title: Memory flow
+      type: dataflow
+      question:
+        en: "Memory lifecycle: writers → git → system prompt"
+        zh: 记忆生命周期：写入者 → git → system prompt
+    - slug: tool-runtime
+      title: Tool runtime
+      type: workflow
+      question:
+        en: "Tool call path: the backend proposes, the client gates and executes"
+        zh: 工具调用路径：后端提出，客户端把关并执行
+    - slug: agent-loop
+      title: Agent loop
+      type: lifecycle
+      question:
+        en: The agent loop split across client and backend
+        zh: 横跨客户端与后端的 agent 循环
+    - slug: sub-agent-flow
+      title: Sub-agent flow
+      type: sequence
+      question:
+        en: "Sub-agent delegation: `Agent` tool → child `letta` process"
+        zh: 子 Agent 委托：`Agent` 工具 → 子 `letta` 进程
