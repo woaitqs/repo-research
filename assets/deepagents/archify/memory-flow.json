@@ -1,0 +1,274 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "deepagents \u2014 memory lifecycle (AGENTS.md files as explicit memory)",
+    "output": "diagrams/deepagents/memory-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "viewBox": [
+      1076,
+      540
+    ],
+    "repository": {
+      "url": "https://github.com/langchain-ai/deepagents.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "16e84d927e7e13c41a10c071380c875af6a562f5"
+    }
+  },
+  "stages": [
+    {
+      "label": "Durable stores"
+    },
+    {
+      "label": "Load"
+    },
+    {
+      "label": "Thread state"
+    },
+    {
+      "label": "Per model call"
+    },
+    {
+      "label": "Agent writes"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "agentsmd",
+      "type": "database",
+      "label": "AGENTS.md files",
+      "sublabel": "user + project scope",
+      "stage": 0,
+      "row": 1,
+      "width": 130,
+      "sources": [
+        {
+          "path": "libs/code/deepagents_code/_paths.py",
+          "line": 295,
+          "end_line": 297,
+          "label": "user AGENTS.md path"
+        },
+        {
+          "path": "libs/code/deepagents_code/project_utils.py",
+          "line": 151,
+          "end_line": 175,
+          "label": "project discovery"
+        },
+        {
+          "path": "libs/code/deepagents_code/agent.py",
+          "line": 3056,
+          "end_line": 3063,
+          "label": "CLI memory sources"
+        }
+      ]
+    },
+    {
+      "id": "store",
+      "type": "database",
+      "label": "LangGraph Store",
+      "sublabel": "StoreBackend route",
+      "stage": 0,
+      "row": 2,
+      "width": 130,
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/backends/store.py",
+          "line": 90,
+          "end_line": 93,
+          "label": "cross-thread storage"
+        },
+        {
+          "path": "libs/deepagents/deepagents/backends/composite.py",
+          "line": 195,
+          "end_line": 225,
+          "label": "prefix routing"
+        }
+      ]
+    },
+    {
+      "id": "load",
+      "type": "backend",
+      "label": "MemoryMiddleware",
+      "sublabel": "before_agent, once",
+      "stage": 1,
+      "row": 1,
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/memory.py",
+          "line": 279,
+          "end_line": 311,
+          "label": "download_files once"
+        },
+        {
+          "path": "libs/deepagents/deepagents/graph.py",
+          "line": 936,
+          "end_line": 945,
+          "label": "added when memory="
+        }
+      ]
+    },
+    {
+      "id": "contents",
+      "type": "database",
+      "label": "memory_contents",
+      "sublabel": "private, per thread",
+      "stage": 2,
+      "row": 1,
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/memory.py",
+          "line": 88,
+          "end_line": 97,
+          "label": "PrivateStateAttr"
+        }
+      ]
+    },
+    {
+      "id": "inject",
+      "type": "backend",
+      "label": "<agent_memory>",
+      "sublabel": "system prompt tail",
+      "stage": 3,
+      "row": 1,
+      "width": 120,
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/memory.py",
+          "line": 105,
+          "end_line": 120,
+          "label": "MEMORY_SYSTEM_PROMPT"
+        },
+        {
+          "path": "libs/deepagents/deepagents/middleware/memory.py",
+          "line": 347,
+          "end_line": 383,
+          "label": "modify_request"
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "type": "external",
+      "label": "Model",
+      "sublabel": "decides to learn",
+      "stage": 4,
+      "row": 1,
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/memory.py",
+          "line": 110,
+          "end_line": 125,
+          "label": "learning guidelines"
+        }
+      ]
+    },
+    {
+      "id": "edit",
+      "type": "security",
+      "label": "edit_file",
+      "sublabel": "guarded by CLI",
+      "stage": 4,
+      "row": 0,
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/filesystem.py",
+          "line": 2268,
+          "end_line": 2290,
+          "label": "edit_file tool"
+        },
+        {
+          "path": "libs/code/deepagents_code/agent.py",
+          "line": 3085,
+          "end_line": 3093,
+          "label": "ManagedMemoryGuard"
+        }
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "id": "files-load",
+      "from": "agentsmd",
+      "to": "load",
+      "label": "download_files",
+      "variant": "emphasis"
+    },
+    {
+      "id": "store-load",
+      "from": "store",
+      "to": "load",
+      "label": "/memories/",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "bottom",
+      "via": [
+        [
+          315,
+          385
+        ]
+      ]
+    },
+    {
+      "id": "cache",
+      "from": "load",
+      "to": "contents",
+      "label": "once per thread",
+      "variant": "emphasis"
+    },
+    {
+      "id": "every-call",
+      "from": "contents",
+      "to": "inject",
+      "label": "every call",
+      "variant": "emphasis"
+    },
+    {
+      "id": "to-model",
+      "from": "inject",
+      "to": "model",
+      "label": "system"
+    },
+    {
+      "id": "learn",
+      "from": "model",
+      "to": "edit",
+      "label": "tool call"
+    },
+    {
+      "id": "persist",
+      "from": "edit",
+      "to": "agentsmd",
+      "label": "next thread sees it",
+      "variant": "dashed",
+      "route": "top-channel"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Explicit memory",
+      "items": [
+        "memory = plain AGENTS.md files the agent edits itself",
+        "no vector store, no implicit extraction"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Staleness",
+      "items": [
+        "memory_contents is cached in the checkpointed thread",
+        "an edit mid-thread is not re-injected until a new thread (probe P6)"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Trust",
+      "items": [
+        "prompt frames memory as data, not instructions",
+        "CLI rejects AGENTS.md symlinks escaping the project"
+      ]
+    }
+  ]
+}

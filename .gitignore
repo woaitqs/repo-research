@@ -1,5 +1,20 @@
-_site/
+# Archify delivery provenance sidecars and locks (contain absolute local paths)
+diagrams/**/*.delivery.json
+diagrams/**/*.delivery-pending.json
+.archify-delivery-lock.json
+**/.archify-delivery-lock.json
+
+# Experiment build artifacts
+experiments/**/.venv/
+experiments/**/dist/
+experiments/**/build/
+experiments/**/*.egg-info/
+__pycache__/
+.pytest_cache/
+
+# Local Jekyll build artifacts
 .sass-cache/
+_site/
 .jekyll-cache/
 .jekyll-metadata
 .DS_Store

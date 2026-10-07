@@ -1,6 +1,7 @@
 ---
 layout: research
-title: OpenHands — interactive diagrams
+title: "OpenHands — interactive diagrams"
+permalink: /diagrams/openhands/
 ---
 
 # OpenHands — interactive diagrams
@@ -28,7 +29,7 @@ Each diagram passed `archify finalize --quality showcase --repo-root <pinned che
 (schema validation, verified delivery, strict provenance check, real-browser check)
 and `archify visual-check` (light/dark, 1440×900 and 2048×1320). Receipts with
 specification/artifact SHA-256 and the number of verified source references are in
-[`assets/openhands/archify-receipts.json`](https://github.com/woaitqs/repo-research/blob/main/assets/openhands/archify-receipts.json).
-The JSON specifications are in [`specs/`](https://github.com/woaitqs/repo-research/tree/main/diagrams/openhands/specs).
+[`assets/openhands/archify/receipts.json`](https://github.com/woaitqs/repo-research/blob/main/assets/openhands/archify/receipts.json).
+The JSON specifications (Archify candidates) and a regeneration recipe are in [`assets/openhands/archify/`](https://github.com/woaitqs/repo-research/tree/main/assets/openhands/archify).
 
 ← Back to the [research article](../../research/openhands.html)

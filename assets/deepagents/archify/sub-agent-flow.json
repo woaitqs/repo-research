@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "deepagents — sub-agent delegation via the task tool (isolated mode)",
+    "output": "diagrams/deepagents/sub-agent-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "viewBox": [1000, 600],
+    "column_fit": "spread",
+    "repository": {
+      "url": "https://github.com/langchain-ai/deepagents.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "16e84d927e7e13c41a10c071380c875af6a562f5"
+    }
+  },
+  "participants": [
+    { "id": "pmodel", "type": "external", "label": "Parent model", "sublabel": "main agent" },
+    {
+      "id": "pgraph", "type": "backend", "label": "Parent graph", "sublabel": "tools node",
+      "sources": [{ "path": "libs/deepagents/deepagents/graph.py", "line": 896, "end_line": 909, "label": "SubAgentMiddleware in stack" }]
+    },
+    {
+      "id": "task", "type": "backend", "label": "task tool", "sublabel": "_build_task_tool",
+      "sources": [
+        { "path": "libs/deepagents/deepagents/middleware/subagents.py", "line": 810, "end_line": 838, "label": "task()" },
+        { "path": "libs/deepagents/deepagents/middleware/subagents.py", "line": 776, "end_line": 808, "label": "prepare child state" },
+        { "path": "libs/deepagents/deepagents/middleware/subagents.py", "line": 721, "end_line": 759, "label": "return Command" }
+      ]
+    },
+    {
+      "id": "child", "type": "backend", "label": "Child agent", "sublabel": "own create_agent",
+      "sources": [
+        { "path": "libs/deepagents/deepagents/middleware/subagents.py", "line": 549, "end_line": 604, "label": "create_sub_agent" },
+        { "path": "libs/deepagents/deepagents/graph.py", "line": 714, "end_line": 736, "label": "child middleware stack" }
+      ]
+    },
+    { "id": "cmodel", "type": "external", "label": "Child model", "sublabel": "spec or parent" },
+    {
+      "id": "backend", "type": "database", "label": "Backend", "sublabel": "shared files",
+      "sources": [{ "path": "libs/deepagents/deepagents/backends/state.py", "line": 99, "end_line": 119, "label": "files channel write" }]
+    }
+  ],
+  "segments": [
+    { "from": 150, "to": 230, "label": "Delegate" },
+    { "from": 236, "to": 404, "label": "Child runs alone" },
+    { "from": 410, "to": 496, "label": "Report back" }
+  ],
+  "messages": [
+    { "id": "call-task", "from": "pmodel", "to": "pgraph", "y": 160, "label": "task(description, type)", "variant": "emphasis" },
+    { "id": "runtime", "from": "pgraph", "to": "task", "y": 188, "label": "ToolRuntime(state, id)" },
+    { "id": "isolate", "from": "task", "to": "child", "y": 216, "label": "invoke(isolated state)", "variant": "security", "note": "messages = [HumanMessage(description)]; private keys dropped" },
+    { "id": "child-ask", "from": "child", "to": "cmodel", "y": 248, "label": "system + description" },
+    { "id": "child-calls", "from": "cmodel", "to": "child", "y": 276, "label": "tool_calls", "variant": "return" },
+    { "id": "child-write", "from": "child", "to": "backend", "y": 304, "label": "write_file(...)" },
+    { "id": "child-written", "from": "backend", "to": "child", "y": 332, "label": "files update", "variant": "return" },
+    { "id": "child-next", "from": "child", "to": "cmodel", "y": 360, "label": "next step" },
+    { "id": "child-final", "from": "cmodel", "to": "child", "y": 388, "label": "final text", "variant": "return" },
+    { "id": "child-state", "from": "child", "to": "task", "y": 420, "label": "final state", "variant": "return" },
+    { "id": "command", "from": "task", "to": "pgraph", "y": 452, "label": "Command(update)", "variant": "return", "note": "last AI text as ToolMessage + shared keys such as files" },
+    { "id": "observe", "from": "pgraph", "to": "pmodel", "y": 482, "label": "ToolMessage only", "variant": "return" }
+  ],
+  "activations": [
+    { "participant": "pgraph", "from": 156, "to": 488, "type": "backend" },
+    { "participant": "task", "from": 184, "to": 458, "type": "backend" },
+    { "participant": "child", "from": 212, "to": 426, "type": "backend" },
+    { "participant": "cmodel", "from": 244, "to": 280, "type": "external" },
+    { "participant": "backend", "from": 300, "to": 336, "type": "database" },
+    { "participant": "cmodel", "from": 356, "to": 392, "type": "external" }
+  ],
+  "cards": [
+    { "dot": "violet", "title": "Isolation", "items": ["child sees only the description, never parent history", "parent sees only the child's final text"] },
+    { "dot": "amber", "title": "Shared state", "items": ["non-excluded keys (e.g. files) merge back via reducers", "a delete inside the child does not remove the parent's copy (probe P7)"] },
+    { "dot": "cyan", "title": "Variants", "items": ["children get no task tool, so no recursion", "mode=fork (beta) replays the parent's summarized history"] }
+  ]
+}

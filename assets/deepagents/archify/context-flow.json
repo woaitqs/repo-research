@@ -1,0 +1,375 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "deepagents \u2014 what reaches the model context (and what is offloaded)",
+    "output": "diagrams/deepagents/context-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/langchain-ai/deepagents.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "16e84d927e7e13c41a10c071380c875af6a562f5"
+    },
+    "viewBox": [
+      1076,
+      540
+    ]
+  },
+  "stages": [
+    {
+      "label": "Inputs"
+    },
+    {
+      "label": "Intercept + state"
+    },
+    {
+      "label": "Compact + offload"
+    },
+    {
+      "label": "Per-call request"
+    },
+    {
+      "label": "Model"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "user",
+      "type": "frontend",
+      "label": "User input",
+      "sublabel": "HumanMessage",
+      "stage": 0,
+      "row": 0,
+      "tag": "> 50k tok evicted",
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/filesystem.py",
+          "line": 3509,
+          "end_line": 3538,
+          "label": "evict large HumanMessage"
+        }
+      ]
+    },
+    {
+      "id": "toolraw",
+      "type": "backend",
+      "label": "Raw tool result",
+      "sublabel": "any size",
+      "stage": 0,
+      "row": 1,
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/filesystem.py",
+          "line": 3682,
+          "end_line": 3710,
+          "label": "wrap_tool_call"
+        }
+      ]
+    },
+    {
+      "id": "mdfiles",
+      "type": "database",
+      "label": "Memory + skills",
+      "sublabel": "AGENTS.md, SKILL.md",
+      "stage": 0,
+      "row": 2,
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/memory.py",
+          "line": 279,
+          "end_line": 311,
+          "label": "memory before_agent"
+        },
+        {
+          "path": "libs/deepagents/deepagents/middleware/skills.py",
+          "line": 1074,
+          "end_line": 1100,
+          "label": "skills before_agent"
+        }
+      ],
+      "width": 136
+    },
+    {
+      "id": "log",
+      "type": "database",
+      "label": "messages log",
+      "sublabel": "full, never rewritten",
+      "stage": 1,
+      "row": 0,
+      "tag": "checkpointed",
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/graph.py",
+          "line": 74,
+          "end_line": 77,
+          "label": "DeltaChannel messages"
+        },
+        {
+          "path": "libs/deepagents/deepagents/_messages_reducer.py",
+          "line": 27,
+          "end_line": 40,
+          "label": "dedupe-by-id reducer"
+        }
+      ]
+    },
+    {
+      "id": "fsmw",
+      "type": "security",
+      "label": "Filesystem MW",
+      "sublabel": "offload > 20k tok",
+      "stage": 1,
+      "row": 1,
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/filesystem.py",
+          "line": 3591,
+          "end_line": 3639,
+          "label": "intercept large result"
+        },
+        {
+          "path": "libs/deepagents/deepagents/middleware/filesystem.py",
+          "line": 1622,
+          "end_line": 1630,
+          "label": "excluded tools"
+        },
+        {
+          "path": "libs/deepagents/deepagents/middleware/_message_eviction.py",
+          "line": 260,
+          "end_line": 284,
+          "label": "write + preview stub"
+        }
+      ]
+    },
+    {
+      "id": "private",
+      "type": "database",
+      "label": "private state",
+      "sublabel": "memory \u00b7 skills cache",
+      "stage": 1,
+      "row": 2,
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/memory.py",
+          "line": 88,
+          "end_line": 97,
+          "label": "memory_contents"
+        },
+        {
+          "path": "libs/deepagents/deepagents/middleware/skills.py",
+          "line": 344,
+          "end_line": 367,
+          "label": "skills_metadata"
+        }
+      ]
+    },
+    {
+      "id": "summ",
+      "type": "backend",
+      "label": "Summarization",
+      "sublabel": "event: cutoff + summary",
+      "stage": 2,
+      "row": 0,
+      "tag": "85% trigger",
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/summarization.py",
+          "line": 1487,
+          "end_line": 1623,
+          "label": "wrap_model_call"
+        },
+        {
+          "path": "libs/deepagents/deepagents/middleware/summarization.py",
+          "line": 262,
+          "end_line": 299,
+          "label": "trigger/keep defaults"
+        }
+      ]
+    },
+    {
+      "id": "files",
+      "type": "database",
+      "label": "Backend files",
+      "sublabel": "results \u00b7 history",
+      "stage": 2,
+      "row": 1,
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/filesystem.py",
+          "line": 1858,
+          "end_line": 1862,
+          "label": "artifact prefixes"
+        },
+        {
+          "path": "libs/deepagents/deepagents/middleware/summarization.py",
+          "line": 1227,
+          "end_line": 1302,
+          "label": "append history .md"
+        }
+      ]
+    },
+    {
+      "id": "view",
+      "type": "backend",
+      "label": "Effective view",
+      "sublabel": "[summary] + tail",
+      "stage": 3,
+      "row": 0,
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/summarization.py",
+          "line": 821,
+          "end_line": 858,
+          "label": "_apply_event_to_messages"
+        }
+      ]
+    },
+    {
+      "id": "prompt",
+      "type": "backend",
+      "label": "System prompt",
+      "sublabel": "+ skills + memory",
+      "stage": 3,
+      "row": 2,
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/graph.py",
+          "line": 655,
+          "end_line": 664,
+          "label": "USER -> BASE -> SUFFIX"
+        },
+        {
+          "path": "libs/deepagents/deepagents/middleware/skills.py",
+          "line": 1044,
+          "end_line": 1072,
+          "label": "skills section"
+        },
+        {
+          "path": "libs/deepagents/deepagents/middleware/memory.py",
+          "line": 347,
+          "end_line": 383,
+          "label": "memory section"
+        }
+      ],
+      "width": 128
+    },
+    {
+      "id": "llm",
+      "type": "external",
+      "label": "Chat model",
+      "sublabel": "one request",
+      "stage": 4,
+      "row": 1,
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/_models.py",
+          "line": 36,
+          "end_line": 58,
+          "label": "resolve_model"
+        }
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "id": "user-append",
+      "from": "user",
+      "to": "log",
+      "label": "append",
+      "variant": "emphasis"
+    },
+    {
+      "id": "raw-intercept",
+      "from": "toolraw",
+      "to": "fsmw",
+      "label": "ToolMessage"
+    },
+    {
+      "id": "stub-append",
+      "from": "fsmw",
+      "to": "log",
+      "label": "stub + preview",
+      "variant": "emphasis"
+    },
+    {
+      "id": "full-offload",
+      "from": "fsmw",
+      "to": "files",
+      "label": "full text",
+      "variant": "dashed"
+    },
+    {
+      "id": "log-compact",
+      "from": "log",
+      "to": "summ",
+      "label": "over budget"
+    },
+    {
+      "id": "span-offload",
+      "from": "summ",
+      "to": "files",
+      "label": "evicted span",
+      "variant": "dashed",
+      "labelDy": 25
+    },
+    {
+      "id": "summary-view",
+      "from": "summ",
+      "to": "view",
+      "label": "summary + tail",
+      "variant": "emphasis"
+    },
+    {
+      "id": "load-once",
+      "from": "mdfiles",
+      "to": "private",
+      "label": "load once"
+    },
+    {
+      "id": "inject",
+      "from": "private",
+      "to": "prompt",
+      "label": "every call"
+    },
+    {
+      "id": "view-model",
+      "from": "view",
+      "to": "llm",
+      "label": "messages",
+      "variant": "emphasis"
+    },
+    {
+      "id": "prompt-model",
+      "from": "prompt",
+      "to": "llm",
+      "label": "system"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Enters context",
+      "items": [
+        "system prompt + effective view + visible tool schemas",
+        "skill bodies and offloaded data only via read_file, on demand"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Kept out",
+      "items": [
+        "results > 20k tokens and inputs > 50k tokens become pointers",
+        "summarized spans stay in state and in /conversation_history"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Last resort",
+      "items": [
+        "ContextOverflowError: summarize, clip the tail, retry once",
+        "irreducible input raises instead of looping"
+      ]
+    }
+  ]
+}

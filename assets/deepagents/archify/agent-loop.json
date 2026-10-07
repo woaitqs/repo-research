@@ -1,0 +1,84 @@
+{
+  "schema_version": 2,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "deepagents — agent loop as LangGraph node states (one invocation)",
+    "output": "diagrams/deepagents/agent-loop.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/langchain-ai/deepagents.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "16e84d927e7e13c41a10c071380c875af6a562f5"
+    }
+  },
+  "lanes": [
+    { "id": "main", "label": "Graph nodes" },
+    { "id": "waiting", "label": "Paused" },
+    { "id": "terminal", "label": "Exit" }
+  ],
+  "states": [
+    {
+      "id": "invoke", "type": "start", "label": "invoke", "sublabel": "thread_id + input", "lane": "main", "col": 0, "step": "01",
+      "sources": [{ "path": "libs/deepagents/deepagents/graph.py", "line": 989, "end_line": 1011, "label": "compiled agent" }]
+    },
+    {
+      "id": "before", "type": "active", "label": "before_agent", "sublabel": "memory · skills · patch", "lane": "main", "col": 1, "step": "02",
+      "sources": [
+        { "path": "libs/deepagents/deepagents/middleware/memory.py", "line": 279, "end_line": 311, "label": "load AGENTS.md once" },
+        { "path": "libs/deepagents/deepagents/middleware/skills.py", "line": 1074, "end_line": 1100, "label": "load skill metadata" },
+        { "path": "libs/deepagents/deepagents/middleware/patch_tool_calls.py", "line": 16, "end_line": 52, "label": "patch dangling calls" }
+      ]
+    },
+    {
+      "id": "model", "type": "active", "label": "model node", "sublabel": "wrap_model_call chain", "lane": "main", "col": 2, "step": "03",
+      "sources": [
+        { "path": "libs/deepagents/deepagents/middleware/filesystem.py", "line": 3242, "end_line": 3302, "label": "filter tools, evict input" },
+        { "path": "libs/deepagents/deepagents/middleware/summarization.py", "line": 1487, "end_line": 1623, "label": "summarize view" }
+      ]
+    },
+    {
+      "id": "route", "type": "decision", "label": "tool calls?", "sublabel": "LangChain router", "lane": "main", "col": 3, "step": "04",
+      "sources": [{ "path": "libs/deepagents/deepagents/graph.py", "line": 989, "end_line": 1001, "label": "delegates to create_agent" }]
+    },
+    {
+      "id": "tools", "type": "active", "label": "tools node", "sublabel": "Send per tool call", "lane": "main", "col": 4, "step": "05",
+      "sources": [
+        { "path": "libs/deepagents/deepagents/middleware/filesystem.py", "line": 3682, "end_line": 3710, "label": "wrap_tool_call offload" },
+        { "path": "libs/deepagents/deepagents/middleware/subagents.py", "line": 810, "end_line": 838, "label": "task tool" }
+      ]
+    },
+    {
+      "id": "interrupted", "type": "waiting", "label": "interrupted", "sublabel": "HITL after_model", "lane": "waiting", "col": 2,
+      "sources": [
+        { "path": "libs/deepagents/deepagents/graph.py", "line": 946, "end_line": 951, "label": "HumanInTheLoopMiddleware" },
+        { "path": "libs/deepagents/deepagents/middleware/_fs_interrupt.py", "line": 156, "end_line": 183, "label": "permissions -> interrupt_on" }
+      ]
+    },
+    {
+      "id": "done", "type": "success", "label": "END", "sublabel": "final AIMessage", "lane": "terminal", "col": 3,
+      "sources": [{ "path": "libs/deepagents/deepagents/middleware/subagents.py", "line": 742, "end_line": 752, "label": "last non-empty AI text" }]
+    },
+    {
+      "id": "limit", "type": "failure", "label": "recursion limit", "sublabel": "recursion_limit 9,999", "lane": "terminal", "col": 4,
+      "sources": [{ "path": "libs/deepagents/deepagents/graph.py", "line": 1002, "end_line": 1005, "label": "with_config" }]
+    }
+  ],
+  "transitions": [
+    { "id": "start", "from": "invoke", "to": "before", "label": "start" },
+    { "id": "ready", "from": "before", "to": "model", "label": "state" },
+    { "id": "ai-message", "from": "model", "to": "route", "label": "AIMessage", "variant": "emphasis" },
+    { "id": "dispatch", "from": "route", "to": "tools", "label": "pending", "variant": "emphasis" },
+    { "id": "observe", "from": "tools", "to": "model", "label": "ToolMessages", "route": "top-channel" },
+    { "id": "finish", "from": "route", "to": "done", "label": "none" },
+    { "id": "pause", "from": "model", "to": "interrupted", "label": "interrupt", "variant": "security" },
+    { "id": "resume", "from": "interrupted", "to": "route", "label": "resume", "variant": "security" },
+    { "id": "too-long", "from": "tools", "to": "limit", "label": "over limit", "variant": "dashed" }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "Loop rule", "items": ["exit when the last AIMessage has no tool calls", "every tool result re-enters the model node"] },
+    { "dot": "rose", "title": "HITL", "items": ["approve/edit keep the call; reject adds an error ToolMessage", "with no pending calls left the router returns to the model"] },
+    { "dot": "violet", "title": "Owned by", "items": ["loop + router: LangChain create_agent", "hooks inside nodes: deepagents middleware"] }
+  ]
+}

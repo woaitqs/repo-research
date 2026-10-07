@@ -4,6 +4,13 @@ A source-code-level research lab for studying important AI infrastructure and ag
 
 This repository is not a collection of README summaries. Each study should trace real implementation paths, identify reusable architectural ideas, produce source-grounded diagrams, and build a minimal working reproduction of the core design.
 
+## Studies
+
+| Repository | Pinned commit | Research | Diagrams | Experiment |
+|---|---|---|---|---|
+| [langchain-ai/deepagents](https://github.com/langchain-ai/deepagents) | `16e84d9` (SDK 0.7.22) | [research/deepagents.md](research/deepagents.md) · [web](https://woaitqs.github.io/repo-research/research/deepagents.html) | [8 Archify diagrams](diagrams/deepagents/) | [experiments/deepagents](experiments/deepagents/) |
+| [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands) + [software-agent-sdk](https://github.com/OpenHands/software-agent-sdk) | `7ea83ba` (Canvas 1.25.0) + `54daf05` (SDK `v1.53.0`) | [research/openhands.md](research/openhands.md) · [web](https://woaitqs.github.io/repo-research/research/openhands.html) | [10 Archify diagrams](diagrams/openhands/) | [experiments/openhands](experiments/openhands/) |
+
 ## What each repository study should contain
 
 For every target repository:
@@ -19,39 +26,58 @@ For every target repository:
 9. Write the final study under `research/<project-name>.md`.
 10. Expose the study and interactive diagrams through the GitHub Pages site.
 
-## Studies
+## How research is performed
 
-| Repository | Article | Diagrams | Reproduction |
-|---|---|---|---|
-| [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands) (+ [software-agent-sdk](https://github.com/OpenHands/software-agent-sdk)) | [research/openhands.md](research/openhands.md) | [diagrams/openhands/](diagrams/openhands/) | [experiments/openhands/](experiments/openhands/) |
+1. **Pin the target.** Clone it into a temporary directory, never into this repo. Record `git rev-parse HEAD` and cite every source reference against that commit.
+2. **Map, then trace.** Read the manifests, entry points (console scripts, servers) and the composition root. Then follow real call sites end to end. Read the dependency source too when the target delegates to a framework. For deepagents that meant reading LangChain's `create_agent`.
+3. **Separate fact from interpretation.** Facts are backed by `path:line`, a test, or observed runtime behavior. Interpretations are labelled as such, and open questions stay explicit.
+4. **Verify claims at runtime when it is cheap.** For example, drive the real library with a scripted fake model. The deepagents probe found two behaviors that were not obvious from reading alone.
+5. **Run the target's own tests** with its locked dependencies, so environment noise is not mistaken for findings.
+6. **Reproduce the architecture, not the product.** Build a small dependency-light version, test its architectural invariants, and mutation-test the tests.
+7. **Diagram from evidence.** Every Archify node carries `sources` pinned to the commit.
 
 ## Repository layout
 
 ```text
 repo-research/
 ├── README.md
-├── index.md                    # site home page with the research library table
-├── _config.yml                 # Jekyll (GitHub Pages) config; experiments/ is excluded from the site
+├── index.md                     # homepage (repository table)
+├── _config.yml                  # GitHub Pages (Jekyll, minima)
 ├── _layouts/
-│   └── research.html           # article layout: breadcrumb + client-side Mermaid rendering
+│   └── research.html            # article layout: wider column + Mermaid rendering
 ├── research/
-│   └── <project-name>.md       # the article (front matter: layout: research)
+│   └── <project-name>.md        # the study (front matter: layout: research)
 ├── diagrams/
 │   └── <project-name>/
-│       ├── index.md            # diagram gallery page
-│       ├── architecture.html   # Archify output (standalone HTML, served as-is)
+│       ├── architecture.html    # Archify output (self-contained HTML)
 │       ├── execution-flow.html
-│       ├── ...
-│       └── specs/*.json        # Archify source specs (re-renderable)
-├── experiments/
+│       └── ...
+├── assets/
 │   └── <project-name>/
-│       ├── README.md
-│       ├── run.sh              # install + build + test + demo
-│       ├── src/
-│       └── tests/
-└── assets/
-    └── <project-name>/         # evidence: probe reports, run logs, Archify receipts
+│       └── archify/*.json       # Archify candidates (diagram sources) + provenance README
+└── experiments/
+    └── <project-name>/
+        ├── README.md
+        ├── run.sh               # install -> build -> test -> run
+        ├── src/
+        └── tests/
 ```
+
+## Adding a new study
+
+1. Create `research/<project-name>.md` with this front matter:
+   ```yaml
+   ---
+   layout: research
+   title: "<project> — source-level study"
+   permalink: /research/<project-name>.html
+   ---
+   ```
+   Follow the section structure of `research/deepagents.md`.
+2. Put Archify candidates in `assets/<project-name>/archify/` and finalize them into `diagrams/<project-name>/` (see [Archify](#archify)). At minimum create `architecture`, `execution-flow`, `core-abstractions` and `context-flow`.
+3. Put the reproduction in `experiments/<project-name>/`, with `README.md`, `src/`, `tests/` and `run.sh`.
+4. Add a row to the table in `index.md` and to the [Studies](#studies) table above.
+5. Avoid Liquid template delimiters (double curly braces, or a curly brace followed by a percent sign) anywhere in published Markdown, this README included. GitHub Pages evaluates them and the build fails.
 
 ## Reading
 
@@ -61,14 +87,15 @@ GitHub Pages site:
 
 Each repository should get its own research page and its own diagram directory, for example:
 
-- `/research/openhands.html`
-- `/diagrams/openhands/` (gallery)
-- `/diagrams/openhands/architecture.html`
-- `/diagrams/openhands/execution-flow.html`
+- `/research/deepagents.html`
+- `/diagrams/deepagents/architecture.html`
+- `/diagrams/deepagents/execution-flow.html`
 
 > GitHub Pages must be enabled once in **Settings → Pages → Deploy from a branch → main / (root)**.
 
-Preview the site locally (Ruby + Bundler):
+Mermaid code fences in research articles render natively on GitHub. On Pages, `_layouts/research.html` converts them in the browser using Mermaid from jsDelivr.
+
+### Local preview
 
 ```bash
 cat > /tmp/Gemfile <<'EOF'
@@ -77,38 +104,8 @@ gem "github-pages", group: :jekyll_plugins
 gem "webrick"
 EOF
 BUNDLE_GEMFILE=/tmp/Gemfile bundle install
-BUNDLE_GEMFILE=/tmp/Gemfile bundle exec jekyll serve --source . --destination /tmp/repo-research-site
+BUNDLE_GEMFILE=/tmp/Gemfile bundle exec jekyll serve   # http://127.0.0.1:4000/
 ```
-
-Mermaid code blocks render natively on GitHub; on the Pages site the `research` layout renders them
-client-side with Mermaid from jsDelivr.
-
-## How a study is performed
-
-1. Clone the target (and any repository it depends on for core behaviour) into a temporary
-   directory, never into this repo. Pin the exact commits you study.
-2. Read entry points, follow call sites, and keep `path:line` evidence for every claim. Use the
-   target's own tests and, where possible, run the real code (a small probe script) to observe
-   runtime behaviour; mark anything not verified as **uncertain**.
-3. Write the reproduction in `experiments/<project-name>/`; it must install, build, test and run
-   from `./run.sh`.
-4. Produce Archify diagrams from source evidence (below) and Mermaid diagrams in the article.
-5. Write `research/<project-name>.md`, store evidence under `assets/<project-name>/`, add a row to
-   `index.md` and to the Studies table above.
-
-## How to add a new study
-
-```text
-research/<project-name>.md            front matter: layout: research, title, diagrams, experiment
-diagrams/<project-name>/index.md      gallery page linking every diagram
-diagrams/<project-name>/specs/*.json  Archify specs
-diagrams/<project-name>/*.html        finalized Archify output
-experiments/<project-name>/           README.md, run.sh, src/, tests/
-assets/<project-name>/                probe outputs, logs, Archify receipts
-index.md                              new row in the Research Library table
-```
-
-Never commit API keys: experiments read keys from environment variables and `.env` is git-ignored.
 
 ## Archify
 
@@ -120,26 +117,26 @@ npx skills add tt-a1i/archify -g
 
 Use Archify for source-grounded architecture, workflow, sequence, data-flow, and lifecycle diagrams. Prefer validated, revision-pinned diagrams when source evidence is available.
 
-Workflow used for the studies here:
+How it is used here:
 
-1. Write a JSON spec (`diagrams/<project-name>/specs/<name>.json`) with `meta.repository`
-   (credential-free origin URL + 40-char revision) and `sources` (`path`, `line`, `end_line`) on
-   every repository-backed node. This produces `SRC` badges that link to GitHub at that revision.
-2. Run from a scratch working directory so receipts and provenance sidecars (which contain absolute
-   paths) stay out of this repo:
+- Pick the diagram type by question:
+  - `architecture`: components and boundaries;
+  - `sequence`: request lifecycle or delegation;
+  - `dataflow`: what enters context, and memory;
+  - `workflow` (v2): tool pipeline with an approval lane;
+  - `lifecycle` (v2): the agent loop as states.
+- Pin `meta.repository` to the studied commit, and give each node 1–3 `sources` (`path`, `line`, `end_line`). The rendered `SRC n` badges link to the exact GitHub lines.
+- Finalize from the repository root. `finalize` runs schema validation, verified delivery, a strict provenance check and a headless-browser check:
 
-   ```bash
-   export ARCHIFY_CHROME=/path/to/chromium      # needed for the browser gate
-   node ~/.agents/skills/archify/bin/archify.mjs finalize <type> \
-     /path/to/repo-research/diagrams/<project>/specs/<name>.json \
-     diagrams/<project>/<name>.html \
-     --repo-root /path/to/pinned/target/checkout --quality showcase --json
-   node ~/.agents/skills/archify/bin/archify.mjs visual-check diagrams/<project>/<name>.html \
-     --summary --require-provenance --out-dir diagrams/<project>/<name>.visual-check
-   ```
+  ```bash
+  export ARCHIFY_CHROME=/path/to/chrome
+  node ~/.agents/skills/archify/bin/archify.mjs finalize <type> \
+    assets/<project>/archify/<name>.json diagrams/<project>/<name>.html \
+    --repo-root /path/to/target/clone --quality showcase --json
+  ```
 
-3. Copy the finalized HTML into `diagrams/<project-name>/` and record the receipt summary
-   (gates, SHA-256, verified reference count) in `assets/<project-name>/archify-receipts.json`.
+- Optional perceptual review: `archify.mjs visual-check diagrams/<project>/<name>.html --summary --require-provenance` captures screenshots. Look at them before claiming visual quality.
+- `*.delivery.json` provenance sidecars contain absolute local paths and are git-ignored.
 
 ## Running experiments
 
@@ -147,11 +144,14 @@ Each experiment is self-contained:
 
 ```bash
 cd experiments/<project-name>
-./run.sh            # creates .venv, installs, builds, runs tests and an offline demo
-./run.sh --live     # optional: also runs against a real model (keys from the environment)
+./run.sh          # creates .venv, installs, builds, runs tests, runs the demo
 ```
 
-See each experiment's README for the mapping between reproduction modules and upstream source files.
+The deepagents experiment is stdlib-only. `./run.sh demo` runs the narrated demo without installing anything. Its `upstream_probe/` directory re-checks the research claims against the real SDK.
+
+The OpenHands experiment is also stdlib-only at runtime (pytest for tests). `./run.sh --live` additionally runs the demo against a real OpenAI-compatible model, and `probe/` drives the real `openhands-sdk` (scripted or with a real model) to re-check the article's runtime claims.
+
+Experiments that call real models read API keys from environment variables only. Never commit keys: `.env` files are git-ignored, and published logs and reports are sanitized.
 
 ## Research principle
 

@@ -1,0 +1,392 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "deepagents \u2014 one dcode turn, end to end",
+    "output": "diagrams/deepagents/execution-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "viewBox": [
+      1030,
+      664
+    ],
+    "column_fit": "spread",
+    "repository": {
+      "url": "https://github.com/langchain-ai/deepagents.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "16e84d927e7e13c41a10c071380c875af6a562f5"
+    }
+  },
+  "participants": [
+    {
+      "id": "user",
+      "type": "external",
+      "label": "Developer",
+      "sublabel": "terminal"
+    },
+    {
+      "id": "tui",
+      "type": "frontend",
+      "label": "dcode TUI",
+      "sublabel": "Textual app",
+      "sources": [
+        {
+          "path": "libs/code/deepagents_code/tui/textual_adapter.py",
+          "line": 2171,
+          "end_line": 2178,
+          "label": "agent.astream"
+        },
+        {
+          "path": "libs/code/deepagents_code/tui/textual_adapter.py",
+          "line": 2573,
+          "end_line": 2576,
+          "label": "__interrupt__ handling"
+        },
+        {
+          "path": "libs/code/deepagents_code/tui/textual_adapter.py",
+          "line": 4096,
+          "label": "Command(resume=...)"
+        }
+      ]
+    },
+    {
+      "id": "server",
+      "type": "backend",
+      "label": "LG server",
+      "sublabel": "langgraph dev",
+      "sources": [
+        {
+          "path": "libs/code/deepagents_code/client/launch/server.py",
+          "line": 386,
+          "end_line": 392,
+          "label": "langgraph dev"
+        },
+        {
+          "path": "libs/code/deepagents_code/client/launch/server_manager.py",
+          "line": 121,
+          "end_line": 164,
+          "label": "SQLite checkpointer"
+        }
+      ]
+    },
+    {
+      "id": "graph",
+      "type": "backend",
+      "label": "Agent graph",
+      "sublabel": "model + tools",
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/graph.py",
+          "line": 989,
+          "end_line": 1011,
+          "label": "create_agent(...)"
+        }
+      ]
+    },
+    {
+      "id": "mw",
+      "type": "backend",
+      "label": "Middleware",
+      "sublabel": "stack hooks",
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/graph.py",
+          "line": 888,
+          "end_line": 969,
+          "label": "stack order"
+        },
+        {
+          "path": "libs/deepagents/deepagents/middleware/summarization.py",
+          "line": 1487,
+          "end_line": 1623,
+          "label": "wrap_model_call"
+        },
+        {
+          "path": "libs/deepagents/deepagents/middleware/memory.py",
+          "line": 279,
+          "end_line": 311,
+          "label": "before_agent"
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "type": "external",
+      "label": "Chat model",
+      "sublabel": "BaseChatModel",
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/_models.py",
+          "line": 36,
+          "end_line": 58,
+          "label": "resolve_model"
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "type": "backend",
+      "label": "Tool node",
+      "sublabel": "ToolNode",
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/filesystem.py",
+          "line": 3682,
+          "end_line": 3710,
+          "label": "offload in wrap_tool_call"
+        }
+      ]
+    },
+    {
+      "id": "backend",
+      "type": "database",
+      "label": "Backend",
+      "sublabel": "files / shell",
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/backends/protocol.py",
+          "line": 404,
+          "end_line": 433,
+          "label": "BackendProtocol"
+        },
+        {
+          "path": "libs/deepagents/deepagents/backends/state.py",
+          "line": 99,
+          "end_line": 119,
+          "label": "StateBackend send"
+        }
+      ]
+    }
+  ],
+  "segments": [
+    {
+      "from": 150,
+      "to": 256,
+      "label": "Turn start"
+    },
+    {
+      "from": 260,
+      "to": 340,
+      "label": "Model step"
+    },
+    {
+      "from": 344,
+      "to": 424,
+      "label": "Tool step"
+    },
+    {
+      "from": 428,
+      "to": 480,
+      "label": "Loop"
+    },
+    {
+      "from": 484,
+      "to": 564,
+      "label": "Finish"
+    }
+  ],
+  "messages": [
+    {
+      "id": "prompt",
+      "from": "user",
+      "to": "tui",
+      "y": 160,
+      "label": "prompt",
+      "variant": "emphasis"
+    },
+    {
+      "id": "astream",
+      "from": "tui",
+      "to": "server",
+      "y": 188,
+      "label": "astream() over SSE",
+      "variant": "emphasis"
+    },
+    {
+      "id": "run-thread",
+      "from": "server",
+      "to": "graph",
+      "y": 216,
+      "label": "run thread_id"
+    },
+    {
+      "id": "before-agent",
+      "from": "graph",
+      "to": "mw",
+      "y": 244,
+      "label": "before_agent (once)",
+      "note": "loads AGENTS.md + skill metadata via backend"
+    },
+    {
+      "id": "model-request",
+      "from": "graph",
+      "to": "mw",
+      "y": 272,
+      "label": "fresh ModelRequest",
+      "note": "filter tools, inject prompt, compact"
+    },
+    {
+      "id": "model-invoke",
+      "from": "mw",
+      "to": "model",
+      "y": 300,
+      "label": "system + view + tools",
+      "variant": "emphasis"
+    },
+    {
+      "id": "model-tool-calls",
+      "from": "model",
+      "to": "mw",
+      "y": 328,
+      "label": "AIMessage(tool_calls)",
+      "variant": "return"
+    },
+    {
+      "id": "send-tools",
+      "from": "graph",
+      "to": "tools",
+      "y": 356,
+      "label": "Send per tool call",
+      "variant": "emphasis",
+      "note": "HITL interrupt, if configured, fires before this"
+    },
+    {
+      "id": "backend-op",
+      "from": "tools",
+      "to": "backend",
+      "y": 384,
+      "label": "read / write / execute"
+    },
+    {
+      "id": "tool-message",
+      "from": "tools",
+      "to": "graph",
+      "y": 412,
+      "label": "ToolMessage or stub",
+      "variant": "return",
+      "note": "results > 20k tokens offloaded to /large_tool_results"
+    },
+    {
+      "id": "next-invoke",
+      "from": "mw",
+      "to": "model",
+      "y": 440,
+      "label": "next model step"
+    },
+    {
+      "id": "final-answer",
+      "from": "model",
+      "to": "mw",
+      "y": 468,
+      "label": "no tool_calls",
+      "variant": "return"
+    },
+    {
+      "id": "end",
+      "from": "graph",
+      "to": "server",
+      "y": 496,
+      "label": "END + checkpoint",
+      "variant": "return"
+    },
+    {
+      "id": "stream-out",
+      "from": "server",
+      "to": "tui",
+      "y": 524,
+      "label": "stream updates",
+      "variant": "return"
+    },
+    {
+      "id": "render",
+      "from": "tui",
+      "to": "user",
+      "y": 552,
+      "label": "render answer",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "tui",
+      "from": 156,
+      "to": 558,
+      "type": "frontend"
+    },
+    {
+      "participant": "server",
+      "from": 184,
+      "to": 530,
+      "type": "backend"
+    },
+    {
+      "participant": "graph",
+      "from": 212,
+      "to": 502,
+      "type": "backend"
+    },
+    {
+      "participant": "mw",
+      "from": 240,
+      "to": 334,
+      "type": "backend"
+    },
+    {
+      "participant": "model",
+      "from": 296,
+      "to": 334,
+      "type": "external"
+    },
+    {
+      "participant": "tools",
+      "from": 352,
+      "to": 418,
+      "type": "backend"
+    },
+    {
+      "participant": "backend",
+      "from": 380,
+      "to": 390,
+      "type": "database"
+    },
+    {
+      "participant": "mw",
+      "from": 436,
+      "to": 474,
+      "type": "backend"
+    },
+    {
+      "participant": "model",
+      "from": 436,
+      "to": 474,
+      "type": "external"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Loop",
+      "items": [
+        "model node rebuilds the request from state each step",
+        "no tool calls means END (LangChain factory)"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Approval",
+      "items": [
+        "HITL is an after_model interrupt, before any tool runs",
+        "the TUI resumes the checkpointed thread (see tool-runtime)"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Context",
+      "items": [
+        "middleware edits the request, not the stored history",
+        "large tool output is replaced by a pointer + preview"
+      ]
+    }
+  ]
+}

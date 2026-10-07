@@ -4,7 +4,7 @@
   "diagrams": [
     {
       "diagram": "diagrams/openhands/architecture.html",
-      "spec": "diagrams/openhands/specs/architecture.json",
+      "spec": "assets/openhands/archify/architecture.json",
       "type": "architecture",
       "finalize_status": "pass",
       "gates": {
@@ -31,7 +31,7 @@
     },
     {
       "diagram": "diagrams/openhands/execution-flow.html",
-      "spec": "diagrams/openhands/specs/execution-flow.json",
+      "spec": "assets/openhands/archify/execution-flow.json",
       "type": "sequence",
       "finalize_status": "pass",
       "gates": {
@@ -58,7 +58,7 @@
     },
     {
       "diagram": "diagrams/openhands/core-abstractions.html",
-      "spec": "diagrams/openhands/specs/core-abstractions.json",
+      "spec": "assets/openhands/archify/core-abstractions.json",
       "type": "architecture",
       "finalize_status": "pass",
       "gates": {
@@ -85,7 +85,7 @@
     },
     {
       "diagram": "diagrams/openhands/context-flow.html",
-      "spec": "diagrams/openhands/specs/context-flow.json",
+      "spec": "assets/openhands/archify/context-flow.json",
       "type": "dataflow",
       "finalize_status": "pass",
       "gates": {
@@ -112,7 +112,7 @@
     },
     {
       "diagram": "diagrams/openhands/agent-loop.html",
-      "spec": "diagrams/openhands/specs/agent-loop.json",
+      "spec": "assets/openhands/archify/agent-loop.json",
       "type": "workflow",
       "finalize_status": "pass",
       "gates": {
@@ -139,7 +139,7 @@
     },
     {
       "diagram": "diagrams/openhands/conversation-lifecycle.html",
-      "spec": "diagrams/openhands/specs/conversation-lifecycle.json",
+      "spec": "assets/openhands/archify/conversation-lifecycle.json",
       "type": "lifecycle",
       "finalize_status": "pass",
       "gates": {
@@ -166,7 +166,7 @@
     },
     {
       "diagram": "diagrams/openhands/memory-flow.html",
-      "spec": "diagrams/openhands/specs/memory-flow.json",
+      "spec": "assets/openhands/archify/memory-flow.json",
       "type": "dataflow",
       "finalize_status": "pass",
       "gates": {
@@ -193,7 +193,7 @@
     },
     {
       "diagram": "diagrams/openhands/tool-runtime.html",
-      "spec": "diagrams/openhands/specs/tool-runtime.json",
+      "spec": "assets/openhands/archify/tool-runtime.json",
       "type": "sequence",
       "finalize_status": "pass",
       "gates": {
@@ -220,7 +220,7 @@
     },
     {
       "diagram": "diagrams/openhands/sub-agent-flow.html",
-      "spec": "diagrams/openhands/specs/sub-agent-flow.json",
+      "spec": "assets/openhands/archify/sub-agent-flow.json",
       "type": "sequence",
       "finalize_status": "pass",
       "gates": {
@@ -247,7 +247,7 @@
     },
     {
       "diagram": "diagrams/openhands/canvas-stack.html",
-      "spec": "diagrams/openhands/specs/canvas-stack.json",
+      "spec": "assets/openhands/archify/canvas-stack.json",
       "type": "architecture",
       "finalize_status": "pass",
       "gates": {

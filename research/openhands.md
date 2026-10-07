@@ -1,6 +1,7 @@
 ---
 layout: research
-title: OpenHands
+title: "OpenHands — source-level study"
+permalink: /research/openhands.html
 diagrams: /diagrams/openhands/
 experiment: https://github.com/woaitqs/repo-research/tree/main/experiments/openhands
 ---
@@ -927,7 +928,7 @@ correct final report, `fib.py` and `test_fib.py` created.
 **E. Diagrams.** All 10 Archify diagrams passed `finalize --quality showcase --repo-root <pinned
 checkout>` (validate, deliver, strict provenance check, real-browser check) and `visual-check`; receipts
 with SHA-256 and verified-reference counts are in
-[`assets/openhands/archify-receipts.json`](https://github.com/woaitqs/repo-research/blob/main/assets/openhands/archify-receipts.json).
+[`assets/openhands/archify/receipts.json`](https://github.com/woaitqs/repo-research/blob/main/assets/openhands/archify/receipts.json).
 
 **Known limitations of the verification.**
 - I ran targeted SDK test subsets (426 tests), not the full suite, and no Canvas tests/build.
