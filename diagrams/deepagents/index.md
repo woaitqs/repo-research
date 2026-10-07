@@ -21,4 +21,4 @@ All eight were finalized with `archify finalize --quality showcase --repo-root <
 The JSON specifications (Archify candidates), the gate results and a regeneration recipe are in
 [`assets/deepagents/archify/`](https://github.com/woaitqs/repo-research/tree/main/assets/deepagents/archify).
 
-← Back to the [research article](../../research/deepagents.html)
+← Back to the research article / 返回研究文章：[English](../../research/deepagents.html) · [中文](../../research/deepagents.zh.html)

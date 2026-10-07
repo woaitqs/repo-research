@@ -24,12 +24,16 @@
       deepagents is an ordered stack of middleware on top of LangChain's `create_agent`.
       Its real product is context engineering: offloading large results to a virtual
       filesystem, non-destructive summarization, and context-isolated sub-agents.
+    # Chinese text stays on one line: folded YAML would insert spaces at line breaks.
+    zh: "deepagents 是叠在 LangChain `create_agent` 之上的一个有序中间件栈。它真正的产品是上下文工程：把大结果卸载到虚拟文件系统、非破坏性的摘要压缩，以及上下文隔离的子 Agent。"
   status: "21 tests + demo pass · upstream probe 7/7 · real-model scenarios 4/4 × 3 runs"
   pages:
     en: /research/deepagents.html
+    zh: /research/deepagents.zh.html
   diagrams_url: /diagrams/deepagents/
   experiment:
     en: https://github.com/woaitqs/repo-research/tree/main/experiments/deepagents
+    zh: https://github.com/woaitqs/repo-research/blob/main/experiments/deepagents/README.zh.md
   diagrams:
     - slug: architecture
       title: Architecture
@@ -92,10 +96,7 @@
       `software-agent-sdk`: an event-sourced conversation, a stateless agent `step()`,
       an LLM context that is a projection of the event log, and compaction done by
       appending a `Condensation` event.
-    zh: >-
-      `OpenHands/OpenHands` 现在是 Agent Canvas 界面；agent 本体在 `software-agent-sdk` 中——
-      事件溯源的会话、无状态的 `step()`、作为事件日志投影的 LLM 上下文，以及通过追加
-      `Condensation` 事件完成的压缩。
+    zh: "`OpenHands/OpenHands` 现在是 Agent Canvas 界面；agent 本体在 `software-agent-sdk` 中——事件溯源的会话、无状态的 `step()`、作为事件日志投影的 LLM 上下文，以及通过追加 `Condensation` 事件完成的压缩。"
   status: "19 tests + demo pass · 426 upstream SDK tests pass · real SDK probed offline and with a real model"
   pages:
     en: /research/openhands.html

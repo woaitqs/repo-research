@@ -5,6 +5,8 @@ study: deepagents
 permalink: /research/deepagents.html
 ---
 
+**English** · [中文](deepagents.zh.md)
+
 # deepagents (`langchain-ai/deepagents`)
 
 > Studied at commit [`16e84d9`](https://github.com/langchain-ai/deepagents/tree/16e84d927e7e13c41a10c071380c875af6a562f5)

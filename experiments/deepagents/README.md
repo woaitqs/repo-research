@@ -1,3 +1,5 @@
+**English** · [中文](README.zh.md)
+
 # minideep — minimal reproduction of the deepagents harness
 
 A ~1,200-line (docstrings included, demo excluded), **stdlib-only** Python reproduction of the core architectural idea of
