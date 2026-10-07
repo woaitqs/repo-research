@@ -1,0 +1,77 @@
+{
+  "execution_status": "finished",
+  "event_type_counts": {
+    "SystemPromptEvent": 1,
+    "MessageEvent": 1,
+    "ActionEvent": 7,
+    "ObservationEvent": 5,
+    "AgentErrorEvent": 2,
+    "Condensation": 1
+  },
+  "event_sequence": [
+    "SystemPromptEvent",
+    "MessageEvent",
+    "ActionEvent",
+    "ObservationEvent",
+    "ActionEvent",
+    "ObservationEvent",
+    "ActionEvent",
+    "ObservationEvent",
+    "ActionEvent",
+    "AgentErrorEvent",
+    "ActionEvent",
+    "AgentErrorEvent",
+    "Condensation",
+    "ActionEvent",
+    "ObservationEvent",
+    "ActionEvent",
+    "ObservationEvent"
+  ],
+  "condensations": [
+    {
+      "forgotten": 8,
+      "summary": "SUMMARY#1: wrote a.txt, notes.md, ran seq",
+      "offset": 2
+    }
+  ],
+  "agent_errors": [
+    "Tool 'does_not_exist' not found. Available: ['terminal', 'file_editor', 'finish', 'think']",
+    "Error validating tool 'terminal': Expecting ',' delimiter: line 1 column 18 (char 17). Arguments: unparseable JSON"
+  ],
+  "seq_observation_chars_sent_to_llm": 30000,
+  "seq_observation_head": "[Previous command outputs are truncated. Showing the last 10013 lines of the output below.]\n189989\n189990\n189991\n189992\n",
+  "seq_observation_tail": "/out/workspace]\n[Python interpreter: <sdk-checkout>/.venv/bin/python]\n[Command finished with exit code 0]",
+  "final_view_types": [
+    "SystemPromptEvent",
+    "MessageEvent",
+    "CondensationSummaryEvent",
+    "ActionEvent",
+    "AgentErrorEvent",
+    "ActionEvent",
+    "ObservationEvent",
+    "ActionEvent",
+    "ObservationEvent"
+  ],
+  "system_prompt_first_in_view": true,
+  "persisted_files_sample": [
+    "base_state.json",
+    "events/.eventlog-len-17.marker",
+    "events/.eventlog.lock",
+    "events/event-00000-0dc21fa2-d9d9-4db1-a5f5-e8dd042e36aa.json",
+    "events/event-00001-cdde17c4-27b2-4358-90ae-42ada87d6644.json",
+    "events/event-00002-6d8ff6b4-ec00-42d7-bc7f-7dbf74af3d94.json",
+    "...",
+    "events/event-00015-82c1471d-0eed-4255-bae5-ccb594df6b38.json",
+    "events/event-00016-143312d6-5d17-4c58-ad8e-e65e98de2990.json",
+    "observations/terminal_output_d17d35ec.txt"
+  ],
+  "persisted_file_count": 21,
+  "agent_llm_calls": 7,
+  "condenser_llm_calls": 1,
+  "workspace_files": [
+    "a.txt",
+    "notes.md"
+  ],
+  "last_agent_message": null,
+  "action_events": 7
+}

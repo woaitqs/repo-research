@@ -1,33 +1,98 @@
 ---
 layout: default
+body_class: reader-page
 ---
-<style>
-  /* Research articles carry wide tables and diagrams: widen minima's column. */
-  .wrapper { max-width: 1120px; }
-  .research-article table { display: block; overflow-x: auto; font-size: 0.92em; }
-  .research-article pre.mermaid { background: transparent; border: 0; text-align: center; overflow-x: auto; }
-  .research-article code { word-break: break-word; }
-</style>
-<article class="post research-article">
-  <div class="post-content">
-    {{ content }}
-  </div>
-</article>
-<script type="module">
-  // kramdown renders ```mermaid fences as highlighted code; turn them back into
-  // Mermaid sources so the same Markdown renders on GitHub and on Pages.
-  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
-  const fences = document.querySelectorAll("div.language-mermaid, pre > code.language-mermaid");
-  fences.forEach((el) => {
-    const code = el.tagName === "CODE" ? el : el.querySelector("code");
-    if (!code) return;
-    const target = el.tagName === "CODE" ? el.parentElement : el;
-    const pre = document.createElement("pre");
-    pre.className = "mermaid";
-    pre.textContent = code.textContent;
-    target.replaceWith(pre);
-  });
-  const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  mermaid.initialize({ startOnLoad: false, securityLevel: "strict", theme: dark ? "dark" : "default" });
-  await mermaid.run({ querySelector: "pre.mermaid" });
-</script>
+{%- include i18n.html -%}
+{%- include split-title.html -%}
+{%- assign heading = study.name | default: page.title -%}
+{%- for s in site.data.studies -%}
+  {%- if s.id == study.id -%}{%- assign study_index = forloop.index0 -%}{%- endif -%}
+{%- endfor -%}
+<div class="reading-progress" aria-hidden="true"><div data-progress></div></div>
+<div class="reader-grid">
+  <aside class="study-rail" aria-label="{{ t.studies }}">
+    {%- include study-rail.html %}
+  </aside>
+
+  <main class="reading-main" id="main-content">
+    <div class="reader-topline">
+      <a href="{{ '/#library' | relative_url }}">{{ t.library }}</a>
+      <span aria-hidden="true">/</span>
+      <span>{% if study %}{{ study.number }} · {% endif %}{{ heading }}</span>
+      <span class="reading-time" data-reading-time="{{ t.min_read }}"></span>
+    </div>
+
+    <header class="study-heading">
+      {%- if study %}
+      <p class="eyebrow"><span class="badge">{{ study.number }}</span>{{ study.category[lang_key] | default: study.category.en }}</p>
+      {%- endif %}
+      <h1>{{ heading }}</h1>
+      <div class="study-toolbar">
+        {%- if study %}{% include study-pins.html %}{% endif %}
+        <div class="reader-controls" data-reader-controls hidden>
+          <details class="text-size">
+            <summary aria-label="{{ t.text_size }}"><span class="type-icon" aria-hidden="true">Aa</span><span class="control-label">{{ t.text_size }}</span></summary>
+            <div class="text-size-panel">
+              <span>{{ t.text_size }}</span>
+              <div>
+                <button type="button" data-text-size="-1" aria-label="{{ t.smaller }}">A−</button>
+                <output data-text-size-value aria-live="polite">100%</output>
+                <button type="button" data-text-size="1" aria-label="{{ t.larger }}">A+</button>
+              </div>
+              <button type="button" class="text-size-reset" data-text-size="0">{{ t.reset }}</button>
+            </div>
+          </details>
+          <button type="button" class="focus-toggle" aria-pressed="false" data-focus-toggle>{% include icon.html name="focus" px=15 %}<span class="control-label">{{ t.focus }}</span></button>
+        </div>
+      </div>
+    </header>
+
+    <details class="mobile-outline" data-outline-wrap hidden>
+      <summary>{{ t.on_this_page }}<span aria-hidden="true"></span></summary>
+      <nav data-outline aria-label="{{ t.on_this_page }}"></nav>
+    </details>
+
+    <article class="prose" data-article>
+{{ article_body }}
+    </article>
+
+    {%- if study %}
+    {%- assign study_exp = study.experiment[lang_key] | default: study.experiment.en %}
+    <section class="study-end" aria-labelledby="study-end-title">
+      <p class="eyebrow">{{ t.practice_eyebrow }}</p>
+      <h2 id="study-end-title">{{ t.practice_title }}</h2>
+      <p>{{ t.practice_text }}</p>
+      <div class="button-row">
+        <a class="button button-primary" href="{{ study_exp }}">{{ t.explore_reproduction }}{% include icon.html name="arrow-up-right" %}</a>
+        <a class="button button-secondary" href="{{ study.diagrams_url | relative_url }}">{{ t.browse_diagrams }}{% include icon.html name="arrow-right" %}</a>
+      </div>
+    </section>
+
+    {%- assign prev_index = study_index | minus: 1 %}
+    {%- assign next_index = study_index | plus: 1 %}
+    {%- assign next_study = site.data.studies[next_index] %}
+    <nav class="pager" aria-label="{{ t.previous }} / {{ t.next }}">
+      {%- if study_index > 0 %}
+      {%- assign prev_study = site.data.studies[prev_index] %}
+      <a href="{{ prev_study.pages[lang_key] | default: prev_study.pages.en | relative_url }}"><span>{% include icon.html name="arrow-left" px=14 %}{{ t.previous }}</span><strong>{{ prev_study.number }} {{ prev_study.name }}</strong></a>
+      {%- else %}
+      <a href="{{ '/#library' | relative_url }}"><span>{% include icon.html name="arrow-left" px=14 %}{{ t.back_to_library }}</span><strong>{{ site.title }}</strong></a>
+      {%- endif %}
+      {%- if next_study %}
+      <a class="pager-next" href="{{ next_study.pages[lang_key] | default: next_study.pages.en | relative_url }}"><span>{{ t.next }}{% include icon.html name="arrow-right" px=14 %}</span><strong>{{ next_study.number }} {{ next_study.name }}</strong></a>
+      {%- endif %}
+    </nav>
+    {%- endif %}
+
+    <footer class="reader-footer">
+      <a href="{{ site.repo_url }}/blob/main/{{ page.path }}">{{ t.view_source }}{% include icon.html name="arrow-up-right" px=14 %}</a>
+      <span>{{ site.title }} · {{ t.lang_name }}</span>
+    </footer>
+  </main>
+
+  <aside class="outline-rail" data-outline-wrap hidden aria-label="{{ t.on_this_page }}">
+    <p class="rail-label">{{ t.on_this_page }}</p>
+    <nav class="outline" data-outline aria-label="{{ t.on_this_page }}"></nav>
+    <a class="back-to-top" href="#top">{{ t.back_to_top }}{% include icon.html name="arrow-up" px=14 %}</a>
+  </aside>
+</div>

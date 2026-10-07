@@ -1,0 +1,354 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "OpenHands Main Execution Flow",
+    "output": "diagrams/openhands/execution-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "viewBox": [
+      1080,
+      690
+    ],
+    "column_fit": "spread",
+    "repository": {
+      "url": "https://github.com/OpenHands/software-agent-sdk.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "54daf056bd863bb46f922a2fe9324dd736b37ff6"
+    }
+  },
+  "participants": [
+    {
+      "id": "canvas",
+      "type": "frontend",
+      "label": "Canvas",
+      "sublabel": "browser client"
+    },
+    {
+      "id": "server",
+      "type": "backend",
+      "label": "Agent Server",
+      "sublabel": "routers",
+      "sources": [
+        {
+          "path": "openhands-agent-server/openhands/agent_server/conversation_router.py",
+          "line": 309,
+          "end_line": 355,
+          "label": "POST /conversations"
+        },
+        {
+          "path": "openhands-agent-server/openhands/agent_server/event_router.py",
+          "line": 213,
+          "end_line": 227,
+          "label": "POST /events"
+        }
+      ]
+    },
+    {
+      "id": "eventsvc",
+      "type": "backend",
+      "label": "EventService",
+      "sublabel": "per conversation",
+      "sources": [
+        {
+          "path": "openhands-agent-server/openhands/agent_server/event_service.py",
+          "line": 841,
+          "end_line": 905,
+          "label": "send_message"
+        },
+        {
+          "path": "openhands-agent-server/openhands/agent_server/event_service.py",
+          "line": 1421,
+          "end_line": 1643,
+          "label": "run"
+        }
+      ]
+    },
+    {
+      "id": "conv",
+      "type": "backend",
+      "label": "Conversation",
+      "sublabel": "LocalConversation",
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/impl/local_conversation.py",
+          "line": 1807,
+          "end_line": 1869,
+          "label": "send_message"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/impl/local_conversation.py",
+          "line": 1917,
+          "end_line": 2046,
+          "label": "_run loop"
+        }
+      ]
+    },
+    {
+      "id": "agent",
+      "type": "backend",
+      "label": "Agent",
+      "sublabel": "step()",
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 706,
+          "end_line": 895,
+          "label": "_step"
+        }
+      ]
+    },
+    {
+      "id": "llm",
+      "type": "cloud",
+      "label": "LLM",
+      "sublabel": "LiteLLM",
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/llm/llm.py",
+          "line": 1673,
+          "end_line": 1703,
+          "label": "generate"
+        }
+      ]
+    },
+    {
+      "id": "tool",
+      "type": "messagebus",
+      "label": "Tool",
+      "sublabel": "executor",
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 1468,
+          "end_line": 1530,
+          "label": "_execute_action_event"
+        }
+      ]
+    },
+    {
+      "id": "log",
+      "type": "database",
+      "label": "EventLog",
+      "sublabel": "+ PubSub",
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/state.py",
+          "line": 315,
+          "end_line": 337,
+          "label": "append_event"
+        },
+        {
+          "path": "openhands-agent-server/openhands/agent_server/pub_sub.py",
+          "line": 33,
+          "end_line": 110,
+          "label": "PubSub"
+        }
+      ]
+    }
+  ],
+  "segments": [
+    {
+      "from": 150,
+      "to": 232,
+      "label": "Create"
+    },
+    {
+      "from": 242,
+      "to": 352,
+      "label": "Message + run"
+    },
+    {
+      "from": 362,
+      "to": 556,
+      "label": "Agent step (repeats)"
+    },
+    {
+      "from": 562,
+      "to": 588,
+      "label": "Stream"
+    }
+  ],
+  "messages": [
+    {
+      "id": "create",
+      "from": "canvas",
+      "to": "server",
+      "y": 165,
+      "label": "POST /api/conversations",
+      "variant": "emphasis"
+    },
+    {
+      "id": "start",
+      "from": "server",
+      "to": "eventsvc",
+      "y": 193,
+      "label": "start()",
+      "variant": "default"
+    },
+    {
+      "id": "construct",
+      "from": "eventsvc",
+      "to": "conv",
+      "y": 221,
+      "label": "LocalConversation(...)",
+      "variant": "default"
+    },
+    {
+      "id": "ws",
+      "from": "canvas",
+      "to": "server",
+      "y": 255,
+      "label": "WS /sockets/session/{id}",
+      "variant": "dashed"
+    },
+    {
+      "id": "post-msg",
+      "from": "canvas",
+      "to": "server",
+      "y": 283,
+      "label": "POST /events run=true",
+      "variant": "emphasis"
+    },
+    {
+      "id": "send",
+      "from": "server",
+      "to": "eventsvc",
+      "y": 311,
+      "label": "send_message + run",
+      "variant": "default"
+    },
+    {
+      "id": "arun",
+      "from": "eventsvc",
+      "to": "conv",
+      "y": 339,
+      "label": "arun() task",
+      "variant": "emphasis"
+    },
+    {
+      "id": "step",
+      "from": "conv",
+      "to": "agent",
+      "y": 373,
+      "label": "step(conv, on_event)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "generate",
+      "from": "agent",
+      "to": "llm",
+      "y": 401,
+      "label": "View msgs + tools",
+      "variant": "default"
+    },
+    {
+      "id": "calls",
+      "from": "llm",
+      "to": "agent",
+      "y": 429,
+      "label": "tool_calls",
+      "variant": "return"
+    },
+    {
+      "id": "action",
+      "from": "agent",
+      "to": "log",
+      "y": 457,
+      "label": "ActionEvent",
+      "variant": "default"
+    },
+    {
+      "id": "exec",
+      "from": "agent",
+      "to": "tool",
+      "y": 485,
+      "label": "tool(action, conv)",
+      "variant": "default"
+    },
+    {
+      "id": "obs",
+      "from": "tool",
+      "to": "agent",
+      "y": 513,
+      "label": "Observation",
+      "variant": "return"
+    },
+    {
+      "id": "record",
+      "from": "agent",
+      "to": "log",
+      "y": 541,
+      "label": "ObservationEvent",
+      "variant": "default"
+    },
+    {
+      "id": "frame",
+      "from": "log",
+      "to": "canvas",
+      "y": 575,
+      "label": "event frames (after_seq)",
+      "variant": "dashed"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "server",
+      "from": 160,
+      "to": 316,
+      "type": "backend"
+    },
+    {
+      "participant": "eventsvc",
+      "from": 189,
+      "to": 585,
+      "type": "backend"
+    },
+    {
+      "participant": "conv",
+      "from": 217,
+      "to": 585,
+      "type": "backend"
+    },
+    {
+      "participant": "agent",
+      "from": 376,
+      "to": 552,
+      "type": "backend"
+    },
+    {
+      "participant": "llm",
+      "from": 400,
+      "to": 436,
+      "type": "cloud"
+    },
+    {
+      "participant": "tool",
+      "from": 484,
+      "to": 520,
+      "type": "messagebus"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Entry points",
+      "items": [
+        "Canvas: ConversationClient.createConversation / sendEvent (OpenHands/OpenHands src/api)",
+        "Server: start_conversation and send_message routers -> ConversationService -> EventService",
+        "SDK only: Conversation(agent, workspace).send_message(); .run()"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Ordering guarantees",
+      "items": [
+        "Each event is persisted before subscribers hear about it (default callback first)",
+        "The run loop holds the state FIFO lock per step; send_message can interleave between steps",
+        "EventService.run returns 409 if a run task is already live",
+        "finish (or a plain text answer) sets FINISHED; the EventService run task then ends"
+      ]
+    }
+  ]
+}

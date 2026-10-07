@@ -1,8 +1,11 @@
 ---
 layout: research
 title: "deepagents — source-level study"
+study: deepagents
 permalink: /research/deepagents.html
 ---
+
+**English** · [中文](deepagents.zh.md)
 
 # deepagents (`langchain-ai/deepagents`)
 

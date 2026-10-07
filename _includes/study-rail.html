@@ -1,0 +1,32 @@
+{%- comment -%}
+  The list of studies. The current study (page.study) expands into its
+  article(s), diagram gallery and reproduction. Used by the left rail on reader
+  pages and by the navigation drawer on every page.
+{%- endcomment -%}
+<a class="back-link" href="{{ '/#library' | relative_url }}">{% include icon.html name="arrow-left" px=14 %}<span>{{ t.back_to_library }}</span></a>
+<p class="rail-label">{{ t.studies }}</p>
+<nav class="rail-nav" aria-label="{{ t.studies }}">
+  {%- for s in site.data.studies %}
+  {%- assign s_url = s.pages[lang_key] | default: s.pages.en %}
+  {%- if s.id == page.study %}
+  <div class="rail-group">
+    <a class="rail-study is-current" href="{{ s_url | relative_url }}"><span class="rail-number">{{ s.number }}</span><span>{{ s.name }}</span></a>
+    <div class="rail-sub">
+      {%- for p in s.pages %}
+      {%- assign p_lang = p[0] %}
+      <a href="{{ p[1] | relative_url }}"{% if p[1] == page.url %} aria-current="page"{% endif %}>{% include icon.html name="book" px=15 %}<span>{{ t.article }}{% if s.pages.size > 1 %} · {{ site.data.i18n[p_lang].lang_name }}{% endif %}</span></a>
+      {%- endfor %}
+      <a href="{{ s.diagrams_url | relative_url }}"{% if s.diagrams_url == page.url %} aria-current="page"{% endif %}>{% include icon.html name="diagram" px=15 %}<span>{{ t.diagrams_short }}</span><small>{{ s.diagrams.size }}</small></a>
+      {%- assign s_exp = s.experiment[lang_key] | default: s.experiment.en %}
+      <a href="{{ s_exp }}">{% include icon.html name="flask" px=15 %}<span>{{ t.reproduction }}</span>{% include icon.html name="arrow-up-right" px=13 %}</a>
+    </div>
+  </div>
+  {%- else %}
+  <a class="rail-study" href="{{ s_url | relative_url }}"><span class="rail-number">{{ s.number }}</span><span>{{ s.name }}</span></a>
+  {%- endif %}
+  {%- endfor %}
+</nav>
+<div class="rail-bottom">
+  <a href="{{ site.repo_url }}/tree/main/experiments">{% include icon.html name="flask" px=15 %}<span>{{ t.experiments }}</span>{% include icon.html name="arrow-up-right" px=13 %}</a>
+  <a href="{{ site.repo_url }}">{% include icon.html name="code" px=15 %}<span>GitHub</span>{% include icon.html name="arrow-up-right" px=13 %}</a>
+</div>

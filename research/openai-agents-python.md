@@ -1,6 +1,7 @@
 ---
 layout: research
 title: "openai-agents-python — source-level study"
+study: openai-agents-python
 permalink: /research/openai-agents-python.html
 ---
 

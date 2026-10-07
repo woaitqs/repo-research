@@ -1,0 +1,252 @@
+# Single source of truth for the site navigation: the home page library,
+# the study rail on every reader page, the previous/next pager and the
+# diagram galleries are all rendered from this list. Order = reading order.
+#
+# pages:       research article per language (keys: en, zh)
+# experiment:  reproduction link per language (falls back to en)
+# pins:        pinned revisions shown under the title
+# diagrams:    Archify outputs in diagrams_url; `pin` names the pins[].label they
+#              are drawn from (defaults to the first pin)
+
+- id: deepagents
+  number: "01"
+  name: deepagents
+  category:
+    en: Agent harness
+    zh: Agent 框架（harness）
+  pins:
+    - label: langchain-ai/deepagents
+      rev: 16e84d9
+      url: https://github.com/langchain-ai/deepagents/tree/16e84d927e7e13c41a10c071380c875af6a562f5
+  studied: 2026-10-06
+  tagline:
+    en: >-
+      deepagents is an ordered stack of middleware on top of LangChain's `create_agent`.
+      Its real product is context engineering: offloading large results to a virtual
+      filesystem, non-destructive summarization, and context-isolated sub-agents.
+    # Chinese text stays on one line: folded YAML would insert spaces at line breaks.
+    zh: "deepagents 是叠在 LangChain `create_agent` 之上的一个有序中间件栈。它真正的产品是上下文工程：把大结果卸载到虚拟文件系统、非破坏性的摘要压缩，以及上下文隔离的子 Agent。"
+  status: "21 tests + demo pass · upstream probe 7/7 · real-model scenarios 4/4 × 3 runs"
+  pages:
+    en: /research/deepagents.html
+    zh: /research/deepagents.zh.html
+  diagrams_url: /diagrams/deepagents/
+  experiment:
+    en: https://github.com/woaitqs/repo-research/tree/main/experiments/deepagents
+    zh: https://github.com/woaitqs/repo-research/blob/main/experiments/deepagents/README.zh.md
+  diagrams:
+    - slug: architecture
+      title: Architecture
+      type: architecture
+      question:
+        en: "System architecture: `dcode` CLI → SDK harness → LangGraph"
+    - slug: execution-flow
+      title: Execution flow
+      type: sequence
+      question:
+        en: One `dcode` turn, end to end
+    - slug: core-abstractions
+      title: Core abstractions
+      type: architecture
+      question:
+        en: The core abstractions and how they connect
+    - slug: context-flow
+      title: Context flow
+      type: dataflow
+      question:
+        en: What reaches the model context, and what is offloaded
+    - slug: memory-flow
+      title: Memory flow
+      type: dataflow
+      question:
+        en: "Memory lifecycle: `AGENTS.md` files as explicit memory"
+    - slug: tool-runtime
+      title: Tool runtime
+      type: workflow
+      question:
+        en: "Tool call path: reasoning vs. execution runtime"
+    - slug: agent-loop
+      title: Agent loop
+      type: lifecycle
+      question:
+        en: The agent loop as LangGraph node states (one invocation)
+    - slug: sub-agent-flow
+      title: Sub-agent flow
+      type: sequence
+      question:
+        en: Sub-agent delegation via the `task` tool (isolated mode)
+
+- id: openhands
+  number: "02"
+  name: OpenHands
+  category:
+    en: Agent SDK & runtime
+    zh: Agent SDK 与运行时
+  pins:
+    - label: OpenHands/OpenHands
+      rev: 7ea83ba
+      url: https://github.com/OpenHands/OpenHands/tree/7ea83bab4fe71149b88b5a8a6b9efe9042cb362d
+    - label: software-agent-sdk
+      rev: v1.53.0
+      url: https://github.com/OpenHands/software-agent-sdk/tree/54daf056bd863bb46f922a2fe9324dd736b37ff6
+  studied: 2026-10-07
+  tagline:
+    en: >-
+      `OpenHands/OpenHands` is now the Agent Canvas UI. The agent itself lives in
+      `software-agent-sdk`: an event-sourced conversation, a stateless agent `step()`,
+      an LLM context that is a projection of the event log, and compaction done by
+      appending a `Condensation` event.
+    zh: "`OpenHands/OpenHands` 现在是 Agent Canvas 界面；agent 本体在 `software-agent-sdk` 中——事件溯源的会话、无状态的 `step()`、作为事件日志投影的 LLM 上下文，以及通过追加 `Condensation` 事件完成的压缩。"
+  status: "19 tests + demo pass · 426 upstream SDK tests pass · real SDK probed offline and with a real model"
+  pages:
+    en: /research/openhands.html
+    zh: /research/openhands.zh.html
+  diagrams_url: /diagrams/openhands/
+  experiment:
+    en: https://github.com/woaitqs/repo-research/tree/main/experiments/openhands
+    zh: https://github.com/woaitqs/repo-research/blob/main/experiments/openhands/README.zh.md
+  diagrams:
+    - slug: architecture
+      title: Architecture
+      type: architecture
+      pin: software-agent-sdk
+      question:
+        en: How Canvas, Agent Server, SDK and runtime fit together
+        zh: Canvas、Agent Server、SDK 和运行时如何组合
+    - slug: execution-flow
+      title: Execution flow
+      type: sequence
+      pin: software-agent-sdk
+      question:
+        en: What happens from `POST /api/conversations` to an `ObservationEvent` on the WebSocket
+        zh: 从 `POST /api/conversations` 到 WebSocket 上出现 `ObservationEvent` 之间发生了什么
+    - slug: core-abstractions
+      title: Core abstractions
+      type: architecture
+      pin: software-agent-sdk
+      question:
+        en: Which object owns what (Conversation, State, EventLog, View, Agent, LLM, Tool, Workspace, Condenser)
+        zh: 每个对象分别拥有什么（Conversation、State、EventLog、View、Agent、LLM、Tool、Workspace、Condenser）
+    - slug: context-flow
+      title: Context flow
+      type: dataflow
+      pin: software-agent-sdk
+      question:
+        en: What enters the model context, what is excluded, how it is bounded
+        zh: 什么进入模型上下文、什么被排除、如何限制大小
+    - slug: agent-loop
+      title: Agent loop
+      type: workflow
+      pin: software-agent-sdk
+      question:
+        en: "`LocalConversation.run()` + `Agent.step()`, early returns and recovery"
+        zh: "`LocalConversation.run()` + `Agent.step()`，提前返回与恢复"
+    - slug: conversation-lifecycle
+      title: Conversation lifecycle
+      type: lifecycle
+      pin: software-agent-sdk
+      question:
+        en: "`ConversationExecutionStatus` transitions"
+        zh: "`ConversationExecutionStatus` 的状态转换"
+    - slug: memory-flow
+      title: Memory flow
+      type: dataflow
+      pin: software-agent-sdk
+      question:
+        en: "Two-tier `MEMORY.md`: writer, loader, injection, staleness"
+        zh: 两层 `MEMORY.md`：谁写、谁加载、如何注入、如何处理过时
+    - slug: tool-runtime
+      title: Tool runtime
+      type: sequence
+      pin: software-agent-sdk
+      question:
+        en: Tool call → validation → confirmation → executor → workspace → observation
+        zh: 工具调用 → 校验 → 确认 → 执行器 → 工作区 → 观察结果
+    - slug: sub-agent-flow
+      title: Sub-agent flow
+      type: sequence
+      pin: software-agent-sdk
+      question:
+        en: "`TaskTool` delegation and context isolation"
+        zh: "`TaskTool` 委托与上下文隔离"
+    - slug: canvas-stack
+      title: Canvas local stack
+      type: architecture
+      pin: OpenHands/OpenHands
+      question:
+        en: What `agent-canvas` launches and how the ingress routes
+        zh: "`agent-canvas` 启动了什么、入口代理如何路由"
+
+- id: openai-agents-python
+  number: "03"
+  name: openai-agents-python
+  category:
+    en: Agent SDK & runtime
+    zh: Agent SDK 与运行时
+  pins:
+    - label: openai/openai-agents-python
+      rev: 71c2da4
+      url: https://github.com/openai/openai-agents-python/tree/71c2da4de47159ccc37905b8fe781be805dbfa66
+  studied: 2026-10-07
+  tagline:
+    en: >-
+      The OpenAI Agents SDK owns its loop: a `while True` over four `NextStep` outcomes,
+      where handoffs and sub-agents are just tool calls and a human approval is a serializable
+      pause. Context policy is opt-in hooks plus server-side compaction; `SandboxAgent` adds
+      per-run capabilities and agent-written file memory.
+    zh: "OpenAI Agents SDK 自己掌控运行循环：一个围绕四种 `NextStep` 结局的 `while True`；handoff 和子 Agent 都只是工具调用，人工审批是一个可序列化的暂停点。上下文策略靠可选钩子加服务端压缩；`SandboxAgent` 增加了按运行准备的能力（capability）和由 Agent 写入的文件记忆。"
+  status: "12,174 upstream tests pass · probe 17/17 · 40 tests + demo 11/11 · mutations 11/11 · real models: 6 scenarios × 2 models × 3 runs"
+  pages:
+    en: /research/openai-agents-python.html
+  diagrams_url: /diagrams/openai-agents-python/
+  experiment:
+    en: https://github.com/woaitqs/repo-research/tree/main/experiments/openai-agents-python
+  diagrams:
+    - slug: architecture
+      title: Architecture
+      type: architecture
+      question:
+        en: How the Runner loop, model boundary, tools and sandbox fit together
+        zh: Runner 循环、模型边界、工具与沙箱如何组合
+    - slug: execution-flow
+      title: Execution flow
+      type: sequence
+      question:
+        en: One `Runner.run` with a session, two turns, end to end
+        zh: 一次带 Session 的 `Runner.run`：两个回合，端到端
+    - slug: core-abstractions
+      title: Core abstractions
+      type: architecture
+      question:
+        en: Which object owns what (Runner, Agent, Tool, Handoff, Model, RunState, SandboxAgent, Capability)
+        zh: 每个对象分别负责什么（Runner、Agent、Tool、Handoff、Model、RunState、SandboxAgent、Capability）
+    - slug: context-flow
+      title: Context flow
+      type: dataflow
+      question:
+        en: What reaches the model on each turn, and which hooks can change it
+        zh: 每个回合什么进入模型，哪些钩子可以改变它
+    - slug: memory-flow
+      title: Memory flow
+      type: dataflow
+      question:
+        en: "Two memories: `Session` history and sandbox `Memory` files"
+        zh: 两种记忆：`Session` 历史与沙箱 `Memory` 文件
+    - slug: tool-runtime
+      title: Tool runtime
+      type: workflow
+      question:
+        en: "Tool call path: classification, approval, invocation, error text"
+        zh: 工具调用路径：分类、审批、执行、错误文本
+    - slug: agent-loop
+      title: Agent loop
+      type: lifecycle
+      question:
+        en: The Runner loop as a `NextStep` state machine
+        zh: 作为 `NextStep` 状态机的 Runner 循环
+    - slug: sub-agent-flow
+      title: Sub-agent flow
+      type: sequence
+      question:
+        en: Handoff (control moves) vs `Agent.as_tool` (control stays)
+        zh: Handoff（控制权转移）与 `Agent.as_tool`（控制权保留）

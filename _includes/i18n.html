@@ -1,0 +1,7 @@
+{%- comment -%}
+  Sets `lang_key` (en | zh), `t` (interface strings) and `study` (the entry in
+  _data/studies.yml named by the page's `study` front matter, or nil).
+{%- endcomment -%}
+{%- assign lang_key = page.lang | default: "en" | slice: 0, 2 -%}
+{%- assign t = site.data.i18n[lang_key] | default: site.data.i18n.en -%}
+{%- assign study = site.data.studies | where: "id", page.study | first -%}
