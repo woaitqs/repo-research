@@ -19,3 +19,5 @@ __pycache__/
 .sass-cache/
 _site/
 .jekyll-cache/
+.jekyll-metadata
+.DS_Store

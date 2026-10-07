@@ -1,0 +1,46 @@
+# mini_openhands demo --live (model doubao-seed-2-1-pro-260915 via Ark Coding Plan), 2026-10-07 — last 45 lines of console output (earlier events not captured)
+  + AgentErrorEvent          agent        tool_name='file_editor'
+  + AgentErrorEvent          agent        tool_name='file_editor'
+  + ActionEvent              agent        tool_name='terminal'
+  + ObservationEvent         environment  tool_name='terminal' (148 chars)
+  + ActionEvent              agent        tool_name='file_editor'
+  + ActionEvent              agent        tool_name='file_editor'
+  + ObservationEvent         environment  tool_name='file_editor' (20 chars)
+  + ObservationEvent         environment  tool_name='file_editor' (25 chars)
+  + Condensation             environment  summary='## USER_CONTEXT\n\nThe agent is working on a Fibonacci Python script and' forgot=10 offset=2
+  + ActionEvent              agent        tool_name='terminal'
+  + ActionEvent              agent        tool_name='file_editor'
+  + ActionEvent              agent        tool_name='file_editor'
+  + ObservationEvent         environment  tool_name='terminal' (250 chars)
+  + ObservationEvent         environment  tool_name='file_editor' (66 chars)
+  + ObservationEvent         environment  tool_name='file_editor' (415 chars)
+  + Condensation             environment  summary='## Summary Steps\n\n1. Reviewed the prior context and the latest tool ev' forgot=7 offset=2
+  + ActionEvent              agent        tool_name='terminal'
+  + ActionEvent              agent        tool_name='file_editor'
+  + ActionEvent              agent        tool_name='file_editor'
+  + ObservationEvent         environment  tool_name='terminal' (250 chars)
+  + ObservationEvent         environment  tool_name='file_editor' (66 chars)
+  + ObservationEvent         environment  tool_name='file_editor' (415 chars)
+  + Condensation             environment  summary='# State Summary\n## USER_CONTEXT\nWork is performed in an isolated tempo' forgot=7 offset=2
+  + ActionEvent              agent        tool_name='file_editor'
+  + ActionEvent              agent        tool_name='file_editor'
+  + ObservationEvent         environment  tool_name='file_editor' (415 chars)
+  + ObservationEvent         environment  tool_name='file_editor' (66 chars)
+  + ActionEvent              agent        tool_name='terminal'
+  + ActionEvent              agent        tool_name='terminal'
+  + ObservationEvent         environment  tool_name='terminal' (37 chars)
+  + ObservationEvent         environment  tool_name='terminal' (26 chars)
+  + Condensation             environment  summary='# State Summary\n\n## USER_CONTEXT\nWork is being performed in the isolat' forgot=9 offset=2
+  + ActionEvent              agent        tool_name='terminal'
+  + ObservationEvent         environment  tool_name='terminal' (727 chars)
+  + ActionEvent              agent        tool_name='terminal'
+  + ObservationEvent         environment  tool_name='terminal' (100 chars)
+  + ActionEvent              agent        tool_name='finish'
+  + ObservationEvent         environment  tool_name='finish' (197 chars)
+model=doubao-seed-2-1-pro-260915 status=finished events=42 view=9
+condensation: forgot=10 summary='## USER_CONTEXT\n\nThe agent is working on a Fibonacci Python script and an associated test file. The original user request is not included in the provided events'
+condensation: forgot=7 summary='## Summary Steps\n\n1. Reviewed the prior context and the latest tool events.\n2. Recorded the current contents and status of `fib.py` and `test_fib.py`.\n3. Identi'
+condensation: forgot=7 summary='# State Summary\n## USER_CONTEXT\nWork is performed in an isolated temporary workspace: `<tmp>/workspace`, focused on validating a Fibonacc'
+condensation: forgot=9 summary='# State Summary\n\n## USER_CONTEXT\nWork is being performed in the isolated workspace `<tmp>/workspace`, focused on validating the Fibonacci'
+finish message: Created and verified fib.py (prints the first 10 Fibonacci numbers 0–34) and test_fib.py (plain-assert subprocess test confirming the last line is 34), with both running successfully under python3.
+workspace files: ['fib.py', 'test_fib.py']

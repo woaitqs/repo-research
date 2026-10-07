@@ -8,7 +8,8 @@ This repository is not a collection of README summaries. Each study should trace
 
 | Repository | Pinned commit | Research | Diagrams | Experiment |
 |---|---|---|---|---|
-| [langchain-ai/deepagents](https://github.com/langchain-ai/deepagents) | `16e84d9` (SDK 0.7.22) | [research/deepagents.md](research/deepagents.md) · [web](https://woaitqs.github.io/repo-research/research/deepagents.html) | [8 Archify diagrams](diagrams/deepagents/) | [experiments/deepagents](experiments/deepagents/) |
+| [langchain-ai/deepagents](https://github.com/langchain-ai/deepagents) | `16e84d9` (SDK 0.7.22) | [research/deepagents.md](research/deepagents.md) · [web](https://woaitqs.github.io/repo-research/research/deepagents.html) · 中文: [deepagents.zh.md](research/deepagents.zh.md) · [web](https://woaitqs.github.io/repo-research/research/deepagents.zh.html) | [8 Archify diagrams](diagrams/deepagents/) | [experiments/deepagents](experiments/deepagents/) |
+| [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands) + [software-agent-sdk](https://github.com/OpenHands/software-agent-sdk) | `7ea83ba` (Canvas 1.25.0) + `54daf05` (SDK `v1.53.0`) | [research/openhands.md](research/openhands.md) · [web](https://woaitqs.github.io/repo-research/research/openhands.html) · 中文: [openhands.zh.md](research/openhands.zh.md) · [web](https://woaitqs.github.io/repo-research/research/openhands.zh.html) | [10 Archify diagrams](diagrams/openhands/) | [experiments/openhands](experiments/openhands/) |
 | [letta-ai/letta-code](https://github.com/letta-ai/letta-code) | `4b028fa` (v0.34.4) | [research/letta-code.md](research/letta-code.md) · [web](https://woaitqs.github.io/repo-research/research/letta-code.html) | [8 Archify diagrams](diagrams/letta-code/) | [experiments/letta-code](experiments/letta-code/) |
 
 ## What each repository study should contain
@@ -41,20 +42,31 @@ For every target repository:
 ```text
 repo-research/
 ├── README.md
-├── index.md                     # homepage (repository table)
-├── _config.yml                  # GitHub Pages (Jekyll, minima)
+├── index.md                     # homepage (layout: home; body = reading convention)
+├── _config.yml                  # GitHub Pages (Jekyll, own layouts, theme: null)
+├── _data/
+│   ├── studies.yml              # the study list: pins, pages, diagrams, experiment links
+│   ├── i18n.yml                 # interface strings (en / zh)
+│   └── home.yml                 # homepage blocks (study anatomy, method)
 ├── _layouts/
-│   └── research.html            # article layout: wider column + Mermaid rendering
-├── research/
-│   └── <project-name>.md        # the study (front matter: layout: research)
-├── diagrams/
-│   └── <project-name>/
-│       ├── architecture.html    # Archify output (self-contained HTML)
-│       ├── execution-flow.html
-│       └── ...
+│   ├── default.html             # header, navigation drawer, scripts
+│   ├── home.html                # homepage: hero, library, diagrams, method
+│   ├── research.html            # article: study rail · article · outline
+│   └── gallery.html             # diagram gallery: study rail · cards from _data/studies.yml
+├── _includes/                   # header, study rail, icons, ...
 ├── assets/
+│   ├── css/site.css             # all site styles (light + dark)
+│   ├── js/site.js               # theme, outline, reading aids, Mermaid rendering
 │   └── <project-name>/
 │       └── archify/*.json       # Archify candidates (diagram sources) + provenance README
+├── research/
+│   └── <project-name>.md        # the study (front matter: layout: research, study: <id>)
+├── diagrams/
+│   └── <project-name>/
+│       ├── index.md             # gallery page (layout: gallery)
+│       ├── architecture.html    # Archify output (self-contained HTML, never edited by hand)
+│       ├── execution-flow.html
+│       └── ...
 └── experiments/
     └── <project-name>/
         ├── README.md
@@ -70,13 +82,21 @@ repo-research/
    ---
    layout: research
    title: "<project> — source-level study"
+   study: <project-name>
    permalink: /research/<project-name>.html
    ---
    ```
-   Follow the section structure of `research/deepagents.md`.
+   Follow the section structure of `research/deepagents.md`. Keep the `# Title` heading: GitHub shows it,
+   while the site drops everything up to and including the first H1 and renders its own title,
+   language switch and navigation. A Chinese version uses `permalink: /research/<project-name>.zh.html`
+   and `lang: zh-CN` with the same `study:` id.
 2. Put Archify candidates in `assets/<project-name>/archify/` and finalize them into `diagrams/<project-name>/` (see [Archify](#archify)). At minimum create `architecture`, `execution-flow`, `core-abstractions` and `context-flow`.
+   Add `diagrams/<project-name>/index.md` (`layout: gallery`, `study: <project-name>`); the cards appear where
+   the page has an HTML comment `<!-- diagram-cards -->`.
 3. Put the reproduction in `experiments/<project-name>/`, with `README.md`, `src/`, `tests/` and `run.sh`.
-4. Add a row to the table in `index.md` and to the [Studies](#studies) table above.
+4. Add an entry to `_data/studies.yml` (pins, pages, diagrams, experiment link, one-line takeaway). The homepage,
+   the study rail, the previous/next links and the gallery are all generated from it. Also add a row to the
+   [Studies](#studies) table above.
 5. Avoid Liquid template delimiters (double curly braces, or a curly brace followed by a percent sign) anywhere in published Markdown, this README included. GitHub Pages evaluates them and the build fails.
 
 ## Reading
@@ -93,7 +113,7 @@ Each repository should get its own research page and its own diagram directory, 
 
 > GitHub Pages must be enabled once in **Settings → Pages → Deploy from a branch → main / (root)**.
 
-Mermaid code fences in research articles render natively on GitHub. On Pages, `_layouts/research.html` converts them in the browser using Mermaid from jsDelivr.
+Mermaid code fences in research articles render natively on GitHub. On Pages, `assets/js/site.js` converts them in the browser using Mermaid from jsDelivr (with the site's light/dark palette).
 
 ### Local preview
 
@@ -147,13 +167,17 @@ cd experiments/<project-name>
 ./run.sh          # creates .venv, installs, builds, runs tests, runs the demo
 ```
 
-The deepagents experiment is stdlib-only. `./run.sh demo` runs the narrated demo without installing anything. Its `upstream_probe/` directory re-checks the research claims against the real SDK.
+The deepagents study is bilingual as well: `research/deepagents.md` (English) and `research/deepagents.zh.md` (Chinese), with `experiments/deepagents/README.zh.md` for the reproduction; its Archify diagrams are shared and English-only. The deepagents experiment is stdlib-only. `./run.sh demo` runs the narrated demo without installing anything. Its `upstream_probe/` directory re-checks the research claims against the real SDK.
 
-The letta-code experiment (`minilc`) is also stdlib-only Python and needs `git` on `PATH`. Its extra checks need the target's toolchain:
+The OpenHands study is bilingual: `research/openhands.md` (English) and `research/openhands.zh.md` (Chinese), with `experiments/openhands/README.zh.md` for the reproduction; the Archify diagrams are shared and English-only. The OpenHands experiment is also stdlib-only at runtime (pytest for tests). `./run.sh --live` additionally runs the demo against a real OpenAI-compatible model, and `probe/` drives the real `openhands-sdk` (scripted or with a real model) to re-check the article's runtime claims.
+
+The letta-code study is English-only for now. Its experiment (`minilc`) is stdlib-only Python at runtime (pytest for tests) and needs `git` on `PATH`. The extra checks need the target's toolchain:
 
 - `./run.sh probe <letta-code clone>` runs a TypeScript probe against the real `LocalBackend` with Bun. It needs no network.
-- `real_model/run_letta_real.py` drives the built `letta.js` with Node against an OpenAI-compatible model. It reads the API key from `ARK_API_KEY`; never commit keys.
+- `real_model/run_letta_real.py` drives the built `letta.js` with Node against an OpenAI-compatible model. It reads the API key from `ARK_API_KEY`.
 - `python3 mutation_check.py` injects architectural regressions and checks that the tests catch each one.
+
+Experiments that call real models read API keys from environment variables only. Never commit keys: `.env` files are git-ignored, and published logs and reports are sanitized.
 
 ## Research principle
 

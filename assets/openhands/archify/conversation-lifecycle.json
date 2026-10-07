@@ -1,0 +1,86 @@
+{
+  "schema_version": 2,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "ConversationExecutionStatus Lifecycle",
+    "output": "diagrams/openhands/conversation-lifecycle.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/OpenHands/software-agent-sdk.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "54daf056bd863bb46f922a2fe9324dd736b37ff6"
+    }
+  },
+  "lanes": [
+    { "id": "main", "label": "Run phases" },
+    { "id": "waiting", "label": "Waits" },
+    { "id": "terminal", "label": "Run exits" }
+  ],
+  "states": [
+    {
+      "id": "idle", "type": "start", "label": "IDLE", "sublabel": "ready for a task", "lane": "main", "col": 0, "step": "01",
+      "sources": [{ "path": "openhands-sdk/openhands/sdk/conversation/state.py", "line": 48, "end_line": 60, "label": "enum" }]
+    },
+    {
+      "id": "running", "type": "active", "label": "RUNNING", "sublabel": "run() loop steps", "lane": "main", "col": 1, "step": "02",
+      "sources": [{ "path": "openhands-sdk/openhands/sdk/conversation/impl/local_conversation.py", "line": 1923, "end_line": 1930, "label": "enter RUNNING" }]
+    },
+    {
+      "id": "finished", "type": "success", "label": "FINISHED", "sublabel": "finish tool or text", "lane": "main", "col": 3, "step": "03",
+      "sources": [
+        { "path": "openhands-sdk/openhands/sdk/agent/agent.py", "line": 645, "end_line": 655, "label": "finish tool" },
+        { "path": "openhands-sdk/openhands/sdk/agent/response_dispatch.py", "line": 248, "end_line": 270, "label": "text answer" }
+      ]
+    },
+    {
+      "id": "paused", "type": "waiting", "label": "PAUSED", "sublabel": "pause() / interrupt()", "lane": "waiting", "col": 1,
+      "sources": [{ "path": "openhands-sdk/openhands/sdk/conversation/impl/local_conversation.py", "line": 2719, "end_line": 2777, "label": "pause / interrupt" }]
+    },
+    {
+      "id": "confirm", "type": "waiting", "label": "WAITING", "sublabel": "for confirmation", "lane": "waiting", "col": 2,
+      "sources": [
+        { "path": "openhands-sdk/openhands/sdk/agent/agent.py", "line": 1152, "end_line": 1171, "label": "policy says confirm" },
+        { "path": "openhands-sdk/openhands/sdk/conversation/impl/local_conversation.py", "line": 2649, "end_line": 2687, "label": "reject_pending_actions" }
+      ]
+    },
+    {
+      "id": "error", "type": "failure", "label": "ERROR", "sublabel": "exception or limit", "lane": "terminal", "col": 1,
+      "sources": [{ "path": "openhands-sdk/openhands/sdk/conversation/impl/local_conversation.py", "line": 2024, "end_line": 2088, "label": "max iterations / except" }]
+    },
+    {
+      "id": "stuck", "type": "failure", "label": "STUCK", "sublabel": "loop pattern found", "lane": "terminal", "col": 2,
+      "sources": [{ "path": "openhands-sdk/openhands/sdk/conversation/impl/local_conversation.py", "line": 744, "end_line": 767, "label": "_check_stuck_or_nudge" }]
+    }
+  ],
+  "transitions": [
+    { "id": "start-run", "from": "idle", "to": "running", "label": "run()" },
+    { "id": "done", "from": "running", "to": "finished", "label": "done", "variant": "emphasis" },
+    { "id": "pause", "from": "running", "to": "paused", "label": "pause" },
+    { "id": "needs-confirm", "from": "running", "to": "confirm", "label": "risky", "variant": "security" },
+    { "id": "fail", "from": "running", "to": "error", "label": "raise", "variant": "security" },
+    { "id": "loop-detected", "from": "running", "to": "stuck", "label": "stuck", "variant": "security" },
+    { "id": "approve", "from": "confirm", "to": "finished", "label": "run() executes", "variant": "dashed" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Re-entry rules",
+      "items": [
+        "run() moves IDLE, PAUSED, ERROR and STUCK to RUNNING (local_conversation.py:1923-1930)",
+        "send_message() resets FINISHED and STUCK to IDLE so a new turn can run (1831-1838)",
+        "A second run() while WAITING executes the pending actions; reject_pending_actions() emits UserRejectObservation and sets IDLE"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "What 'terminal' means here",
+      "items": [
+        "is_terminal() is FINISHED, ERROR, STUCK: terminal for one run, not for the conversation (state.py:62-79)",
+        "MaxIterationsReached and MaxBudgetReached are ConversationErrorEvents, not crashes",
+        "interrupt() cancels arun(); orphaned actions get synthetic AgentErrorEvents"
+      ]
+    }
+  ]
+}

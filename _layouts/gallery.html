@@ -1,0 +1,97 @@
+---
+layout: default
+body_class: reader-page gallery-page
+---
+{%- include i18n.html -%}
+{%- include split-title.html -%}
+{%- comment -%}
+  The card grid is rendered from _data/studies.yml where the Markdown has a
+  `<!-- diagram-cards -->` marker (an HTML comment, invisible on GitHub).
+{%- endcomment -%}
+{%- assign marker = "<!-- diagram-cards -->" -%}
+{%- if article_body contains marker -%}
+  {%- assign gallery_intro = article_body | split: marker | first -%}
+  {%- assign gallery_outro = article_body | remove_first: gallery_intro | remove_first: marker -%}
+{%- else -%}
+  {%- assign gallery_intro = article_body -%}
+  {%- assign gallery_outro = "" -%}
+{%- endif -%}
+{%- for s in site.data.studies -%}
+  {%- if s.id == study.id -%}{%- assign study_index = forloop.index0 -%}{%- endif -%}
+{%- endfor -%}
+<div class="reader-grid reader-grid--wide">
+  <aside class="study-rail" aria-label="{{ t.studies }}">
+    {%- include study-rail.html %}
+  </aside>
+
+  <main class="reading-main reading-main--wide" id="main-content">
+    <div class="reader-topline">
+      <a href="{{ '/#library' | relative_url }}">{{ t.library }}</a>
+      <span aria-hidden="true">/</span>
+      <a href="{{ study.pages.en | relative_url }}">{{ study.number }} · {{ study.name }}</a>
+      <span aria-hidden="true">/</span>
+      <span>{{ t.diagrams_short }}</span>
+    </div>
+
+    <header class="study-heading">
+      <p class="eyebrow"><span class="badge">{{ study.number }}</span>{{ t.diagrams }}</p>
+      <h1>{{ study.name }}</h1>
+      <div class="study-toolbar">
+        {%- include study-pins.html %}
+        <p class="study-links">
+          {%- for p in study.pages %}
+          {%- assign p_lang = p[0] %}
+          {%- assign l = site.data.i18n[p_lang] %}
+          <a href="{{ p[1] | relative_url }}" lang="{{ l.code }}">{% include icon.html name="book" px=15 %}{{ l.read_study }}</a>
+          {%- endfor %}
+        </p>
+      </div>
+    </header>
+
+    <div class="prose prose--gallery">
+{{ gallery_intro }}
+    </div>
+
+    <ol class="diagram-cards">
+      {%- for d in study.diagrams %}
+      {%- assign pin_label = d.pin | default: study.pins.first.label %}
+      <li>
+        <a class="diagram-card" href="{{ study.diagrams_url | append: d.slug | append: '.html' | relative_url }}">
+          <span class="diagram-card-top"><span class="diagram-number">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span><span class="diagram-type">{{ d.type }}</span></span>
+          <span class="diagram-title">{{ d.title }}</span>
+          <span class="diagram-question">{{ d.question.en | markdownify | remove: "<p>" | remove: "</p>" | strip }}</span>
+          {%- if d.question.zh %}
+          <span class="diagram-question diagram-question--zh" lang="zh-CN">{{ d.question.zh | markdownify | remove: "<p>" | remove: "</p>" | strip }}</span>
+          {%- endif %}
+          <span class="diagram-card-foot"><span>{{ t.pinned }} <code>{{ pin_label }}</code></span>{% include icon.html name="arrow-right" %}</span>
+        </a>
+      </li>
+      {%- endfor %}
+    </ol>
+
+    {%- assign outro_text = gallery_outro | strip_html | strip %}
+    {%- if outro_text != "" %}
+    <div class="prose prose--gallery prose--notes">
+{{ gallery_outro }}
+    </div>
+    {%- endif %}
+
+    {%- assign prev_index = study_index | minus: 1 %}
+    {%- assign next_index = study_index | plus: 1 %}
+    {%- assign next_study = site.data.studies[next_index] %}
+    <nav class="pager" aria-label="{{ t.previous }} / {{ t.next }}">
+      <a href="{{ study.pages.en | relative_url }}"><span>{% include icon.html name="arrow-left" px=14 %}{{ t.article }}</span><strong>{{ study.number }} {{ study.name }}</strong></a>
+      {%- if next_study %}
+      <a class="pager-next" href="{{ next_study.diagrams_url | relative_url }}"><span>{{ t.diagrams_short }}{% include icon.html name="arrow-right" px=14 %}</span><strong>{{ next_study.number }} {{ next_study.name }}</strong></a>
+      {%- elsif study_index > 0 %}
+      {%- assign first_study = site.data.studies.first %}
+      <a class="pager-next" href="{{ first_study.diagrams_url | relative_url }}"><span>{{ t.diagrams_short }}{% include icon.html name="arrow-right" px=14 %}</span><strong>{{ first_study.number }} {{ first_study.name }}</strong></a>
+      {%- endif %}
+    </nav>
+
+    <footer class="reader-footer">
+      <a href="{{ site.repo_url }}/blob/main/{{ page.path }}">{{ t.view_source }}{% include icon.html name="arrow-up-right" px=14 %}</a>
+      <span>{{ site.title }}</span>
+    </footer>
+  </main>
+</div>

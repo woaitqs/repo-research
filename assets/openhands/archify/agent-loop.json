@@ -1,0 +1,454 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "OpenHands Agent Loop: run() and step()",
+    "output": "diagrams/openhands/agent-loop.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/OpenHands/software-agent-sdk.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "54daf056bd863bb46f922a2fe9324dd736b37ff6"
+    }
+  },
+  "lanes": [
+    {
+      "id": "conv",
+      "label": "LocalConversation"
+    },
+    {
+      "id": "agent",
+      "label": "Agent.step"
+    },
+    {
+      "id": "exec",
+      "label": "Tool execution"
+    },
+    {
+      "id": "policy",
+      "label": "Recovery + policy",
+      "variant": "exception"
+    }
+  ],
+  "phases": [
+    {
+      "id": "intake",
+      "label": "Intake + guard",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "reason",
+      "label": "Context + model",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "act",
+      "label": "Act + observe",
+      "fromCol": 4,
+      "toCol": 5,
+      "variant": "dashed"
+    }
+  ],
+  "mainPath": [
+    "send",
+    "guard",
+    "pending",
+    "condense",
+    "llm",
+    "classify",
+    "validate",
+    "execute",
+    "finished"
+  ],
+  "nodes": [
+    {
+      "id": "send",
+      "lane": "conv",
+      "col": 0,
+      "type": "external",
+      "label": "send_message()",
+      "sublabel": "MessageEvent + skills",
+      "width": 136,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/impl/local_conversation.py",
+          "line": 1807,
+          "end_line": 1869,
+          "label": "send_message"
+        }
+      ]
+    },
+    {
+      "id": "guard",
+      "lane": "conv",
+      "col": 1,
+      "type": "backend",
+      "label": "run() iteration",
+      "sublabel": "status, stuck, budget",
+      "tag": "state lock",
+      "width": 136,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/impl/local_conversation.py",
+          "line": 1935,
+          "end_line": 2046,
+          "label": "while True loop"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/impl/local_conversation.py",
+          "line": 744,
+          "end_line": 767,
+          "label": "stuck check"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/stuck_detector.py",
+          "line": 104,
+          "end_line": 155,
+          "label": "is_stuck"
+        }
+      ]
+    },
+    {
+      "id": "finished",
+      "lane": "conv",
+      "col": 5,
+      "type": "backend",
+      "label": "FINISHED",
+      "sublabel": "stop hooks may veto",
+      "width": 136,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/impl/local_conversation.py",
+          "line": 1947,
+          "end_line": 1975,
+          "label": "stop hook"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/response_dispatch.py",
+          "line": 248,
+          "end_line": 270,
+          "label": "content ends turn"
+        }
+      ]
+    },
+    {
+      "id": "pending",
+      "lane": "agent",
+      "col": 1,
+      "type": "backend",
+      "label": "Unmatched actions?",
+      "sublabel": "confirmed batch first",
+      "width": 136,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 713,
+          "end_line": 722,
+          "label": "pending first"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/state.py",
+          "line": 677,
+          "end_line": 716,
+          "label": "get_unmatched_actions"
+        }
+      ]
+    },
+    {
+      "id": "condense",
+      "lane": "agent",
+      "col": 2,
+      "type": "backend",
+      "label": "Condense view",
+      "sublabel": "prepare_llm_messages",
+      "width": 136,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 747,
+          "end_line": 758,
+          "label": "view or Condensation"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/utils.py",
+          "line": 581,
+          "end_line": 633,
+          "label": "prepare_llm_messages"
+        }
+      ]
+    },
+    {
+      "id": "llm",
+      "lane": "agent",
+      "col": 3,
+      "type": "cloud",
+      "label": "llm.generate()",
+      "sublabel": "messages + tool schemas",
+      "width": 136,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 788,
+          "end_line": 796,
+          "label": "generate"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/llm/llm.py",
+          "line": 1673,
+          "end_line": 1703,
+          "label": "completion or responses"
+        }
+      ]
+    },
+    {
+      "id": "classify",
+      "lane": "agent",
+      "col": 4,
+      "type": "backend",
+      "label": "classify_response",
+      "sublabel": "tools / text / empty",
+      "width": 136,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/response_dispatch.py",
+          "line": 54,
+          "end_line": 77,
+          "label": "classify"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 873,
+          "end_line": 895,
+          "label": "dispatch"
+        }
+      ]
+    },
+    {
+      "id": "condensation",
+      "lane": "policy",
+      "col": 2,
+      "type": "security",
+      "label": "Condensation event",
+      "sublabel": "step returns early",
+      "width": 136,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 753,
+          "end_line": 756,
+          "label": "emit + return"
+        }
+      ]
+    },
+    {
+      "id": "llmerr",
+      "lane": "policy",
+      "col": 3,
+      "type": "security",
+      "label": "Error mapping",
+      "sublabel": "nudge or CondensationRequest",
+      "width": 136,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 797,
+          "end_line": 871,
+          "label": "except branches"
+        }
+      ]
+    },
+    {
+      "id": "confirm",
+      "lane": "policy",
+      "col": 4,
+      "type": "security",
+      "label": "Await confirmation",
+      "sublabel": "WAITING_FOR_CONFIRMATION",
+      "width": 136,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 1130,
+          "end_line": 1171,
+          "label": "policy + analyzer"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/response_dispatch.py",
+          "line": 186,
+          "end_line": 187,
+          "label": "stop before exec"
+        }
+      ]
+    },
+    {
+      "id": "validate",
+      "lane": "exec",
+      "col": 4,
+      "type": "messagebus",
+      "label": "ActionEvent",
+      "sublabel": "parse, normalize, validate",
+      "width": 136,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 1311,
+          "end_line": 1466,
+          "label": "_get_action_event"
+        }
+      ]
+    },
+    {
+      "id": "execute",
+      "lane": "exec",
+      "col": 5,
+      "type": "messagebus",
+      "label": "Execute batch",
+      "sublabel": "ObservationEvent / error",
+      "width": 136,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 627,
+          "end_line": 655,
+          "label": "_execute_actions"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/parallel_executor.py",
+          "line": 67,
+          "end_line": 120,
+          "label": "execute_batch"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 1468,
+          "end_line": 1530,
+          "label": "tool(action, conv)"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "send-guard",
+      "from": "send",
+      "to": "guard",
+      "role": "main"
+    },
+    {
+      "id": "guard-step",
+      "from": "guard",
+      "to": "pending",
+      "label": "agent.step()",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "id": "pending-condense",
+      "from": "pending",
+      "to": "condense",
+      "label": "none",
+      "role": "main"
+    },
+    {
+      "id": "condense-llm",
+      "from": "condense",
+      "to": "llm",
+      "label": "View",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "id": "condense-event",
+      "from": "condense",
+      "to": "condensation",
+      "label": "over budget",
+      "role": "branch",
+      "variant": "security"
+    },
+    {
+      "id": "llm-classify",
+      "from": "llm",
+      "to": "classify",
+      "role": "main"
+    },
+    {
+      "id": "llm-error",
+      "from": "llm",
+      "to": "llmerr",
+      "label": "raises",
+      "role": "error",
+      "variant": "security"
+    },
+    {
+      "id": "classify-validate",
+      "from": "classify",
+      "to": "validate",
+      "label": "tool calls",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "id": "classify-finish",
+      "from": "classify",
+      "to": "finished",
+      "label": "text",
+      "role": "branch"
+    },
+    {
+      "id": "validate-confirm",
+      "from": "validate",
+      "to": "confirm",
+      "label": "needs OK",
+      "role": "branch",
+      "variant": "security"
+    },
+    {
+      "id": "validate-execute",
+      "from": "validate",
+      "to": "execute",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "id": "execute-finish",
+      "from": "execute",
+      "to": "finished",
+      "label": "finish tool",
+      "role": "main"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Loop ownership",
+      "items": [
+        "LocalConversation owns the while-loop, the FIFO state lock, statuses, max_iteration_per_run and max_budget_per_run",
+        "Agent.step is one iteration; it never loops and keeps no history of its own",
+        "Every effect leaves step() via on_event, which persists before notifying subscribers",
+        "Before each step: STUCK if StuckDetector sees repeated action/observation, error or monologue patterns"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Early returns",
+      "items": [
+        "A Condensation or CondensationRequest ends the step; the next iteration reads the condensed view",
+        "Malformed tool calls and content-filter blocks become user-role nudges, not crashes",
+        "Confirmation mode stops after ActionEvents are recorded; the next run() executes them"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Next iteration",
+      "items": [
+        "Without finish, the observations are in the log and run() calls step() again",
+        "A plain text answer sets FINISHED; a new send_message resets FINISHED to IDLE"
+      ]
+    }
+  ]
+}

@@ -1,7 +1,17 @@
 title: Repo Research
 description: Source-code-level research on AI infrastructure, agents, context engineering, memory, tools, and runtimes.
-theme: minima
+description_short: source-level studies of AI agent repositories
+repo_url: https://github.com/woaitqs/repo-research
 markdown: kramdown
+
+# The site ships its own layouts (_layouts/, assets/css/site.css). `null` stops
+# GitHub Pages from falling back to its default theme (jekyll-theme-primer).
+theme: null
 
 exclude:
   - experiments
+
+# Rewrite links between Markdown pages (e.g. the English/中文 switch) to their .html permalinks.
+# GitHub Pages enables this plugin by default; listing it keeps local builds identical.
+plugins:
+  - jekyll-relative-links

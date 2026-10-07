@@ -1,0 +1,15 @@
+<dialog class="nav-drawer" id="nav-drawer" aria-label="{{ t.nav_main }}">
+  <div class="drawer-head">
+    <a class="brand" href="{{ '/' | relative_url }}" aria-label="{{ site.title }}">
+      <span class="brand-mark" aria-hidden="true">r<span>r</span></span>
+      <span class="brand-text">{{ site.title }}<span class="brand-secondary">{{ t.tagline }}</span></span>
+    </a>
+    <button class="icon-button" type="button" aria-label="{{ t.close }}" data-drawer-close>{% include icon.html name="close" px=19 %}</button>
+  </div>
+  <nav class="drawer-links" aria-label="{{ t.nav_main }}">
+    {%- include nav-links.html %}
+  </nav>
+  <div class="drawer-rail">
+    {%- include study-rail.html %}
+  </div>
+</dialog>

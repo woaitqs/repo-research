@@ -1,6 +1,7 @@
 ---
 layout: research
 title: "letta-code — source-level study"
+study: letta-code
 permalink: /research/letta-code.html
 ---
 
@@ -817,4 +818,4 @@ Each one fails at least one test. The first version of the suite missed "compile
 - Docs: <https://docs.letta.com/letta-code/> (memory, MemFS, subagents, permissions).
 - Background: [MemGPT](https://arxiv.org/abs/2310.08560) and [Sleep-time compute](https://arxiv.org/abs/2504.13171). *Interpretation:* background reflection is this paper's idea applied to a coding agent.
 - pi-ai, the provider runtime the local backend delegates to: <https://github.com/earendil-works/pi>
-- Companion study in this series: [deepagents](deepagents.html), which uses middleware on a framework loop. letta-code instead uses a protocol split across processes.
+- Companion study in this series: [deepagents](deepagents.md), which uses middleware on a framework loop. letta-code instead uses a protocol split across processes.

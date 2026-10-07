@@ -1,0 +1,34 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+{%- if page.url == "/" %}
+<title>{{ site.title }} — {{ site.description_short }}</title>
+{%- else %}
+<title>{{ page.title | default: site.title }} · {{ site.title }}</title>
+{%- endif %}
+<meta name="description" content="{{ page.description | default: site.description | strip_html | normalize_whitespace | escape }}">
+{%- if page.layout == "research" and study and study.pages.size > 1 %}
+{%- for p in study.pages %}
+{%- assign p_lang = p[0] %}
+<link rel="alternate" hreflang="{{ site.data.i18n[p_lang].code }}" href="{{ p[1] | relative_url }}">
+{%- endfor %}
+{%- endif %}
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='3' fill='%2320231e'/%3E%3Ctext x='4' y='23' font-family='Arial,sans-serif' font-weight='700' font-size='20' fill='%23fcfcf9'%3Er%3C/text%3E%3Ctext x='15' y='23' font-family='Arial,sans-serif' font-weight='700' font-size='20' fill='%23d8ed7a'%3Er%3C/text%3E%3C/svg%3E">
+<script>
+  // Resolve theme and reading preferences before first paint.
+  (function () {
+    var root = document.documentElement;
+    try {
+      var saved = localStorage.getItem("rr-theme");
+      root.dataset.theme = saved === "dark" || saved === "light"
+        ? saved
+        : (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      var scale = parseFloat(localStorage.getItem("rr-text-scale"));
+      if (scale >= 0.85 && scale <= 1.3) root.style.setProperty("--reading-scale", scale);
+    } catch (e) {}
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&display=swap">
+<link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
