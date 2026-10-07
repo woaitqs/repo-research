@@ -5,3 +5,7 @@ markdown: kramdown
 
 exclude:
   - experiments
+
+# Keep the top navigation to the home page; studies are listed in the library table.
+header_pages:
+  - index.md

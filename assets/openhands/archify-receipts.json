@@ -1,0 +1,276 @@
+{
+  "tool": "archify 3.0.1 (finalize --quality showcase --repo-root <pinned checkout>)",
+  "generated": "2026-10-07",
+  "diagrams": [
+    {
+      "diagram": "diagrams/openhands/architecture.html",
+      "spec": "diagrams/openhands/specs/architecture.json",
+      "type": "architecture",
+      "finalize_status": "pass",
+      "gates": {
+        "validate": "pass",
+        "deliver": "pass",
+        "check": "pass",
+        "browser-check": "pass"
+      },
+      "spec_sha256": "b8d13407a042de7f48c452857c5a57ecf421390ebd9dc3fd7581fb73f9cba5cf",
+      "artifact_sha256": "4ec0004ef87716b37b7f02371170e3744145e252425dec264a9771e0cda27365",
+      "verified_source_references": 16,
+      "repository": "https://github.com/OpenHands/software-agent-sdk",
+      "revision": "54daf056bd863bb46f922a2fe9324dd736b37ff6",
+      "visual_check": {
+        "status": "pass",
+        "same_artifact": true,
+        "containment": "pass",
+        "readability": "pass",
+        "viewerChrome": "pass",
+        "themeStates": "pass",
+        "captures": "pass",
+        "screenshots": "1440x900 + 2048x1320, light + dark"
+      }
+    },
+    {
+      "diagram": "diagrams/openhands/execution-flow.html",
+      "spec": "diagrams/openhands/specs/execution-flow.json",
+      "type": "sequence",
+      "finalize_status": "pass",
+      "gates": {
+        "validate": "pass",
+        "deliver": "pass",
+        "check": "pass",
+        "browser-check": "pass"
+      },
+      "spec_sha256": "cb6bc0179f71868cfed593c4e5d7db366f8afd1a864f704a873b7cce0ba7568b",
+      "artifact_sha256": "da8466d0a0024563baa0835f5f6d3f711ca22cc81113ddffd9004a60cc9d3b5a",
+      "verified_source_references": 11,
+      "repository": "https://github.com/OpenHands/software-agent-sdk",
+      "revision": "54daf056bd863bb46f922a2fe9324dd736b37ff6",
+      "visual_check": {
+        "status": "pass",
+        "same_artifact": true,
+        "containment": "pass",
+        "readability": "pass",
+        "viewerChrome": "pass",
+        "themeStates": "pass",
+        "captures": "pass",
+        "screenshots": "1440x900 + 2048x1320, light + dark"
+      }
+    },
+    {
+      "diagram": "diagrams/openhands/core-abstractions.html",
+      "spec": "diagrams/openhands/specs/core-abstractions.json",
+      "type": "architecture",
+      "finalize_status": "pass",
+      "gates": {
+        "validate": "pass",
+        "deliver": "pass",
+        "check": "pass",
+        "browser-check": "pass"
+      },
+      "spec_sha256": "751669231c3a86081b08e7648cd08f7cf734b6f489da665e4ed1e8151e1cc156",
+      "artifact_sha256": "3e68fc65c480fdd181f119d7ec7771bd230dda9ce4fc5ea89864c4b350446412",
+      "verified_source_references": 19,
+      "repository": "https://github.com/OpenHands/software-agent-sdk",
+      "revision": "54daf056bd863bb46f922a2fe9324dd736b37ff6",
+      "visual_check": {
+        "status": "pass",
+        "same_artifact": true,
+        "containment": "pass",
+        "readability": "pass",
+        "viewerChrome": "pass",
+        "themeStates": "pass",
+        "captures": "pass",
+        "screenshots": "1440x900 + 2048x1320, light + dark"
+      }
+    },
+    {
+      "diagram": "diagrams/openhands/context-flow.html",
+      "spec": "diagrams/openhands/specs/context-flow.json",
+      "type": "dataflow",
+      "finalize_status": "pass",
+      "gates": {
+        "validate": "pass",
+        "deliver": "pass",
+        "check": "pass",
+        "browser-check": "pass"
+      },
+      "spec_sha256": "7ddb046e9fce2d538eb4246675a0087d619ffb6c3e43713fe9663ebb0b9756a3",
+      "artifact_sha256": "6ddeaa1e320f728646887958e6cc2f7db50407fec980a291db4bf7c19cdd02b0",
+      "verified_source_references": 24,
+      "repository": "https://github.com/OpenHands/software-agent-sdk",
+      "revision": "54daf056bd863bb46f922a2fe9324dd736b37ff6",
+      "visual_check": {
+        "status": "pass",
+        "same_artifact": true,
+        "containment": "pass",
+        "readability": "pass",
+        "viewerChrome": "pass",
+        "themeStates": "pass",
+        "captures": "pass",
+        "screenshots": "1440x900 + 2048x1320, light + dark"
+      }
+    },
+    {
+      "diagram": "diagrams/openhands/agent-loop.html",
+      "spec": "diagrams/openhands/specs/agent-loop.json",
+      "type": "workflow",
+      "finalize_status": "pass",
+      "gates": {
+        "validate": "pass",
+        "deliver": "pass",
+        "check": "pass",
+        "browser-check": "pass"
+      },
+      "spec_sha256": "c885385277b6aab5b488e7ea42deaf71a8bd7371d9a3d7a670dcc88f907bd845",
+      "artifact_sha256": "742845a0d41e1e924ff5ea19560a7b62c716c68cc72cc9786fe3653eff16226e",
+      "verified_source_references": 22,
+      "repository": "https://github.com/OpenHands/software-agent-sdk",
+      "revision": "54daf056bd863bb46f922a2fe9324dd736b37ff6",
+      "visual_check": {
+        "status": "pass",
+        "same_artifact": true,
+        "containment": "pass",
+        "readability": "pass",
+        "viewerChrome": "pass",
+        "themeStates": "pass",
+        "captures": "pass",
+        "screenshots": "1440x900 + 2048x1320, light + dark"
+      }
+    },
+    {
+      "diagram": "diagrams/openhands/conversation-lifecycle.html",
+      "spec": "diagrams/openhands/specs/conversation-lifecycle.json",
+      "type": "lifecycle",
+      "finalize_status": "pass",
+      "gates": {
+        "validate": "pass",
+        "deliver": "pass",
+        "check": "pass",
+        "browser-check": "pass"
+      },
+      "spec_sha256": "b8b50f4a50137500475bc81552a0b9f36bc8024a80fb759c5c4f897fa201e729",
+      "artifact_sha256": "7978a424f51ce52343daffd2582f833d40a11cdec27c74d81a60fc967c863e99",
+      "verified_source_references": 9,
+      "repository": "https://github.com/OpenHands/software-agent-sdk",
+      "revision": "54daf056bd863bb46f922a2fe9324dd736b37ff6",
+      "visual_check": {
+        "status": "pass",
+        "same_artifact": true,
+        "containment": "pass",
+        "readability": "pass",
+        "viewerChrome": "pass",
+        "themeStates": "pass",
+        "captures": "pass",
+        "screenshots": "1440x900 + 2048x1320, light + dark"
+      }
+    },
+    {
+      "diagram": "diagrams/openhands/memory-flow.html",
+      "spec": "diagrams/openhands/specs/memory-flow.json",
+      "type": "dataflow",
+      "finalize_status": "pass",
+      "gates": {
+        "validate": "pass",
+        "deliver": "pass",
+        "check": "pass",
+        "browser-check": "pass"
+      },
+      "spec_sha256": "03fc15a5bd4a744261db6117eec5e6152523900e0e1e18aeecb266203d89a600",
+      "artifact_sha256": "a4210e9f40df6aeb8afd54468f2f226761718f6ed17f66c7fe3529dfae0da3ff",
+      "verified_source_references": 9,
+      "repository": "https://github.com/OpenHands/software-agent-sdk",
+      "revision": "54daf056bd863bb46f922a2fe9324dd736b37ff6",
+      "visual_check": {
+        "status": "pass",
+        "same_artifact": true,
+        "containment": "pass",
+        "readability": "pass",
+        "viewerChrome": "pass",
+        "themeStates": "pass",
+        "captures": "pass",
+        "screenshots": "1440x900 + 2048x1320, light + dark"
+      }
+    },
+    {
+      "diagram": "diagrams/openhands/tool-runtime.html",
+      "spec": "diagrams/openhands/specs/tool-runtime.json",
+      "type": "sequence",
+      "finalize_status": "pass",
+      "gates": {
+        "validate": "pass",
+        "deliver": "pass",
+        "check": "pass",
+        "browser-check": "pass"
+      },
+      "spec_sha256": "ecccea3bff484324cb981750468772fe03061b3d6638df1b5cd04e8531700710",
+      "artifact_sha256": "d8d44d3fdd7c644c8db270fb9f779c8b7d97f38bc75ca97a3df132efbabbf0d6",
+      "verified_source_references": 13,
+      "repository": "https://github.com/OpenHands/software-agent-sdk",
+      "revision": "54daf056bd863bb46f922a2fe9324dd736b37ff6",
+      "visual_check": {
+        "status": "pass",
+        "same_artifact": true,
+        "containment": "pass",
+        "readability": "pass",
+        "viewerChrome": "pass",
+        "themeStates": "pass",
+        "captures": "pass",
+        "screenshots": "1440x900 + 2048x1320, light + dark"
+      }
+    },
+    {
+      "diagram": "diagrams/openhands/sub-agent-flow.html",
+      "spec": "diagrams/openhands/specs/sub-agent-flow.json",
+      "type": "sequence",
+      "finalize_status": "pass",
+      "gates": {
+        "validate": "pass",
+        "deliver": "pass",
+        "check": "pass",
+        "browser-check": "pass"
+      },
+      "spec_sha256": "744123c4a9a394b49c5853029a419ee12294d9b5803d7e6f4edea85745f36c1f",
+      "artifact_sha256": "7fdbbfa67d84754b7007c73723d6ee656b8ae7919b9944125acc5b86ae6fe13e",
+      "verified_source_references": 7,
+      "repository": "https://github.com/OpenHands/software-agent-sdk",
+      "revision": "54daf056bd863bb46f922a2fe9324dd736b37ff6",
+      "visual_check": {
+        "status": "pass",
+        "same_artifact": true,
+        "containment": "pass",
+        "readability": "pass",
+        "viewerChrome": "pass",
+        "themeStates": "pass",
+        "captures": "pass",
+        "screenshots": "1440x900 + 2048x1320, light + dark"
+      }
+    },
+    {
+      "diagram": "diagrams/openhands/canvas-stack.html",
+      "spec": "diagrams/openhands/specs/canvas-stack.json",
+      "type": "architecture",
+      "finalize_status": "pass",
+      "gates": {
+        "validate": "pass",
+        "deliver": "pass",
+        "check": "pass",
+        "browser-check": "pass"
+      },
+      "spec_sha256": "4c6629c3a5e8ea61bdacc3317c0bedaa08e3d5fe479850f75a6226e58641c7fd",
+      "artifact_sha256": "289f3c10207b7b831f77c1741104ee078c9eb5fb085758f5f48d4795ee123d9f",
+      "verified_source_references": 16,
+      "repository": "https://github.com/OpenHands/OpenHands",
+      "revision": "7ea83bab4fe71149b88b5a8a6b9efe9042cb362d",
+      "visual_check": {
+        "status": "pass",
+        "same_artifact": true,
+        "containment": "pass",
+        "readability": "pass",
+        "viewerChrome": "pass",
+        "themeStates": "pass",
+        "captures": "pass",
+        "screenshots": "1440x900 + 2048x1320, light + dark"
+      }
+    }
+  ]
+}

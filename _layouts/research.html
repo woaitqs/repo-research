@@ -1,0 +1,32 @@
+---
+layout: default
+---
+<style>
+  .post-content table, .page-content table { display: block; overflow-x: auto; }
+  .post-content pre, .page-content pre { overflow-x: auto; }
+  .mermaid { margin: 1.2em 0; text-align: center; overflow-x: auto; }
+  .research-nav { font-size: 0.9em; margin-bottom: 1.5em; }
+</style>
+<nav class="research-nav">
+  <a href="{{ '/' | relative_url }}">Repo Research</a> /
+  {{ page.title }}
+  {% if page.diagrams %} · <a href="{{ page.diagrams | relative_url }}">Interactive diagrams</a>{% endif %}
+  {% if page.experiment %} · <a href="{{ page.experiment }}">Minimal reproduction</a>{% endif %}
+</nav>
+{{ content }}
+<script type="module">
+  // GitHub renders ```mermaid natively; on Pages, kramdown emits
+  // <pre><code class="language-mermaid">. Swap those for Mermaid containers.
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+  const blocks = document.querySelectorAll("pre code.language-mermaid");
+  blocks.forEach((code) => {
+    const div = document.createElement("div");
+    div.className = "mermaid";
+    div.textContent = code.textContent;
+    const host = code.closest("div.highlighter-rouge") || code.parentElement;
+    host.replaceWith(div);
+  });
+  const dark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  mermaid.initialize({ startOnLoad: false, securityLevel: "strict", theme: dark ? "dark" : "default" });
+  await mermaid.run({ querySelector: ".mermaid" });
+</script>

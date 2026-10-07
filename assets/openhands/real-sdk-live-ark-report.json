@@ -1,0 +1,76 @@
+{
+  "note": "Real openhands-sdk v1.53.0 driven by Volcano Engine Ark Coding Plan (OpenAI-compatible) via LiteLLM; probe/probe_real_sdk_live.py; run 2026-10-07",
+  "runs": {
+    "max_size_12": {
+      "model": "doubao-seed-2-1-pro-260915",
+      "execution_status": "finished",
+      "event_count": 10,
+      "event_type_counts": {
+        "SystemPromptEvent": 1,
+        "MessageEvent": 1,
+        "ActionEvent": 4,
+        "ObservationEvent": 4
+      },
+      "tool_calls": {
+        "file_editor": 2,
+        "terminal": 1,
+        "finish": 1
+      },
+      "agent_errors": [],
+      "condensations": [],
+      "final_view_len": 10,
+      "system_prompt_blocks_chars": [
+        15228
+      ],
+      "finish_message": "Created fib.py (prints the 10 Fibonacci numbers 0–34) and test_fib.py (a plain-assert subprocess test asserting 10 lines with the last equal to \"34\"); both ran successfully under python3, with fib.py ending in 34 and the test reporting \"test passed\".",
+      "agent_message": null,
+      "observation_count": 4,
+      "workspace_files": [
+        "fib.py",
+        "test_fib.py"
+      ],
+      "fib_output": true,
+      "accumulated_cost": 0.0,
+      "prompt_tokens": 20868
+    },
+    "max_size_8": {
+      "model": "doubao-seed-2-1-pro-260915",
+      "execution_status": "finished",
+      "event_count": 17,
+      "event_type_counts": {
+        "SystemPromptEvent": 1,
+        "MessageEvent": 1,
+        "ActionEvent": 7,
+        "ObservationEvent": 7,
+        "Condensation": 1
+      },
+      "tool_calls": {
+        "file_editor": 3,
+        "terminal": 3,
+        "finish": 1
+      },
+      "agent_errors": [],
+      "condensations": [
+        {
+          "forgotten": 8,
+          "offset": 2,
+          "summary_head": "## USER_CONTEXT\nImplement and test a Fibonacci script. The agent created `fib.py`, verified it prints the Fibonacci sequence through `34`, and began creating `test_fib.py`.\n\n## TASK_TRACKING\nNo explic"
+        }
+      ],
+      "final_view_len": 9,
+      "system_prompt_blocks_chars": [
+        15228
+      ],
+      "finish_message": "`fib.py` prints the first 10 Fibonacci numbers (0 through 34) one per line, and `test_fib.py` runs it via subprocess and asserts the last line is \"34\" — both ran successfully under python3 with the test passing.",
+      "agent_message": null,
+      "observation_count": 7,
+      "workspace_files": [
+        "fib.py",
+        "test_fib.py"
+      ],
+      "fib_output": true,
+      "accumulated_cost": 0.0,
+      "prompt_tokens": 50816
+    }
+  }
+}
