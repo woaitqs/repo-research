@@ -22,4 +22,4 @@ from `visual-check` captures. The JSON specifications (Archify candidates), the 
 regeneration recipe are in
 [`assets/openai-agents-python/archify/`](https://github.com/woaitqs/repo-research/tree/main/assets/openai-agents-python/archify).
 
-← Back to the research article: [English](../../research/openai-agents-python.html)
+← Back to the research article / 返回研究文章：[English](../../research/openai-agents-python.html) · [中文](../../research/openai-agents-python.zh.html)

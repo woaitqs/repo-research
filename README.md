@@ -10,7 +10,7 @@ This repository is not a collection of README summaries. Each study should trace
 |---|---|---|---|---|
 | [langchain-ai/deepagents](https://github.com/langchain-ai/deepagents) | `16e84d9` (SDK 0.7.22) | [research/deepagents.md](research/deepagents.md) · [web](https://woaitqs.github.io/repo-research/research/deepagents.html) · 中文: [deepagents.zh.md](research/deepagents.zh.md) · [web](https://woaitqs.github.io/repo-research/research/deepagents.zh.html) | [8 Archify diagrams](diagrams/deepagents/) | [experiments/deepagents](experiments/deepagents/) |
 | [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands) + [software-agent-sdk](https://github.com/OpenHands/software-agent-sdk) | `7ea83ba` (Canvas 1.25.0) + `54daf05` (SDK `v1.53.0`) | [research/openhands.md](research/openhands.md) · [web](https://woaitqs.github.io/repo-research/research/openhands.html) · 中文: [openhands.zh.md](research/openhands.zh.md) · [web](https://woaitqs.github.io/repo-research/research/openhands.zh.html) | [10 Archify diagrams](diagrams/openhands/) | [experiments/openhands](experiments/openhands/) |
-| [openai/openai-agents-python](https://github.com/openai/openai-agents-python) | `71c2da4` (0.23.1 + 22) | [research/openai-agents-python.md](research/openai-agents-python.md) · [web](https://woaitqs.github.io/repo-research/research/openai-agents-python.html) | [8 Archify diagrams](diagrams/openai-agents-python/) | [experiments/openai-agents-python](experiments/openai-agents-python/) |
+| [openai/openai-agents-python](https://github.com/openai/openai-agents-python) | `71c2da4` (0.23.1 + 22) | [research/openai-agents-python.md](research/openai-agents-python.md) · [web](https://woaitqs.github.io/repo-research/research/openai-agents-python.html) · 中文: [openai-agents-python.zh.md](research/openai-agents-python.zh.md) · [web](https://woaitqs.github.io/repo-research/research/openai-agents-python.zh.html) | [8 Archify diagrams](diagrams/openai-agents-python/) | [experiments/openai-agents-python](experiments/openai-agents-python/) |
 
 ## What each repository study should contain
 
@@ -175,7 +175,7 @@ The OpenHands study is bilingual: `research/openhands.md` (English) and `researc
 
 Experiments that call real models read API keys from environment variables only. Never commit keys: `.env` files are git-ignored, and published logs and reports are sanitized.
 
-The openai-agents-python experiment (`miniagents`) is also stdlib-only, with the same `run.sh` contract. It adds `mutation_check.py` (injects 11 architectural regressions), `upstream_probe/` (17 probes of the real SDK, no network) and `real_model/` (scripts that drive both the real SDK and the reproduction against an OpenAI-compatible endpoint; keys come from environment variables).
+The openai-agents-python study is bilingual too: `research/openai-agents-python.md` (English) and `research/openai-agents-python.zh.md` (Chinese), with `experiments/openai-agents-python/README.zh.md` for the reproduction; the Archify diagrams are shared and English-only. Its experiment (`miniagents`) is also stdlib-only, with the same `run.sh` contract. It adds `mutation_check.py` (injects 11 architectural regressions), `upstream_probe/` (17 probes of the real SDK, no network) and `real_model/` (scripts that drive both the real SDK and the reproduction against an OpenAI-compatible endpoint; keys come from environment variables).
 
 ## Research principle
 
