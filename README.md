@@ -10,7 +10,7 @@ This repository is not a collection of README summaries. Each study should trace
 |---|---|---|---|---|
 | [langchain-ai/deepagents](https://github.com/langchain-ai/deepagents) | `16e84d9` (SDK 0.7.22) | [research/deepagents.md](research/deepagents.md) · [web](https://woaitqs.github.io/repo-research/research/deepagents.html) · 中文: [deepagents.zh.md](research/deepagents.zh.md) · [web](https://woaitqs.github.io/repo-research/research/deepagents.zh.html) | [8 Archify diagrams](diagrams/deepagents/) | [experiments/deepagents](experiments/deepagents/) |
 | [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands) + [software-agent-sdk](https://github.com/OpenHands/software-agent-sdk) | `7ea83ba` (Canvas 1.25.0) + `54daf05` (SDK `v1.53.0`) | [research/openhands.md](research/openhands.md) · [web](https://woaitqs.github.io/repo-research/research/openhands.html) · 中文: [openhands.zh.md](research/openhands.zh.md) · [web](https://woaitqs.github.io/repo-research/research/openhands.zh.html) | [10 Archify diagrams](diagrams/openhands/) | [experiments/openhands](experiments/openhands/) |
-| [letta-ai/letta-code](https://github.com/letta-ai/letta-code) | `4b028fa` (v0.34.4) | [research/letta-code.md](research/letta-code.md) · [web](https://woaitqs.github.io/repo-research/research/letta-code.html) | [8 Archify diagrams](diagrams/letta-code/) | [experiments/letta-code](experiments/letta-code/) |
+| [letta-ai/letta-code](https://github.com/letta-ai/letta-code) | `4b028fa` (v0.34.4) | [research/letta-code.md](research/letta-code.md) · [web](https://woaitqs.github.io/repo-research/research/letta-code.html) · 中文: [letta-code.zh.md](research/letta-code.zh.md) · [web](https://woaitqs.github.io/repo-research/research/letta-code.zh.html) | [8 Archify diagrams](diagrams/letta-code/) | [experiments/letta-code](experiments/letta-code/) |
 
 ## What each repository study should contain
 
@@ -171,7 +171,7 @@ The deepagents study is bilingual as well: `research/deepagents.md` (English) an
 
 The OpenHands study is bilingual: `research/openhands.md` (English) and `research/openhands.zh.md` (Chinese), with `experiments/openhands/README.zh.md` for the reproduction; the Archify diagrams are shared and English-only. The OpenHands experiment is also stdlib-only at runtime (pytest for tests). `./run.sh --live` additionally runs the demo against a real OpenAI-compatible model, and `probe/` drives the real `openhands-sdk` (scripted or with a real model) to re-check the article's runtime claims.
 
-The letta-code study is English-only for now. Its experiment (`minilc`) is stdlib-only Python at runtime (pytest for tests) and needs `git` on `PATH`. The extra checks need the target's toolchain:
+The letta-code study is bilingual: `research/letta-code.md` (English) and `research/letta-code.zh.md` (Chinese), with `experiments/letta-code/README.zh.md` for the reproduction; the Archify diagrams are shared and English-only. Its experiment (`minilc`) is stdlib-only Python at runtime (pytest for tests) and needs `git` on `PATH`. The extra checks need the target's toolchain:
 
 - `./run.sh probe <letta-code clone>` runs a TypeScript probe against the real `LocalBackend` with Bun. It needs no network.
 - `real_model/run_letta_real.py` drives the built `letta.js` with Node against an OpenAI-compatible model. It reads the API key from `ARK_API_KEY`.

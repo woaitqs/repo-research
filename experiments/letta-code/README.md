@@ -1,3 +1,5 @@
+**English** · [中文](README.zh.md)
+
 # minilc — minimal reproduction of the letta-code architecture
 
 A ~1,100-line (docstrings included, demo excluded), **stdlib-only** Python reproduction of the

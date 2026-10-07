@@ -198,9 +198,11 @@
   status: "24 tests + demo 11/11 · mutation 9/9 · upstream unit tests 8,778 pass · probe 9 claims (1 disproved) · real-model 6 scenarios × 3 runs"
   pages:
     en: /research/letta-code.html
+    zh: /research/letta-code.zh.html
   diagrams_url: /diagrams/letta-code/
   experiment:
     en: https://github.com/woaitqs/repo-research/tree/main/experiments/letta-code
+    zh: https://github.com/woaitqs/repo-research/blob/main/experiments/letta-code/README.zh.md
   diagrams:
     - slug: architecture
       title: Architecture

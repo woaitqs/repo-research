@@ -21,4 +21,4 @@ All eight were finalized with `archify finalize --quality showcase --repo-root <
 The JSON specifications (Archify candidates), the gate results and a regeneration recipe are in
 [`assets/letta-code/archify/`](https://github.com/woaitqs/repo-research/tree/main/assets/letta-code/archify).
 
-← Back to the research article: [English](../../research/letta-code.html)
+← Back to the research article / 返回研究文章：[English](../../research/letta-code.html) · [中文](../../research/letta-code.zh.html)
