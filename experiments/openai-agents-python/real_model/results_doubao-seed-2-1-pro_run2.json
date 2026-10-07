@@ -1,0 +1,131 @@
+{
+  "model": "doubao-seed-2-1-pro-260915",
+  "base_url": "https://ark.cn-beijing.volces.com/api/plan/v3",
+  "R1_handoff": {
+    "triage_handoffs_offered": [
+      "transfer_to_billing",
+      "transfer_to_tech"
+    ],
+    "routed_to": "Billing",
+    "billing_first_input_kinds": [
+      "message:user",
+      "reasoning",
+      "function_call",
+      "function_call_output"
+    ],
+    "billing_saw_raw_transcript": true,
+    "final": "I’m sorry for the duplicate September subscription charge. I’ve escalated this to our billing team, who will review the charges and refund the duplicate payment if confirmed.",
+    "pass": true,
+    "seconds": 11.3
+  },
+  "R2_agent_as_tool": {
+    "tool_calls": [
+      [
+        "translate_to_french",
+        "{\"input\": \"Good morning, the meeting moved to 3pm.\"}"
+      ],
+      [
+        "translate_to_spanish",
+        "{\"input\": \"Good morning, the meeting moved to 3pm.\"}"
+      ]
+    ],
+    "parallel_in_one_turn": true,
+    "orchestrator_model_calls": 2,
+    "child_input_item_counts": [
+      1,
+      1
+    ],
+    "child_inputs": [
+      [
+        {
+          "content": "Good morning, the meeting moved to 3pm.",
+          "role": "user"
+        }
+      ],
+      [
+        {
+          "content": "Good morning, the meeting moved to 3pm.",
+          "role": "user"
+        }
+      ]
+    ],
+    "secret_leaked_to_children": false,
+    "final": "Here are the translations:\n\n**French :** Bonjour, la réunion a été déplacée à 15 h.\n\n**Spanish :** Buenos días, la reunión pasó a las 3 p. m.",
+    "pass": true,
+    "_turns_with_tools": 1,
+    "seconds": 22.9
+  },
+  "R3_hitl": {
+    "approve": {
+      "interrupted_on": [
+        "issue_refund"
+      ],
+      "executed_before_decision": [],
+      "executed_after": [
+        "1042"
+      ],
+      "state_json_bytes": 11628,
+      "model_calls": 2,
+      "final": "Your duplicate charge of **$30.00** for order **1042** has been refunded. The refund should appear according to your payment provider’s processing timeline.",
+      "mentions_ticket": false
+    },
+    "reject": {
+      "interrupted_on": [
+        "issue_refund"
+      ],
+      "executed_before_decision": [],
+      "executed_after": [],
+      "state_json_bytes": 10359,
+      "model_calls": 2,
+      "final": "I attempted to refund the duplicate $30.00 charge on order 1042, but the refund was declined because a support ticket must be filed first.\n\nPlease submit a support ticket referencing order 1042 and the duplicate $30.00 charge. Once the ticket is opened and approved, I can process the $30.00 refund r",
+      "mentions_ticket": true
+    },
+    "pass": true,
+    "seconds": 15.8
+  },
+  "R4_session": {
+    "full_history_answer": "Rust.",
+    "full_history_input_items": 4,
+    "limit2_answer": "UNKNOWN",
+    "limit2_input_items": 3,
+    "pass": true,
+    "seconds": 21.7
+  },
+  "R5_tool_errors": {
+    "default_redacted": {
+      "attempts": [
+        "A-1042",
+        "A-1042",
+        "A-1042"
+      ],
+      "recovered": false,
+      "final": "I'm sorry, but I'm unable to retrieve the status of order #A-1042. The order lookup service is returning an error on every attempt (I tried three times).\n\nPlease try again later, or contact support with your order number for assistance."
+    },
+    "custom_visible": {
+      "attempts": [
+        "A-1042",
+        "1042"
+      ],
+      "recovered": true,
+      "final": "Order #A-1042 is **shipped**."
+    },
+    "pass": true,
+    "seconds": 20.9
+  },
+  "R6_sandbox": {
+    "system_prompt_chars": 23291,
+    "tools_offered": [
+      "exec_command",
+      "write_stdin"
+    ],
+    "exec_commands": [
+      "cat .agents/release-notes/SKILL.md; echo \"---CHANGELOG---\"; cat CHANGELOG.md"
+    ],
+    "read_skill_md": true,
+    "read_changelog": true,
+    "followed_skill_marker": true,
+    "final": "# Release Notes\n\n## Features\n- Add CSV export\n- Dark mode\n\n## Fixes\n- Fix crash when the cart is empty\n\nGenerated with the release-notes skill.",
+    "pass": true,
+    "seconds": 7.7
+  }
+}

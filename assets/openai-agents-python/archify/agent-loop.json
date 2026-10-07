@@ -1,0 +1,295 @@
+{
+  "schema_version": 2,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "openai-agents-python — the Runner loop as a NextStep state machine",
+    "output": "diagrams/openai-agents-python/agent-loop.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/openai/openai-agents-python",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "71c2da4de47159ccc37905b8fe781be805dbfa66"
+    }
+  },
+  "lanes": [
+    {
+      "id": "main",
+      "label": "Runner loop"
+    },
+    {
+      "id": "paused",
+      "label": "Paused"
+    },
+    {
+      "id": "terminal",
+      "label": "Exit"
+    }
+  ],
+  "states": [
+    {
+      "id": "start",
+      "type": "start",
+      "label": "Runner.run",
+      "sublabel": "input or RunState",
+      "lane": "main",
+      "col": 0,
+      "step": "01",
+      "sources": [
+        {
+          "path": "src/agents/run.py",
+          "line": 273,
+          "end_line": 290,
+          "label": "Runner.run"
+        }
+      ]
+    },
+    {
+      "id": "prepare",
+      "type": "active",
+      "label": "prepare turn",
+      "sublabel": "turn += 1 · guardrails",
+      "lane": "main",
+      "col": 1,
+      "step": "02",
+      "sources": [
+        {
+          "path": "src/agents/run.py",
+          "line": 1591,
+          "end_line": 1600,
+          "label": "turn counter"
+        },
+        {
+          "path": "src/agents/run.py",
+          "line": 1040,
+          "end_line": 1060,
+          "label": "first-turn guardrails"
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "type": "active",
+      "label": "model call",
+      "sublabel": "get_new_response",
+      "lane": "main",
+      "col": 2,
+      "step": "03",
+      "sources": [
+        {
+          "path": "src/agents/run_internal/run_loop.py",
+          "line": 2800,
+          "end_line": 2911,
+          "label": "get_new_response"
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "type": "active",
+      "label": "side effects",
+      "sublabel": "tools · approvals",
+      "lane": "main",
+      "col": 3,
+      "step": "04",
+      "sources": [
+        {
+          "path": "src/agents/run_internal/turn_resolution.py",
+          "line": 804,
+          "end_line": 940,
+          "label": "execute_tools_and_side_effects"
+        }
+      ]
+    },
+    {
+      "id": "decide",
+      "type": "decision",
+      "label": "NextStep?",
+      "sublabel": "SingleStepResult",
+      "lane": "main",
+      "col": 4,
+      "step": "05",
+      "sources": [
+        {
+          "path": "src/agents/run_internal/run_steps.py",
+          "line": 164,
+          "end_line": 191,
+          "label": "NextStep variants"
+        },
+        {
+          "path": "src/agents/run_internal/turn_resolution.py",
+          "line": 537,
+          "end_line": 600,
+          "label": "execute_handoffs"
+        }
+      ]
+    },
+    {
+      "id": "interrupted",
+      "type": "waiting",
+      "label": "interrupted",
+      "sublabel": "RunState + approvals",
+      "lane": "paused",
+      "col": 3,
+      "sources": [
+        {
+          "path": "src/agents/run.py",
+          "line": 2171,
+          "end_line": 2180,
+          "label": "NextStepInterruption"
+        },
+        {
+          "path": "src/agents/run_internal/turn_resolution.py",
+          "line": 1173,
+          "end_line": 1200,
+          "label": "resolve_interrupted_turn"
+        }
+      ]
+    },
+    {
+      "id": "maxturns",
+      "type": "failure",
+      "label": "MaxTurnsExceeded",
+      "sublabel": "unless error handler",
+      "lane": "terminal",
+      "col": 1,
+      "sources": [
+        {
+          "path": "src/agents/run.py",
+          "line": 1592,
+          "end_line": 1616,
+          "label": "max_turns check"
+        }
+      ]
+    },
+    {
+      "id": "behavior",
+      "type": "failure",
+      "label": "error raised",
+      "sublabel": "unknown tool · tripwire",
+      "lane": "terminal",
+      "col": 2,
+      "sources": [
+        {
+          "path": "src/agents/run_internal/turn_resolution.py",
+          "line": 3615,
+          "end_line": 3640,
+          "label": "tool not found"
+        }
+      ]
+    },
+    {
+      "id": "done",
+      "type": "success",
+      "label": "final output",
+      "sublabel": "output guardrails",
+      "lane": "terminal",
+      "col": 4,
+      "sources": [
+        {
+          "path": "src/agents/run.py",
+          "line": 2001,
+          "end_line": 2015,
+          "label": "NextStepFinalOutput"
+        }
+      ]
+    }
+  ],
+  "transitions": [
+    {
+      "id": "begin",
+      "from": "start",
+      "to": "prepare",
+      "label": "input"
+    },
+    {
+      "id": "call",
+      "from": "prepare",
+      "to": "model",
+      "label": "turn N",
+      "variant": "emphasis"
+    },
+    {
+      "id": "resp",
+      "from": "model",
+      "to": "tools",
+      "label": "items",
+      "variant": "emphasis"
+    },
+    {
+      "id": "res",
+      "from": "tools",
+      "to": "decide",
+      "label": "outputs",
+      "variant": "emphasis"
+    },
+    {
+      "id": "again",
+      "from": "decide",
+      "to": "prepare",
+      "label": "RunAgain / Handoff",
+      "route": "top-channel"
+    },
+    {
+      "id": "pause",
+      "from": "decide",
+      "to": "interrupted",
+      "label": "Interruption",
+      "variant": "security"
+    },
+    {
+      "id": "resume",
+      "from": "interrupted",
+      "to": "tools",
+      "label": "resume",
+      "variant": "security"
+    },
+    {
+      "id": "finish",
+      "from": "decide",
+      "to": "done",
+      "label": "FinalOutput"
+    },
+    {
+      "id": "too-many",
+      "from": "prepare",
+      "to": "maxturns",
+      "label": "over max",
+      "variant": "dashed"
+    },
+    {
+      "id": "fail",
+      "from": "model",
+      "to": "behavior",
+      "label": "raise",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Loop rule",
+      "items": [
+        "no tool calls + a message = final output",
+        "tool outputs always go back to the model (RunAgain)"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Resume",
+      "items": [
+        "resume finishes the paused turn without a new model call",
+        "max_turns and the current turn travel inside RunState"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Handoff",
+      "items": [
+        "NextStepHandoff swaps current_agent, then the loop prepares the new agent",
+        "max_turns (default 10) bounds model calls across all agents"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,297 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "openai-agents-python — two memories: Session history and sandbox Memory",
+    "output": "diagrams/openai-agents-python/memory-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/openai/openai-agents-python",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "71c2da4de47159ccc37905b8fe781be805dbfa66"
+    },
+    "viewBox": [
+      1076,
+      690
+    ]
+  },
+  "stages": [
+    {
+      "label": "Run"
+    },
+    {
+      "label": "Persist"
+    },
+    {
+      "label": "Phase 1"
+    },
+    {
+      "label": "Phase 2"
+    },
+    {
+      "label": "Next run"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "run",
+      "type": "backend",
+      "label": "Runner.run",
+      "sublabel": "turn items",
+      "stage": 0,
+      "row": 0,
+      "sources": [
+        {
+          "path": "src/agents/run_internal/session_persistence.py",
+          "line": 743,
+          "end_line": 760,
+          "label": "save_result_to_session"
+        }
+      ]
+    },
+    {
+      "id": "sbrun",
+      "type": "security",
+      "label": "SandboxAgent run",
+      "sublabel": "Memory capability",
+      "stage": 0,
+      "row": 2,
+      "sources": [
+        {
+          "path": "src/agents/sandbox/runtime.py",
+          "line": 152,
+          "end_line": 168,
+          "label": "enqueue_memory_result"
+        }
+      ]
+    },
+    {
+      "id": "session",
+      "type": "database",
+      "label": "Session",
+      "sublabel": "items + reasoning",
+      "stage": 1,
+      "row": 0,
+      "sources": [
+        {
+          "path": "src/agents/memory/session.py",
+          "line": 53,
+          "end_line": 97,
+          "label": "Session protocol"
+        },
+        {
+          "path": "src/agents/memory/sqlite_session.py",
+          "line": 18,
+          "end_line": 40,
+          "label": "SQLiteSession"
+        }
+      ]
+    },
+    {
+      "id": "rollout",
+      "type": "database",
+      "label": "rollout JSONL",
+      "sublabel": "sessions/*.jsonl",
+      "stage": 1,
+      "row": 2,
+      "sources": [
+        {
+          "path": "src/agents/sandbox/memory/manager.py",
+          "line": 89,
+          "end_line": 117,
+          "label": "enqueue_rollout_payload"
+        }
+      ]
+    },
+    {
+      "id": "compact",
+      "type": "cloud",
+      "label": "responses.compact",
+      "sublabel": "opt-in wrapper",
+      "stage": 2,
+      "row": 1,
+      "sources": [
+        {
+          "path": "src/agents/memory/openai_responses_compaction_session.py",
+          "line": 91,
+          "end_line": 110,
+          "label": "compaction session"
+        },
+        {
+          "path": "src/agents/run_internal/session_persistence.py",
+          "line": 678,
+          "end_line": 740,
+          "label": "post-write compaction"
+        }
+      ]
+    },
+    {
+      "id": "phase1",
+      "type": "backend",
+      "label": "extract agent",
+      "sublabel": "structured output",
+      "stage": 2,
+      "row": 2,
+      "sources": [
+        {
+          "path": "src/agents/sandbox/memory/phase_one.py",
+          "line": 102,
+          "end_line": 126,
+          "label": "run_phase_one"
+        },
+        {
+          "path": "src/agents/sandbox/memory/manager.py",
+          "line": 163,
+          "end_line": 214,
+          "label": "per rollout"
+        }
+      ]
+    },
+    {
+      "id": "phase2",
+      "type": "backend",
+      "label": "consolidate agent",
+      "sublabel": "SandboxAgent",
+      "stage": 3,
+      "row": 2,
+      "sources": [
+        {
+          "path": "src/agents/sandbox/memory/phase_two.py",
+          "line": 10,
+          "end_line": 37,
+          "label": "run_phase_two"
+        },
+        {
+          "path": "src/agents/sandbox/memory/manager.py",
+          "line": 216,
+          "end_line": 243,
+          "label": "after flush"
+        }
+      ]
+    },
+    {
+      "id": "memfiles",
+      "type": "database",
+      "label": "memory folder",
+      "sublabel": "MEMORY.md, skills/",
+      "stage": 3,
+      "row": 3
+    },
+    {
+      "id": "history",
+      "type": "frontend",
+      "label": "next input",
+      "sublabel": "history prepended",
+      "stage": 4,
+      "row": 0,
+      "sources": [
+        {
+          "path": "src/agents/run_internal/session_persistence.py",
+          "line": 443,
+          "end_line": 488,
+          "label": "get_items(limit)"
+        }
+      ],
+      "yOffset": -7
+    },
+    {
+      "id": "prompt",
+      "type": "frontend",
+      "label": "next prompt",
+      "sublabel": "memory_summary.md",
+      "stage": 4,
+      "row": 3,
+      "sources": [
+        {
+          "path": "src/agents/sandbox/capabilities/memory.py",
+          "line": 50,
+          "end_line": 90,
+          "label": "Memory.instructions"
+        }
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "id": "save",
+      "from": "run",
+      "to": "session",
+      "label": "add_items",
+      "variant": "emphasis"
+    },
+    {
+      "id": "roll",
+      "from": "sbrun",
+      "to": "rollout",
+      "label": "append segment"
+    },
+    {
+      "id": "cmp",
+      "from": "session",
+      "to": "compact",
+      "label": "if wrapped",
+      "variant": "dashed"
+    },
+    {
+      "id": "load",
+      "from": "session",
+      "to": "history",
+      "label": "get_items",
+      "variant": "emphasis"
+    },
+    {
+      "id": "flush",
+      "from": "rollout",
+      "to": "phase1",
+      "label": "on close"
+    },
+    {
+      "id": "raw",
+      "from": "phase1",
+      "to": "phase2",
+      "label": "raw memories"
+    },
+    {
+      "id": "write",
+      "from": "phase2",
+      "to": "memfiles",
+      "label": "edit files",
+      "labelDy": 25
+    },
+    {
+      "id": "inject",
+      "from": "memfiles",
+      "to": "prompt",
+      "label": "summary",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Session = history",
+      "items": [
+        "append-only items, prepended next run; limit counts items, not turns",
+        "written by the Runner after each settled turn"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Memory = distilled files",
+      "items": [
+        "two background agents run when the sandbox session closes",
+        "summary in the prompt; MEMORY.md and skills/ read on demand"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Staleness",
+      "items": [
+        "read prompt: memory is guidance, current evidence wins",
+        "live_update lets the agent edit MEMORY.md in the same turn"
+      ]
+    }
+  ]
+}

@@ -4,6 +4,11 @@ diagrams/**/*.delivery-pending.json
 .archify-delivery-lock.json
 **/.archify-delivery-lock.json
 
+# Archify finalize / browser-check evidence sidecars (contain absolute local paths)
+diagrams/**/*.finalize.json
+diagrams/**/*.finalize-summary.json
+diagrams/**/*.browser-check.json
+
 # Experiment build artifacts
 experiments/**/.venv/
 experiments/**/dist/
