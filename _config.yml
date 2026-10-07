@@ -1,0 +1,7 @@
+title: Repo Research
+description: Source-code-level research on AI infrastructure, agents, context engineering, memory, tools, and runtimes.
+theme: minima
+markdown: kramdown
+
+exclude:
+  - experiments
