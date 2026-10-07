@@ -9,6 +9,7 @@ This repository is not a collection of README summaries. Each study should trace
 | Repository | Pinned commit | Research | Diagrams | Experiment |
 |---|---|---|---|---|
 | [langchain-ai/deepagents](https://github.com/langchain-ai/deepagents) | `16e84d9` (SDK 0.7.22) | [research/deepagents.md](research/deepagents.md) · [web](https://woaitqs.github.io/repo-research/research/deepagents.html) | [8 Archify diagrams](diagrams/deepagents/) | [experiments/deepagents](experiments/deepagents/) |
+| [letta-ai/letta-code](https://github.com/letta-ai/letta-code) | `4b028fa` (v0.34.4) | [research/letta-code.md](research/letta-code.md) · [web](https://woaitqs.github.io/repo-research/research/letta-code.html) | [8 Archify diagrams](diagrams/letta-code/) | [experiments/letta-code](experiments/letta-code/) |
 
 ## What each repository study should contain
 
@@ -30,8 +31,8 @@ For every target repository:
 1. **Pin the target.** Clone it into a temporary directory, never into this repo. Record `git rev-parse HEAD` and cite every source reference against that commit.
 2. **Map, then trace.** Read the manifests, entry points (console scripts, servers) and the composition root. Then follow real call sites end to end. Read the dependency source too when the target delegates to a framework. For deepagents that meant reading LangChain's `create_agent`.
 3. **Separate fact from interpretation.** Facts are backed by `path:line`, a test, or observed runtime behavior. Interpretations are labelled as such, and open questions stay explicit.
-4. **Verify claims at runtime when it is cheap.** For example, drive the real library with a scripted fake model. The deepagents probe found two behaviors that were not obvious from reading alone.
-5. **Run the target's own tests** with its locked dependencies, so environment noise is not mistaken for findings.
+4. **Verify claims at runtime when it is cheap.** For example, drive the real library with a scripted fake model. The deepagents probe found two behaviors that were not obvious from reading alone. When the target is a CLI, run its published build against a real model through a small logging proxy, so every request body is recorded. The letta-code study used this to check what actually entered the model's context, and to measure prompt-cache hits per call.
+5. **Run the target's own tests** with its locked dependencies, so environment noise is not mistaken for findings. Trace every failure to a cause and re-run it with that cause removed before reporting it.
 6. **Reproduce the architecture, not the product.** Build a small dependency-light version, test its architectural invariants, and mutation-test the tests.
 7. **Diagram from evidence.** Every Archify node carries `sources` pinned to the commit.
 
@@ -135,7 +136,7 @@ How it is used here:
   ```
 
 - Optional perceptual review: `archify.mjs visual-check diagrams/<project>/<name>.html --summary --require-provenance` captures screenshots. Look at them before claiming visual quality.
-- `*.delivery.json` provenance sidecars contain absolute local paths and are git-ignored.
+- `*.delivery.json`, `*.finalize.json`, `*.finalize-summary.json` and `*.browser-check.json` receipts contain absolute local paths and are git-ignored. Delete a diagram's old `*.browser-check.json` before re-finalizing it.
 
 ## Running experiments
 
@@ -147,6 +148,12 @@ cd experiments/<project-name>
 ```
 
 The deepagents experiment is stdlib-only. `./run.sh demo` runs the narrated demo without installing anything. Its `upstream_probe/` directory re-checks the research claims against the real SDK.
+
+The letta-code experiment (`minilc`) is also stdlib-only Python and needs `git` on `PATH`. Its extra checks need the target's toolchain:
+
+- `./run.sh probe <letta-code clone>` runs a TypeScript probe against the real `LocalBackend` with Bun. It needs no network.
+- `real_model/run_letta_real.py` drives the built `letta.js` with Node against an OpenAI-compatible model. It reads the API key from `ARK_API_KEY`; never commit keys.
+- `python3 mutation_check.py` injects architectural regressions and checks that the tests catch each one.
 
 ## Research principle
 

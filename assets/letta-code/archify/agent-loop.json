@@ -1,0 +1,62 @@
+{
+  "schema_version": 2,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "letta-code — the agent loop split across client and backend (headless, local backend)",
+    "output": "diagrams/letta-code/agent-loop.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/letta-ai/letta-code.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "4b028fab07c69edaac2ddb4f7b9a43573ff20d81"
+    }
+  },
+  "lanes": [
+    { "id": "main", "label": "Turn" },
+    { "id": "waiting", "label": "Recovering / waiting" },
+    { "id": "terminal", "label": "Exit" }
+  ],
+  "states": [
+    { "id": "input", "type": "start", "label": "turn input", "sublabel": "prompt + reminders", "lane": "main", "col": 0, "step": "01",
+      "sources": [ { "path": "src/headless.ts", "line": 1894, "end_line": 1949, "label": "content with reminders" } ] },
+    { "id": "run", "type": "active", "label": "run started", "sublabel": "1 active run / conv", "lane": "main", "col": 1, "step": "02",
+      "sources": [ { "path": "src/backend/dev/fake-headless-backend.ts", "line": 473, "end_line": 504, "label": "guard · settle · startRun" } ] },
+    { "id": "model", "type": "active", "label": "model step", "sublabel": "one provider call", "lane": "main", "col": 2, "step": "03",
+      "sources": [ { "path": "src/backend/dev/pi-stream-adapter.ts", "line": 574, "end_line": 606, "label": "streamOnce" } ] },
+    { "id": "stop", "type": "decision", "label": "stop_reason?", "sublabel": "set per run", "lane": "main", "col": 3, "step": "04",
+      "sources": [ { "path": "src/backend/dev/provider-turn-executor.ts", "line": 509, "end_line": 544, "label": "done → stop reason" } ] },
+    { "id": "tools", "type": "active", "label": "client tools", "sublabel": "classify + execute", "lane": "main", "col": 4, "step": "05",
+      "sources": [ { "path": "src/headless.ts", "line": 2578, "end_line": 2667, "label": "requires_approval branch" } ] },
+    { "id": "recover", "type": "waiting", "label": "compact / retry", "sublabel": "≤ 3 each, per turn", "lane": "waiting", "col": 2,
+      "sources": [ { "path": "src/backend/dev/pi-stream-adapter.ts", "line": 795, "end_line": 963, "label": "overflow · transient · images" } ] },
+    { "id": "ask", "type": "waiting", "label": "await approval", "sublabel": "TUI dialog / SDK", "lane": "waiting", "col": 4,
+      "sources": [
+        { "path": "src/headless.ts", "line": 4536, "end_line": 4569, "label": "can_use_tool (SDK)" },
+        { "path": "src/cli/app/use-approval-flow.ts", "line": 646, "end_line": 680, "label": "TUI approval" }
+      ] },
+    { "id": "done", "type": "success", "label": "end_turn", "sublabel": "final assistant text", "lane": "terminal", "col": 3,
+      "sources": [ { "path": "src/headless.ts", "line": 2524, "end_line": 2575, "label": "end_turn" } ] },
+    { "id": "failed", "type": "failure", "label": "error / max_tokens", "sublabel": "not retried", "lane": "terminal", "col": 4,
+      "sources": [ { "path": "src/headless.ts", "line": 2814, "end_line": 2824, "label": "non-retriable stops" } ] }
+  ],
+  "transitions": [
+    { "id": "send", "from": "input", "to": "run", "label": "stream()" },
+    { "id": "step", "from": "run", "to": "model", "label": "append input" },
+    { "id": "stopped", "from": "model", "to": "stop", "label": "chunks", "variant": "emphasis" },
+    { "id": "approval", "from": "stop", "to": "tools", "label": "requires_approval", "variant": "emphasis" },
+    { "id": "resume", "from": "tools", "to": "run", "label": "{type: approval}", "route": "top-channel" },
+    { "id": "finish", "from": "stop", "to": "done", "label": "end_turn" },
+    { "id": "fail", "from": "stop", "to": "failed", "label": "error", "variant": "dashed" },
+    { "id": "pressure", "from": "model", "to": "recover", "label": "overflow / 5xx", "variant": "dashed" },
+    { "id": "retry", "from": "recover", "to": "model", "label": "retry" },
+    { "id": "ask-user", "from": "tools", "to": "ask", "label": "ask", "variant": "security" },
+    { "id": "decided", "from": "ask", "to": "tools", "label": "decision", "variant": "security" }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "Loop rule", "items": ["each pass through 'run started' is a new backend run with one model step", "the client decides to continue; the backend never loops on its own"] },
+    { "dot": "amber", "title": "Bounded recovery", "items": ["≤ 3 overflow compactions and ≤ 3 transient retries per provider call", "max_tokens_exceeded ends the turn (seen when a compacted request still fills the window)"] },
+    { "dot": "rose", "title": "One-shot headless", "items": ["'ask' decisions are denied, not awaited", "max-turns counts user turns, not approval continuations"] }
+  ]
+}

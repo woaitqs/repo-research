@@ -1,0 +1,364 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "letta-code — tool call: backend proposes, client gates and executes",
+    "output": "diagrams/letta-code/tool-runtime.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "viewBox": [
+      1040,
+      652
+    ],
+    "repository": {
+      "url": "https://github.com/letta-ai/letta-code.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "4b028fab07c69edaac2ddb4f7b9a43573ff20d81"
+    }
+  },
+  "lanes": [
+    {
+      "id": "reasoning",
+      "label": "Backend / model"
+    },
+    {
+      "id": "gate",
+      "label": "Permission gate",
+      "variant": "exception"
+    },
+    {
+      "id": "chain",
+      "label": "Tool manager"
+    },
+    {
+      "id": "runtime",
+      "label": "Execution runtime"
+    }
+  ],
+  "phases": [
+    {
+      "id": "decide",
+      "label": "Propose + classify",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "execute",
+      "label": "Execute",
+      "fromCol": 2,
+      "toCol": 4,
+      "variant": "emphasis"
+    },
+    {
+      "id": "return",
+      "label": "Return",
+      "fromCol": 5,
+      "toCol": 5
+    }
+  ],
+  "mainPath": [
+    "model",
+    "classify",
+    "hooks",
+    "fn",
+    "clamp",
+    "observe"
+  ],
+  "nodes": [
+    {
+      "id": "model",
+      "lane": "reasoning",
+      "col": 0,
+      "type": "external",
+      "label": "Model step",
+      "sublabel": "approval_request",
+      "sources": [
+        {
+          "path": "src/backend/dev/provider-turn-executor.ts",
+          "line": 496,
+          "end_line": 528,
+          "label": "toolcall → requires_approval"
+        }
+      ]
+    },
+    {
+      "id": "observe",
+      "lane": "reasoning",
+      "col": 5,
+      "type": "external",
+      "label": "Next run",
+      "sublabel": "{type: approval}",
+      "sources": [
+        {
+          "path": "src/headless-response-state.ts",
+          "line": 12,
+          "end_line": 21,
+          "label": "approval input"
+        },
+        {
+          "path": "src/backend/local/local-store.ts",
+          "line": 1507,
+          "end_line": 1548,
+          "label": "→ toolResult"
+        }
+      ]
+    },
+    {
+      "id": "classify",
+      "lane": "gate",
+      "col": 1,
+      "type": "security",
+      "label": "Classify",
+      "sublabel": "checker rules",
+      "sources": [
+        {
+          "path": "src/cli/helpers/approval-classification.ts",
+          "line": 124,
+          "end_line": 230,
+          "label": "allow / deny / ask"
+        },
+        {
+          "path": "src/permissions/checker.ts",
+          "line": 238,
+          "end_line": 418,
+          "label": "evaluation order"
+        }
+      ]
+    },
+    {
+      "id": "denied",
+      "lane": "gate",
+      "col": 2,
+      "type": "security",
+      "label": "Denied",
+      "sublabel": "approve: false",
+      "sources": [
+        {
+          "path": "src/agent/approval-execution.ts",
+          "line": 296,
+          "end_line": 301,
+          "label": "denial result"
+        },
+        {
+          "path": "src/headless.ts",
+          "line": 2603,
+          "end_line": 2626,
+          "label": "ask → deny (one-shot)"
+        }
+      ]
+    },
+    {
+      "id": "hooks",
+      "lane": "chain",
+      "col": 2,
+      "type": "backend",
+      "label": "Pre hooks",
+      "sublabel": "block / rewrite",
+      "sources": [
+        {
+          "path": "src/tools/manager.ts",
+          "line": 2173,
+          "end_line": 2194,
+          "label": "runPreToolUseHooks"
+        }
+      ]
+    },
+    {
+      "id": "fn",
+      "lane": "chain",
+      "col": 3,
+      "type": "backend",
+      "label": "Tool impl",
+      "sublabel": "batched by resource",
+      "sources": [
+        {
+          "path": "src/tools/manager.ts",
+          "line": 2272,
+          "end_line": 2274,
+          "label": "tool.fn"
+        },
+        {
+          "path": "src/agent/approval-execution.ts",
+          "line": 45,
+          "end_line": 118,
+          "label": "parallel vs locks"
+        }
+      ]
+    },
+    {
+      "id": "clamp",
+      "lane": "chain",
+      "col": 4,
+      "type": "backend",
+      "label": "Scrub + clamp",
+      "sublabel": "secrets · 32k",
+      "sources": [
+        {
+          "path": "src/tools/manager.ts",
+          "line": 2307,
+          "end_line": 2324,
+          "label": "scrub + clamp"
+        },
+        {
+          "path": "src/tools/impl/truncation.ts",
+          "line": 37,
+          "label": "TOOL_RETURN_MAX_CHARS"
+        }
+      ]
+    },
+    {
+      "id": "workspace",
+      "lane": "runtime",
+      "col": 3,
+      "type": "database",
+      "label": "Files + shell",
+      "sublabel": "bash -c, cwd",
+      "sources": [
+        {
+          "path": "src/tools/impl/bash.ts",
+          "line": 122,
+          "end_line": 130,
+          "label": "launch"
+        }
+      ]
+    },
+    {
+      "id": "sandbox",
+      "lane": "runtime",
+      "col": 2,
+      "type": "cloud",
+      "label": "OS sandbox",
+      "sublabel": "bwrap/Seatbelt",
+      "sources": [
+        {
+          "path": "src/tools/impl/shell-sandbox.ts",
+          "line": 62,
+          "end_line": 91,
+          "label": "applyShellSandbox"
+        },
+        {
+          "path": "src/sandbox/bwrap.ts",
+          "line": 20,
+          "end_line": 22,
+          "label": "no --unshare-net"
+        }
+      ]
+    },
+    {
+      "id": "overflow",
+      "lane": "runtime",
+      "col": 4,
+      "type": "database",
+      "label": "Overflow file",
+      "sublabel": "full output",
+      "sources": [
+        {
+          "path": "src/tools/impl/overflow.ts",
+          "line": 82,
+          "end_line": 101,
+          "label": "writeOverflowFile"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "calls",
+      "from": "model",
+      "to": "classify",
+      "label": "tool calls",
+      "variant": "emphasis"
+    },
+    {
+      "id": "allow",
+      "from": "classify",
+      "to": "hooks",
+      "label": "allow",
+      "variant": "emphasis"
+    },
+    {
+      "id": "deny",
+      "from": "classify",
+      "to": "denied",
+      "label": "deny / ask",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "args",
+      "from": "hooks",
+      "to": "fn",
+      "label": "args",
+      "variant": "emphasis"
+    },
+    {
+      "id": "io",
+      "from": "fn",
+      "to": "workspace",
+      "label": "file op / exec"
+    },
+    {
+      "id": "wrap",
+      "from": "workspace",
+      "to": "sandbox",
+      "label": "LETTA_FS_SANDBOX",
+      "variant": "dashed",
+      "role": "branch"
+    },
+    {
+      "id": "result",
+      "from": "fn",
+      "to": "clamp",
+      "label": "result",
+      "variant": "emphasis"
+    },
+    {
+      "id": "spill",
+      "from": "clamp",
+      "to": "overflow",
+      "label": "full text",
+      "variant": "dashed"
+    },
+    {
+      "id": "return",
+      "from": "clamp",
+      "to": "observe",
+      "label": "tool_return",
+      "variant": "emphasis"
+    },
+    {
+      "id": "denial-return",
+      "from": "denied",
+      "to": "observe",
+      "label": "approve:false + reason",
+      "variant": "security"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "violet",
+      "title": "Boundary",
+      "items": [
+        "the backend never executes client tools",
+        "it only sees the approval message on the next run"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Gate",
+      "items": [
+        "default mode is unrestricted (mode.ts:10)",
+        "cross-agent memory guard and deny rules apply in every mode"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Isolation",
+      "items": [
+        "kernel sandbox wraps spawned shells only, opt-in, no network isolation",
+        "in-process Read/Edit/Write rely on the permission checker"
+      ]
+    }
+  ]
+}

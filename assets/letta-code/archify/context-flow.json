@@ -1,0 +1,464 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "letta-code — what enters each provider call (local backend)",
+    "output": "diagrams/letta-code/context-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/letta-ai/letta-code.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "4b028fab07c69edaac2ddb4f7b9a43573ff20d81"
+    },
+    "viewBox": [
+      1080,
+      640
+    ],
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "dashed": {
+          "label": "side write (not in context)"
+        }
+      }
+    }
+  },
+  "stages": [
+    {
+      "label": "Sources"
+    },
+    {
+      "label": "Client shaping"
+    },
+    {
+      "label": "State on disk"
+    },
+    {
+      "label": "Per-call request"
+    },
+    {
+      "label": "Model"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "user",
+      "type": "frontend",
+      "label": "User prompt",
+      "sublabel": "turn input",
+      "stage": 0,
+      "row": 0,
+      "sources": [
+        {
+          "path": "src/headless.ts",
+          "line": 1894,
+          "end_line": 1949,
+          "label": "build content"
+        }
+      ],
+      "width": 140
+    },
+    {
+      "id": "usermsg",
+      "type": "frontend",
+      "label": "Turn input",
+      "sublabel": "+ reminder parts",
+      "stage": 1,
+      "row": 0,
+      "sources": [
+        {
+          "path": "src/reminders/engine.ts",
+          "line": 575,
+          "end_line": 606,
+          "label": "prependReminderPartsToContent"
+        },
+        {
+          "path": "src/backend/local/local-store.ts",
+          "line": 927,
+          "end_line": 968,
+          "label": "appendTurnInput (user | approval)"
+        }
+      ],
+      "width": 140
+    },
+    {
+      "id": "transcript",
+      "type": "database",
+      "label": "Transcript",
+      "sublabel": "append-only (recall)",
+      "stage": 2,
+      "row": 0,
+      "sources": [
+        {
+          "path": "src/backend/local/local-store.ts",
+          "line": 970,
+          "end_line": 1012,
+          "label": "appendStreamChunk"
+        },
+        {
+          "path": "src/backend/local/local-transcript.ts",
+          "line": 131,
+          "end_line": 160,
+          "label": "session entries"
+        }
+      ],
+      "width": 140
+    },
+    {
+      "id": "view",
+      "type": "backend",
+      "label": "Message view",
+      "sublabel": "summary + tail",
+      "stage": 3,
+      "row": 0,
+      "sources": [
+        {
+          "path": "src/backend/local/local-store.ts",
+          "line": 1014,
+          "end_line": 1022,
+          "label": "listLocalMessages"
+        },
+        {
+          "path": "src/backend/dev/pi-stream-adapter.ts",
+          "line": 265,
+          "end_line": 281,
+          "label": "toPiMessages"
+        }
+      ],
+      "width": 140
+    },
+    {
+      "id": "toolout",
+      "type": "backend",
+      "label": "Raw tool output",
+      "sublabel": "Bash · Read · …",
+      "stage": 0,
+      "row": 1,
+      "sources": [
+        {
+          "path": "src/tools/manager.ts",
+          "line": 2272,
+          "end_line": 2274,
+          "label": "tool.fn"
+        }
+      ],
+      "width": 140
+    },
+    {
+      "id": "clamp",
+      "type": "security",
+      "label": "Clamp + scrub",
+      "sublabel": "≤ 32k chars, head+tail",
+      "stage": 1,
+      "row": 1,
+      "sources": [
+        {
+          "path": "src/tools/manager.ts",
+          "line": 2307,
+          "end_line": 2324,
+          "label": "scrub + clamp"
+        },
+        {
+          "path": "src/tools/impl/truncation.ts",
+          "line": 11,
+          "end_line": 38,
+          "label": "limits"
+        }
+      ],
+      "width": 140
+    },
+    {
+      "id": "overflow",
+      "type": "database",
+      "label": "Overflow file",
+      "sublabel": "full output on disk",
+      "stage": 2,
+      "row": 1,
+      "sources": [
+        {
+          "path": "src/tools/impl/overflow.ts",
+          "line": 82,
+          "end_line": 101,
+          "label": "writeOverflowFile"
+        }
+      ],
+      "width": 140
+    },
+    {
+      "id": "compaction",
+      "type": "backend",
+      "label": "Compaction",
+      "sublabel": "> window − 16k reserve",
+      "stage": 3,
+      "row": 1,
+      "sources": [
+        {
+          "path": "src/backend/dev/provider-turn-executor.ts",
+          "line": 241,
+          "end_line": 272,
+          "label": "threshold"
+        },
+        {
+          "path": "src/backend/local/compaction.ts",
+          "line": 584,
+          "end_line": 650,
+          "label": "cut at assistant msg"
+        },
+        {
+          "path": "src/backend/local/local-store.ts",
+          "line": 1157,
+          "end_line": 1209,
+          "label": "replace in-context ids"
+        }
+      ],
+      "width": 140
+    },
+    {
+      "id": "memfs",
+      "type": "database",
+      "label": "MemFS repo",
+      "sublabel": "committed HEAD only",
+      "stage": 0,
+      "row": 2,
+      "sources": [
+        {
+          "path": "src/backend/local/system-prompt-compilation.ts",
+          "line": 81,
+          "end_line": 143,
+          "label": "git ls-tree / show HEAD"
+        }
+      ],
+      "width": 140
+    },
+    {
+      "id": "compiled",
+      "type": "database",
+      "label": "Compiled prompt",
+      "sublabel": "cached; Δ on new commit",
+      "stage": 2,
+      "row": 2,
+      "sources": [
+        {
+          "path": "src/backend/local/local-backend.ts",
+          "line": 896,
+          "end_line": 947,
+          "label": "cache + memory delta"
+        },
+        {
+          "path": "src/backend/local/system-prompt-compilation.ts",
+          "line": 432,
+          "end_line": 461,
+          "label": "compile"
+        }
+      ],
+      "width": 140
+    },
+    {
+      "id": "sysprompt",
+      "type": "backend",
+      "label": "System prompt",
+      "sublabel": "+ <available_skills>",
+      "stage": 3,
+      "row": 2,
+      "sources": [
+        {
+          "path": "src/backend/local/system-prompt-compilation.ts",
+          "line": 391,
+          "end_line": 430,
+          "label": "skills block"
+        }
+      ],
+      "width": 140
+    },
+    {
+      "id": "llm",
+      "type": "external",
+      "label": "Model",
+      "sublabel": "one pi-ai Context",
+      "stage": 4,
+      "row": 2,
+      "sources": [
+        {
+          "path": "src/backend/dev/pi-stream-adapter.ts",
+          "line": 574,
+          "end_line": 606,
+          "label": "Context assembly"
+        }
+      ],
+      "width": 140
+    },
+    {
+      "id": "skills",
+      "type": "database",
+      "label": "Skills",
+      "sublabel": "SKILL.md frontmatter",
+      "stage": 0,
+      "row": 3,
+      "sources": [
+        {
+          "path": "src/agent/client-skills.ts",
+          "line": 377,
+          "end_line": 383,
+          "label": "name · description · location"
+        }
+      ],
+      "width": 140
+    },
+    {
+      "id": "extras",
+      "type": "frontend",
+      "label": "Request extras",
+      "sublabel": "client_tools/skills",
+      "stage": 3,
+      "row": 3,
+      "sources": [
+        {
+          "path": "src/agent/message.ts",
+          "line": 310,
+          "end_line": 337,
+          "label": "request body"
+        },
+        {
+          "path": "src/tools/client-tool-serialization.ts",
+          "line": 48,
+          "end_line": 78,
+          "label": "serializeClientTools"
+        }
+      ],
+      "width": 140
+    }
+  ],
+  "flows": [
+    {
+      "id": "user-msg",
+      "from": "user",
+      "to": "usermsg",
+      "label": "prompt",
+      "variant": "emphasis"
+    },
+    {
+      "id": "msg-append",
+      "from": "usermsg",
+      "to": "transcript",
+      "label": "append",
+      "variant": "emphasis"
+    },
+    {
+      "id": "out-clamp",
+      "from": "toolout",
+      "to": "clamp",
+      "label": "tool_return"
+    },
+    {
+      "id": "clamp-input",
+      "from": "clamp",
+      "to": "usermsg",
+      "label": "approval msg",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "clamp-overflow",
+      "from": "clamp",
+      "to": "overflow",
+      "label": "full text",
+      "variant": "dashed"
+    },
+    {
+      "id": "transcript-view",
+      "from": "transcript",
+      "to": "view",
+      "label": "in-context",
+      "variant": "emphasis"
+    },
+    {
+      "id": "compact-view",
+      "from": "compaction",
+      "to": "view",
+      "label": "summary + tail",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "memfs-compiled",
+      "from": "memfs",
+      "to": "compiled",
+      "label": "HEAD at create/compact"
+    },
+    {
+      "id": "compiled-sys",
+      "from": "compiled",
+      "to": "sysprompt",
+      "label": "same bytes"
+    },
+    {
+      "id": "skills-extras",
+      "from": "skills",
+      "to": "extras",
+      "label": "name + description"
+    },
+    {
+      "id": "view-llm",
+      "from": "view",
+      "to": "llm",
+      "label": "messages",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "top",
+      "via": [
+        [
+          960,
+          157
+        ]
+      ]
+    },
+    {
+      "id": "sys-llm",
+      "from": "sysprompt",
+      "to": "llm",
+      "label": "system"
+    },
+    {
+      "id": "extras-llm",
+      "from": "extras",
+      "to": "llm",
+      "label": "tool schemas",
+      "fromSide": "right",
+      "toSide": "bottom",
+      "via": [
+        [
+          960,
+          499
+        ]
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Enters context",
+      "items": [
+        "cached system prompt (core memory + skills list) + message view + all tool schemas",
+        "volatile facts ride on the user message as <system-reminder> parts"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Kept out",
+      "items": [
+        "uncommitted memory, child-directory memory bodies, skill bodies",
+        "full tool output beyond 32k (overflow file) and evicted messages (transcript)"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Memory change mid-conversation",
+      "items": [
+        "a new commit adds a <memory_update> to the next call only",
+        "the prompt bytes are re-rendered at compaction or in a new conversation"
+      ]
+    }
+  ]
+}

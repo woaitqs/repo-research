@@ -1,0 +1,297 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "letta-code — sub-agent delegation (Agent tool → child letta process)",
+    "output": "diagrams/letta-code/sub-agent-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "viewBox": [
+      1080,
+      640
+    ],
+    "column_fit": "spread",
+    "repository": {
+      "url": "https://github.com/letta-ai/letta-code.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "4b028fab07c69edaac2ddb4f7b9a43573ff20d81"
+    }
+  },
+  "participants": [
+    {
+      "id": "parent",
+      "type": "frontend",
+      "label": "Parent loop",
+      "sublabel": "TUI / SDK / listener",
+      "sources": [
+        {
+          "path": "src/headless.ts",
+          "line": 3596,
+          "end_line": 3606,
+          "label": "queue adder (bidirectional)"
+        }
+      ]
+    },
+    {
+      "id": "task",
+      "type": "backend",
+      "label": "Agent tool",
+      "sublabel": "task.ts",
+      "sources": [
+        {
+          "path": "src/tools/impl/task.ts",
+          "line": 937,
+          "end_line": 960,
+          "label": "background at depth 0"
+        },
+        {
+          "path": "src/tools/impl/task.ts",
+          "line": 590,
+          "end_line": 640,
+          "label": "launchSubagent"
+        },
+        {
+          "path": "src/tools/impl/task.ts",
+          "line": 432,
+          "end_line": 479,
+          "label": "completion notification"
+        }
+      ]
+    },
+    {
+      "id": "manager",
+      "type": "backend",
+      "label": "Subagent manager",
+      "sublabel": "spawn + parse",
+      "sources": [
+        {
+          "path": "src/agent/subagents/manager.ts",
+          "line": 180,
+          "end_line": 230,
+          "label": "child CLI args"
+        },
+        {
+          "path": "src/agent/subagents/subagent-launcher.ts",
+          "line": 215,
+          "end_line": 289,
+          "label": "child env (depth+1)"
+        }
+      ]
+    },
+    {
+      "id": "child",
+      "type": "backend",
+      "label": "Child letta",
+      "sublabel": "headless, stream-json",
+      "sources": [
+        {
+          "path": "src/headless.ts",
+          "line": 829,
+          "end_line": 846,
+          "label": "subagent role, no memfs"
+        },
+        {
+          "path": "src/agent/subagents/subagent-depth.ts",
+          "line": 11,
+          "end_line": 43,
+          "label": "depth ≤ 2, tool policy"
+        }
+      ]
+    },
+    {
+      "id": "backend",
+      "type": "database",
+      "label": "Backend",
+      "sublabel": "agents + conversations",
+      "sources": [
+        {
+          "path": "src/agent/subagents/fork-conversation.ts",
+          "line": 50,
+          "end_line": 106,
+          "label": "fork: hidden copy"
+        }
+      ]
+    }
+  ],
+  "segments": [
+    {
+      "from": 150,
+      "to": 250,
+      "label": "Launch"
+    },
+    {
+      "from": 262,
+      "to": 360,
+      "label": "Child turn"
+    },
+    {
+      "from": 372,
+      "to": 476,
+      "label": "Report"
+    }
+  ],
+  "messages": [
+    {
+      "id": "call",
+      "from": "parent",
+      "to": "task",
+      "y": 160,
+      "label": "Agent(prompt, type)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "launch",
+      "from": "task",
+      "to": "manager",
+      "y": 188,
+      "label": "launchSubagent"
+    },
+    {
+      "id": "spawn",
+      "from": "manager",
+      "to": "child",
+      "y": 216,
+      "label": "spawn; prompt on stdin",
+      "variant": "emphasis",
+      "note": "--new-agent --system <type>, --permission-mode unrestricted"
+    },
+    {
+      "id": "ack",
+      "from": "task",
+      "to": "parent",
+      "y": 244,
+      "label": "task id + output file",
+      "variant": "return",
+      "note": "depth 0 never waits"
+    },
+    {
+      "id": "child-create",
+      "from": "child",
+      "to": "backend",
+      "y": 272,
+      "label": "new agent + conversation",
+      "note": "fork: hidden copy of the parent conversation"
+    },
+    {
+      "id": "child-turns",
+      "from": "child",
+      "to": "backend",
+      "y": 300,
+      "label": "own split loop + tools"
+    },
+    {
+      "id": "child-end",
+      "from": "backend",
+      "to": "child",
+      "y": 328,
+      "label": "end_turn",
+      "variant": "return"
+    },
+    {
+      "id": "result-event",
+      "from": "child",
+      "to": "manager",
+      "y": 356,
+      "label": "result event (final text)",
+      "variant": "return"
+    },
+    {
+      "id": "report",
+      "from": "manager",
+      "to": "task",
+      "y": 384,
+      "label": "report",
+      "variant": "return"
+    },
+    {
+      "id": "notify",
+      "from": "task",
+      "to": "parent",
+      "y": 412,
+      "label": "<task-notification> ≤ 30k chars",
+      "variant": "return",
+      "note": "only a long-lived host consumes it"
+    },
+    {
+      "id": "next-turn",
+      "from": "parent",
+      "to": "backend",
+      "y": 440,
+      "label": "new turn: report only",
+      "variant": "emphasis"
+    },
+    {
+      "id": "answer",
+      "from": "backend",
+      "to": "parent",
+      "y": 468,
+      "label": "answer using the report",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "parent",
+      "from": 156,
+      "to": 248,
+      "type": "frontend"
+    },
+    {
+      "participant": "task",
+      "from": 156,
+      "to": 248,
+      "type": "backend"
+    },
+    {
+      "participant": "manager",
+      "from": 184,
+      "to": 388,
+      "type": "backend"
+    },
+    {
+      "participant": "child",
+      "from": 212,
+      "to": 360,
+      "type": "backend"
+    },
+    {
+      "participant": "task",
+      "from": 380,
+      "to": 416,
+      "type": "backend"
+    },
+    {
+      "participant": "parent",
+      "from": 408,
+      "to": 472,
+      "type": "frontend"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Context isolation",
+      "items": [
+        "fresh child: new memory-less agent, sees only its brief",
+        "fork child: copy of the parent conversation + 'NOT the primary agent' reminder"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Return contract",
+      "items": [
+        "only the final result text comes back, as a queued task notification",
+        "nested children (depth > 0) run in the foreground instead"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Observed",
+      "items": [
+        "one-shot `letta -p` exits before the report: the child is orphaned",
+        "bidirectional stream-json delivered it as a second turn (3/3 runs)"
+      ]
+    }
+  ]
+}

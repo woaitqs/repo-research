@@ -1,6 +1,9 @@
 # Archify delivery provenance sidecars and locks (contain absolute local paths)
 diagrams/**/*.delivery.json
 diagrams/**/*.delivery-pending.json
+diagrams/**/*.finalize.json
+diagrams/**/*.finalize-summary.json
+diagrams/**/*.browser-check.json
 .archify-delivery-lock.json
 **/.archify-delivery-lock.json
 

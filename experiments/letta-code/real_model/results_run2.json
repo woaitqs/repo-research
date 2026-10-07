@@ -1,0 +1,513 @@
+{
+  "model": "deepseek-v4-1-flash-260910",
+  "letta_js_sha": "8c1f791510fc",
+  "started": "2026-10-07T10:20:20Z",
+  "scenarios": {
+    "S1_tool_loop": {
+      "checks": {
+        "answer_file_is_4217": true,
+        "each_tool_step_is_a_separate_run_ending_requires_approval": true,
+        "system_prompt_byte_identical_across_calls": true,
+        "tool_schemas_sent_on_every_call": true,
+        "volatile_context_in_user_message_reminders": true
+      },
+      "stop_reasons": [
+        "requires_approval",
+        "requires_approval",
+        "end_turn"
+      ],
+      "provider_calls": [
+        {
+          "n_messages": 2,
+          "roles": [
+            "system",
+            "user"
+          ],
+          "system_sha": "ae2b3b2cd099",
+          "system_chars": 29116,
+          "tool_names": [
+            "Bash",
+            "Monitor",
+            "WatchPR",
+            "Wake",
+            "EnterWorktree",
+            "ExitWorktree",
+            "SetWorkingDirectory",
+            "Edit",
+            "TaskStop",
+            "Read",
+            "Skill",
+            "Workflow",
+            "Agent",
+            "SendAgentMessage",
+            "TaskCreate",
+            "TaskGet",
+            "TaskList",
+            "TaskUpdate",
+            "Write"
+          ],
+          "tools_chars": 74924
+        },
+        {
+          "n_messages": 4,
+          "roles": [
+            "system",
+            "user",
+            "assistant",
+            "tool"
+          ],
+          "system_sha": "ae2b3b2cd099",
+          "system_chars": 29116,
+          "tool_names": [
+            "Bash",
+            "Monitor",
+            "WatchPR",
+            "Wake",
+            "EnterWorktree",
+            "ExitWorktree",
+            "SetWorkingDirectory",
+            "Edit",
+            "TaskStop",
+            "Read",
+            "Skill",
+            "Workflow",
+            "Agent",
+            "SendAgentMessage",
+            "TaskCreate",
+            "TaskGet",
+            "TaskList",
+            "TaskUpdate",
+            "Write"
+          ],
+          "tools_chars": 74924
+        },
+        {
+          "n_messages": 6,
+          "roles": [
+            "system",
+            "user",
+            "assistant",
+            "tool",
+            "assistant",
+            "tool"
+          ],
+          "system_sha": "ae2b3b2cd099",
+          "system_chars": 29116,
+          "tool_names": [
+            "Bash",
+            "Monitor",
+            "WatchPR",
+            "Wake",
+            "EnterWorktree",
+            "ExitWorktree",
+            "SetWorkingDirectory",
+            "Edit",
+            "TaskStop",
+            "Read",
+            "Skill",
+            "Workflow",
+            "Agent",
+            "SendAgentMessage",
+            "TaskCreate",
+            "TaskGet",
+            "TaskList",
+            "TaskUpdate",
+            "Write"
+          ],
+          "tools_chars": 74924
+        }
+      ],
+      "tool_calls": [
+        "Read",
+        "Write"
+      ],
+      "result": "4217\n\nI read `notes.txt` and wrote the magic number `4217` into `answer.txt`.",
+      "seconds": 9.8,
+      "first_user_message_parts": [
+        "<system-reminder>\nThis is an automated message providing context about the user's environment.\nThe user has just initiated a new connection via the [Letta Code ",
+        "<system-reminder> This is an automated message providing information about you.\n- **Agent ID (also stored in `AGENT_ID` env var)**: agent-local-e60b755b-73c8-4b",
+        "<system-reminder>\nMCP servers with available tools: None\n</system-reminder>",
+        "<system-reminder>Permission mode active: unrestricted. All tools auto-approved. Bias toward action.</system-reminder>\n\n",
+        "Read notes.txt, then create answer.txt containing only the magic number. Reply with the number."
+      ]
+    },
+    "S2_memory": {
+      "checks": {
+        "agent_committed_the_fact_to_memfs": true,
+        "a_memory_update_reached_the_model_in_turn1": true,
+        "same_conversation_later_calls_do_not_carry_the_memory": true,
+        "new_conversation_prompt_contains_the_memory": true,
+        "new_conversation_answers_teal_without_tools": true
+      },
+      "memfs_log": [
+        "71b004e memory: record human's favorite color (teal) as a standing preference",
+        "aa5cf7c chore: initialize local memory"
+      ],
+      "turn1_calls": [
+        {
+          "system_sha": "ae2b3b2cd099",
+          "teal_in_system": false,
+          "memory_update_in_system": false,
+          "memory_update_in_messages": false
+        },
+        {
+          "system_sha": "ae2b3b2cd099",
+          "teal_in_system": false,
+          "memory_update_in_system": false,
+          "memory_update_in_messages": false
+        },
+        {
+          "system_sha": "ae2b3b2cd099",
+          "teal_in_system": false,
+          "memory_update_in_system": false,
+          "memory_update_in_messages": false
+        },
+        {
+          "system_sha": "ae2b3b2cd099",
+          "teal_in_system": false,
+          "memory_update_in_system": false,
+          "memory_update_in_messages": false
+        },
+        {
+          "system_sha": "c291e1e3e2c8",
+          "teal_in_system": true,
+          "memory_update_in_system": true,
+          "memory_update_in_messages": false
+        }
+      ],
+      "turn1_tools": [
+        "Bash",
+        "Bash",
+        "Read",
+        "Read",
+        "Read",
+        "Write",
+        "Bash"
+      ],
+      "turn2_calls": [
+        {
+          "system_sha": "ae2b3b2cd099",
+          "teal_in_system": false,
+          "memory_update_anywhere": false,
+          "teal_in_transcript": true
+        },
+        {
+          "system_sha": "ae2b3b2cd099",
+          "teal_in_system": false,
+          "memory_update_anywhere": false,
+          "teal_in_transcript": true
+        }
+      ],
+      "turn2_tools": [
+        "Bash",
+        "Bash"
+      ],
+      "turn2_result": "`date` → **Wed Oct 7 10:20:57 UTC 2026**\n\nYour favorite color is **teal** — committed to `human.md` in `71b004e` last turn, and verified still present on disk just now (line 6, under \"Preferences\").\n\nOne honest detail worth flagging, since this is exactly the kind of thing that should work reliably: the system prompt compiled for *this* turn still shows my pre-edit `human.md` text (\"I haven't gotten to know this person yet\"), because the memory recompile happens on conversation start against a committed revision, not instantly. So I'm answering from the recalled conversation and a direct read of the file — not from it being in my in-context memory yet. On subsequent turns it'll be baked into my prompt directly, which is the durable version of \"permanently.\"",
+      "turn3_result": "Teal. 🩵",
+      "turn3_tools": []
+    },
+    "S3a_subagent_one_shot": {
+      "checks": {
+        "parent_called_Agent": true,
+        "child_ran_as_a_separate_agent_with_a_different_system_prompt": true,
+        "child_first_request_is_only_the_brief": true,
+        "child_got_no_shared_environment_reminders": true,
+        "child_has_no_parent_memory_block": true,
+        "(observed) one-shot parent ends its turn before the report arrives": true
+      },
+      "parent_tools": [
+        "Agent"
+      ],
+      "agent_tool_return": "Task running in background with task ID: task_1\nAgent ID: agent-local-c4c12898-e197-4c0d-870c-779c4f54f099\nConversation ID: default\nOutput file: /tmp/letta-background-EbPW4b/task_1.log\n\nYou will be notified automatically when this task completes — a <task-notification> message will be delivered with the result. No need to poll, sleep-wait, or check the output file. Just continue with your current ",
+      "child_calls_logged": 1,
+      "child_tool_names": [
+        "Bash",
+        "Edit",
+        "TaskStop",
+        "Read",
+        "Agent",
+        "SendAgentMessage",
+        "TaskCreate",
+        "TaskGet",
+        "TaskList",
+        "TaskUpdate",
+        "Write"
+      ],
+      "child_first_user_message": "[{\"type\": \"text\", \"text\": \"<system-reminder>\\nThis message is from agent agent-local-e60b755b-73c8-4bfc-9148-95151d617b4b, conversation local-conv-4.\\nThe sender will only see the final message you generate (not tool calls or reasoning). Include your answer in your final response.\\n</system-reminder>\\n\\n\"}, {\"type\": \"text\", \"text\": \"Count the lines in notes.txt in the current directory using the shell and report the number.\"}]",
+      "result": "The subagent is running. Waiting for its report.",
+      "seconds": 8.4
+    },
+    "S3b_subagent_bidirectional": {
+      "checks": {
+        "two_turns_first_launch_then_notification": true,
+        "parent_context_received_a_task_notification": true,
+        "child_context_never_enters_parent_context": true,
+        "final_answer_mentions_2": true
+      },
+      "turn_results": [
+        "The line-count task is running in the background. I'll report back with the number as soon as the subagent finishes.",
+        "The subagent reported **2 lines**.\n\nIt ran `wc -l notes.txt`, which output `2 notes.txt`. It noted the file is 33 bytes containing two lines — `project notes` and `magic number: 4217` — with a trailin"
+      ],
+      "child_calls_logged": 4,
+      "parent_calls": 3
+    },
+    "S4a_compaction_multi_turn": {
+      "checks": {
+        "window_set": true,
+        "compaction_happened": true,
+        "transcript_append_only_with_compaction_row": true,
+        "a_later_request_starts_with_system_alert_summary": true,
+        "turn_C_answers_both_without_tools": false
+      },
+      "window": 45000,
+      "turns": {
+        "A": {
+          "stops": [
+            "requires_approval",
+            "requires_approval",
+            "requires_approval",
+            "requires_approval",
+            "end_turn"
+          ],
+          "compactions": [],
+          "tools": [
+            "Bash",
+            "Read",
+            "Read",
+            "Bash"
+          ],
+          "calls": [
+            {
+              "n_messages": 4,
+              "system_sha": "6c2665cff27a",
+              "first_is_system_alert": false,
+              "is_summarizer_call": false,
+              "max_completion_tokens": 16303,
+              "prompt_tokens": 24684,
+              "finish": "tool_calls"
+            },
+            {
+              "n_messages": 6,
+              "system_sha": "6c2665cff27a",
+              "first_is_system_alert": false,
+              "is_summarizer_call": false,
+              "max_completion_tokens": 16042,
+              "prompt_tokens": 24884,
+              "finish": "tool_calls"
+            },
+            {
+              "n_messages": 8,
+              "system_sha": "6c2665cff27a",
+              "first_is_system_alert": false,
+              "is_summarizer_call": false,
+              "max_completion_tokens": 8322,
+              "prompt_tokens": 31219,
+              "finish": "tool_calls"
+            },
+            {
+              "n_messages": 10,
+              "system_sha": "6c2665cff27a",
+              "first_is_system_alert": false,
+              "is_summarizer_call": false,
+              "max_completion_tokens": 7639,
+              "prompt_tokens": 32986,
+              "finish": "tool_calls"
+            },
+            {
+              "n_messages": 12,
+              "system_sha": "6c2665cff27a",
+              "first_is_system_alert": false,
+              "is_summarizer_call": false,
+              "max_completion_tokens": 7686,
+              "prompt_tokens": 33279,
+              "finish": "stop"
+            }
+          ],
+          "result": "Last line of `big1.txt`:\n\n```\nLAST LINE OF big1.txt: ALPHA-END\n```\n\nI read all 401 lines (no line exceeded 2000 chars, so nothing was silently truncated) and confirmed it directly — 34,033 bytes, ending with that line plus a trailing newline. The rest of the file is filler (`alpha filler line 00000`"
+        },
+        "B": {
+          "stops": [
+            "requires_approval",
+            "max_tokens_exceeded"
+          ],
+          "compactions": [
+            {
+              "trigger": "context_window_limit"
+            },
+            {
+              "trigger": "context_window_limit"
+            }
+          ],
+          "tools": [
+            "Read"
+          ],
+          "calls": [
+            {
+              "n_messages": 14,
+              "system_sha": "6c2665cff27a",
+              "first_is_system_alert": false,
+              "is_summarizer_call": false,
+              "max_completion_tokens": 6964,
+              "prompt_tokens": 34023,
+              "finish": "tool_calls"
+            },
+            {
+              "n_messages": 2,
+              "system_sha": "6cff62edd10c",
+              "first_is_system_alert": false,
+              "is_summarizer_call": true,
+              "max_completion_tokens": 32000,
+              "prompt_tokens": 1593,
+              "finish": "stop"
+            },
+            {
+              "n_messages": 12,
+              "system_sha": "6c2665cff27a",
+              "first_is_system_alert": true,
+              "is_summarizer_call": false,
+              "max_completion_tokens": 1,
+              "prompt_tokens": 37572,
+              "finish": "length"
+            },
+            {
+              "n_messages": 2,
+              "system_sha": "6cff62edd10c",
+              "first_is_system_alert": false,
+              "is_summarizer_call": true,
+              "max_completion_tokens": 32000,
+              "prompt_tokens": 2244,
+              "finish": "stop"
+            }
+          ],
+          "result": ""
+        },
+        "C": {
+          "stops": [
+            "end_turn"
+          ],
+          "compactions": [],
+          "tools": [],
+          "calls": [
+            {
+              "n_messages": 9,
+              "system_sha": "6c2665cff27a",
+              "first_is_system_alert": true,
+              "is_summarizer_call": false,
+              "max_completion_tokens": 8612,
+              "prompt_tokens": 30012,
+              "finish": "stop"
+            }
+          ],
+          "result": "Without tools, I can only report what's actually in my context:\n\n**big1.txt — last line (verified earlier):**\n```\nLAST LINE OF big1.txt: ALPHA-END\n```\nThat was line 401 of 401, confirmed byte-for-byte at the end of the file.\n\n**big2.txt — I can't honestly tell you.** I've read lines 1–210 so far, wh"
+        }
+      },
+      "transcript_row_types": [
+        "session",
+        "message",
+        "message",
+        "message",
+        "message",
+        "message",
+        "message",
+        "message",
+        "message",
+        "message",
+        "message",
+        "message",
+        "message",
+        "message",
+        "message",
+        "message",
+        "compaction",
+        "message",
+        "compaction",
+        "message",
+        "message"
+      ]
+    },
+    "S4b_compaction_stress": {
+      "checks": {
+        "window_set": true,
+        "compaction_happened": true,
+        "(observed) answer survives": false
+      },
+      "stops": [
+        "requires_approval",
+        "requires_approval",
+        "max_tokens_exceeded"
+      ],
+      "compactions": [
+        {
+          "trigger": "context_window_limit"
+        },
+        {
+          "trigger": "context_window_limit"
+        }
+      ],
+      "calls": [
+        {
+          "n_messages": 4,
+          "system_sha": "6c2665cff27a",
+          "first_is_system_alert": false,
+          "is_summarizer_call": false,
+          "max_completion_tokens": 11293,
+          "prompt_tokens": 24695,
+          "finish": "tool_calls"
+        },
+        {
+          "n_messages": 6,
+          "system_sha": "6c2665cff27a",
+          "first_is_system_alert": false,
+          "is_summarizer_call": false,
+          "max_completion_tokens": 10919,
+          "prompt_tokens": 25020,
+          "finish": "tool_calls"
+        },
+        {
+          "n_messages": 2,
+          "system_sha": "6cff62edd10c",
+          "first_is_system_alert": false,
+          "is_summarizer_call": true,
+          "max_completion_tokens": 32000,
+          "prompt_tokens": 1451,
+          "finish": "stop"
+        },
+        {
+          "n_messages": 7,
+          "system_sha": "6c2665cff27a",
+          "first_is_system_alert": true,
+          "is_summarizer_call": false,
+          "max_completion_tokens": 1,
+          "prompt_tokens": 37215,
+          "finish": "length"
+        },
+        {
+          "n_messages": 2,
+          "system_sha": "6cff62edd10c",
+          "first_is_system_alert": false,
+          "is_summarizer_call": true,
+          "max_completion_tokens": 32000,
+          "prompt_tokens": 1195,
+          "finish": "stop"
+        }
+      ],
+      "result": "",
+      "transcript_row_types": [
+        "session",
+        "message",
+        "message",
+        "message",
+        "message",
+        "message",
+        "message",
+        "message",
+        "message",
+        "compaction",
+        "message",
+        "compaction"
+      ]
+    }
+  },
+  "provider_calls_total": 38,
+  "workdir": "<temp>"
+}

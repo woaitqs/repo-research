@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "letta-code — system architecture (client harness ⇄ Backend contract ⇄ model)",
+    "output": "diagrams/letta-code/architecture.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/letta-ai/letta-code.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "4b028fab07c69edaac2ddb4f7b9a43573ff20d81"
+    }
+  },
+  "components": [
+    { "id": "user", "type": "external", "label": "User / host", "sublabel": "TUI · -p · Desktop · chat", "pos": [40, 230], "size": [150, 64] },
+    { "id": "entry", "type": "frontend", "label": "letta CLI entry", "sublabel": "index.ts main()", "pos": [270, 230], "size": [170, 64],
+      "sources": [
+        { "path": "src/index.ts", "line": 571, "label": "main()" },
+        { "path": "src/index.ts", "line": 809, "label": "isHeadlessStartup" },
+        { "path": "src/index.ts", "line": 1291, "end_line": 1292, "label": "handleHeadlessCommand" }
+      ] },
+    { "id": "harness", "type": "backend", "label": "Client turn loop", "sublabel": "headless · TUI · listener", "pos": [560, 230], "size": [170, 64], "tag": "owns execution",
+      "sources": [
+        { "path": "src/headless.ts", "line": 2176, "end_line": 2244, "label": "while(true) → sendMessageStream" },
+        { "path": "src/headless.ts", "line": 2578, "end_line": 2667, "label": "requires_approval branch" },
+        { "path": "src/agent/message.ts", "line": 310, "end_line": 337, "label": "request body: client_tools" }
+      ] },
+    { "id": "perms", "type": "security", "label": "Permission checker", "sublabel": "modes · rules · guards", "pos": [560, 60], "size": [170, 64], "tag": "default: unrestricted",
+      "sources": [
+        { "path": "src/cli/helpers/approval-classification.ts", "line": 124, "end_line": 230, "label": "classifyApprovals" },
+        { "path": "src/permissions/checker.ts", "line": 238, "end_line": 418, "label": "evaluation order" },
+        { "path": "src/permissions/mode.ts", "line": 10, "label": "DEFAULT_PERMISSION_MODE" }
+      ] },
+    { "id": "toolmgr", "type": "backend", "label": "Tool manager", "sublabel": "batch · hooks · clamp", "pos": [560, 400], "size": [170, 64],
+      "sources": [
+        { "path": "src/agent/approval-execution.ts", "line": 324, "end_line": 440, "label": "executeApprovalBatch" },
+        { "path": "src/tools/manager.ts", "line": 1966, "end_line": 2433, "label": "executeToolInner" },
+        { "path": "src/tools/impl/truncation.ts", "line": 37, "label": "32k return clamp" }
+      ] },
+    { "id": "workspace", "type": "database", "label": "Workspace + shell", "sublabel": "files · bash -c", "pos": [40, 400], "size": [150, 64], "tag": "opt-in bwrap/seatbelt",
+      "sources": [
+        { "path": "src/tools/impl/bash.ts", "line": 122, "end_line": 130, "label": "shell launch + sandbox" },
+        { "path": "src/tools/impl/shell-sandbox.ts", "line": 62, "end_line": 91, "label": "applyShellSandbox" }
+      ] },
+    { "id": "subagent", "type": "backend", "label": "Sub-agent process", "sublabel": "child letta, stream-json", "pos": [560, 570], "size": [170, 64],
+      "sources": [
+        { "path": "src/agent/subagents/manager.ts", "line": 180, "end_line": 230, "label": "child CLI args" },
+        { "path": "src/agent/subagents/manager.ts", "line": 451, "end_line": 458, "label": "spawn + prompt on stdin" }
+      ] },
+    { "id": "iface", "type": "backend", "label": "Backend interface", "sublabel": "getBackend()", "pos": [850, 230], "size": [170, 64], "tag": "Letta REST contract",
+      "sources": [
+        { "path": "src/backend/backend.ts", "line": 190, "end_line": 369, "label": "interface Backend" },
+        { "path": "src/backend/backend.ts", "line": 731, "end_line": 744, "label": "createBackendForMode" }
+      ] },
+    { "id": "api", "type": "backend", "label": "APIBackend", "sublabel": "@letta-ai/letta-client", "pos": [850, 60], "size": [170, 64],
+      "sources": [
+        { "path": "src/backend/backend.ts", "line": 376, "end_line": 410, "label": "class APIBackend" },
+        { "path": "src/backend/backend.ts", "line": 627, "end_line": 648, "label": "SSE stream" }
+      ] },
+    { "id": "local", "type": "backend", "label": "LocalBackend", "sublabel": "in-process server emulation", "pos": [850, 400], "size": [170, 64], "tag": "messages.jsonl",
+      "sources": [
+        { "path": "src/backend/local/local-backend.ts", "line": 178, "end_line": 242, "label": "class LocalBackend" },
+        { "path": "src/backend/dev/fake-headless-backend.ts", "line": 469, "end_line": 565, "label": "executeConversationTurn" },
+        { "path": "src/backend/dev/pi-stream-adapter.ts", "line": 795, "end_line": 963, "label": "retry + compaction loop" }
+      ] },
+    { "id": "cloud", "type": "cloud", "label": "Letta Cloud / server", "sublabel": "agent state · web_search", "pos": [1110, 60], "size": [160, 64],
+      "sources": [
+        { "path": "src/agent/create-agent-request.ts", "line": 35, "label": "server-side base tools" },
+        { "path": "src/agent/create.ts", "line": 294, "end_line": 297, "label": "client tools not attached" },
+        { "path": "src/agent/memory-git.ts", "line": 228, "end_line": 233, "label": "memfs git remote" }
+      ] },
+    { "id": "llm", "type": "external", "label": "LLM provider APIs", "sublabel": "via pi-ai Models", "pos": [1110, 400], "size": [160, 64],
+      "sources": [
+        { "path": "src/backend/dev/pi-models-runtime.ts", "line": 203, "end_line": 240, "label": "LocalPiModelsRuntime" },
+        { "path": "src/backend/dev/pi-stream-adapter.ts", "line": 574, "end_line": 606, "label": "streamOnce: build Context" }
+      ] },
+    { "id": "memfs", "type": "database", "label": "MemFS git repo", "sublabel": "per-agent memory", "pos": [850, 570], "size": [170, 64],
+      "sources": [
+        { "path": "src/agent/memory-filesystem.ts", "line": 46, "end_line": 57, "label": "~/.letta/agents/<id>/memory" },
+        { "path": "src/backend/local/system-prompt-compilation.ts", "line": 81, "end_line": 143, "label": "read committed HEAD" }
+      ] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "one letta process (Node)", "wraps": ["entry", "harness", "perms", "toolmgr", "iface", "api", "local"] }
+  ],
+  "connections": [
+    { "id": "user-prompt", "from": "user", "to": "entry", "label": "prompt", "variant": "emphasis" },
+    { "id": "entry-turn", "from": "entry", "to": "harness", "label": "start turn", "variant": "emphasis" },
+    { "id": "harness-stream", "from": "harness", "to": "iface", "label": "stream req", "variant": "emphasis" },
+    { "id": "harness-classify", "from": "harness", "to": "perms", "label": "classify calls", "fromSide": "top", "toSide": "bottom" },
+    { "id": "harness-execute", "from": "harness", "to": "toolmgr", "label": "approved batch", "fromSide": "bottom", "toSide": "top" },
+    { "id": "iface-api", "from": "iface", "to": "api", "label": "cloud mode", "fromSide": "top", "toSide": "bottom" },
+    { "id": "api-cloud", "from": "api", "to": "cloud", "label": "HTTPS/SSE" },
+    { "id": "iface-local", "from": "iface", "to": "local", "label": "local mode", "fromSide": "bottom", "toSide": "top" },
+    { "id": "local-llm", "from": "local", "to": "llm", "label": "1 step/run" },
+    { "id": "cloud-llm", "from": "cloud", "to": "llm", "label": "server-side loop", "variant": "dashed", "fromSide": "bottom", "toSide": "top" },
+    { "id": "tool-workspace", "from": "toolmgr", "to": "workspace", "label": "files · shell" },
+    { "id": "tool-subagent", "from": "toolmgr", "to": "subagent", "label": "Agent tool", "variant": "dashed", "fromSide": "bottom", "toSide": "top" },
+    { "id": "tool-memfs", "from": "toolmgr", "to": "memfs", "label": "Edit + git commit", "fromSide": "right", "toSide": "left" },
+    { "id": "memfs-local", "from": "memfs", "to": "local", "label": "HEAD → prompt", "fromSide": "top", "toSide": "bottom" }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "Split agent loop", "items": ["backend runs one model step per run; any tool call ends it with requires_approval", "client classifies, executes, then resumes with {type: approval}"] },
+    { "dot": "cyan", "title": "One contract, two backends", "items": ["APIBackend talks to Letta Cloud (server loop, web_search)", "LocalBackend emulates the same REST/stream contract in-process via pi-ai"] },
+    { "dot": "violet", "title": "Memory", "items": ["MemFS is a per-agent git repo edited with ordinary tools", "prompt compiles committed HEAD; cloud mode pushes commits after each turn"] }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "letta-code — core abstractions and who depends on whom",
+    "output": "diagrams/letta-code/core-abstractions.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/letta-ai/letta-code.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "4b028fab07c69edaac2ddb4f7b9a43573ff20d81"
+    }
+  },
+  "components": [
+    { "id": "skill", "type": "database", "label": "Skill", "sublabel": "SKILL.md folder", "pos": [300, 60], "size": [170, 64], "tag": "metadata only",
+      "sources": [
+        { "path": "src/agent/skills.ts", "line": 420, "end_line": 484, "label": "parseSkillFile" },
+        { "path": "src/agent/client-skills.ts", "line": 377, "end_line": 383, "label": "toClientSkill" },
+        { "path": "src/tools/impl/skill.ts", "line": 337, "end_line": 379, "label": "body on demand" }
+      ] },
+    { "id": "loop", "type": "frontend", "label": "Turn loop", "sublabel": "headless · TUI · listener", "pos": [300, 230], "size": [170, 64],
+      "sources": [
+        { "path": "src/headless.ts", "line": 2176, "end_line": 2244, "label": "headless loop" },
+        { "path": "src/cli/app/use-conversation-loop.ts", "line": 744, "label": "TUI loop" },
+        { "path": "src/websocket/listener/turn.ts", "line": 314, "end_line": 360, "label": "listener loop" }
+      ] },
+    { "id": "stream", "type": "backend", "label": "StreamProcessor", "sublabel": "chunks → approvals", "pos": [40, 230], "size": [170, 64],
+      "sources": [
+        { "path": "src/cli/helpers/stream-processor.ts", "line": 176, "end_line": 220, "label": "accumulate tool calls" },
+        { "path": "src/cli/helpers/stream.ts", "line": 446, "end_line": 470, "label": "stop reason + approvals" }
+      ] },
+    { "id": "classify", "type": "security", "label": "Permission checker", "sublabel": "allow · deny · ask", "pos": [300, 400], "size": [170, 64],
+      "sources": [
+        { "path": "src/cli/helpers/approval-classification.ts", "line": 124, "end_line": 230, "label": "classifyApprovals" },
+        { "path": "src/permissions/checker.ts", "line": 238, "end_line": 418, "label": "rule order" }
+      ] },
+    { "id": "tools", "type": "backend", "label": "Tool registry", "sublabel": "defineTool + snapshot", "pos": [300, 570], "size": [170, 64],
+      "sources": [
+        { "path": "src/tools/define-tool.ts", "line": 14, "end_line": 38, "label": "ToolAssets" },
+        { "path": "src/tools/manager.ts", "line": 735, "end_line": 813, "label": "per-turn snapshot" }
+      ] },
+    { "id": "subcfg", "type": "backend", "label": "Subagent config", "sublabel": "md + frontmatter", "pos": [40, 570], "size": [170, 64],
+      "sources": [
+        { "path": "src/agent/subagents/index.ts", "line": 90, "end_line": 109, "label": "SubagentConfig" },
+        { "path": "src/agent/subagents/subagent-depth.ts", "line": 11, "end_line": 43, "label": "depth ≤ 2" }
+      ] },
+    { "id": "backend", "type": "backend", "label": "Backend", "sublabel": "interface + capabilities", "pos": [560, 230], "size": [170, 64],
+      "sources": [
+        { "path": "src/backend/backend.ts", "line": 169, "end_line": 183, "label": "BackendCapabilities" },
+        { "path": "src/backend/backend.ts", "line": 190, "end_line": 369, "label": "interface Backend" }
+      ] },
+    { "id": "api", "type": "backend", "label": "APIBackend", "sublabel": "Letta Cloud client", "pos": [560, 60], "size": [170, 64],
+      "sources": [
+        { "path": "src/backend/backend.ts", "line": 376, "end_line": 410, "label": "class APIBackend" }
+      ] },
+    { "id": "headless", "type": "backend", "label": "HeadlessBackend", "sublabel": "runs · replay · settle", "pos": [820, 230], "size": [170, 64],
+      "sources": [
+        { "path": "src/backend/dev/fake-headless-backend.ts", "line": 196, "end_line": 232, "label": "class HeadlessBackend" },
+        { "path": "src/backend/dev/fake-headless-backend.ts", "line": 469, "end_line": 565, "label": "executeConversationTurn" }
+      ] },
+    { "id": "local", "type": "backend", "label": "LocalBackend", "sublabel": "prompt cache · compaction", "pos": [820, 60], "size": [170, 64],
+      "sources": [
+        { "path": "src/backend/local/local-backend.ts", "line": 178, "end_line": 242, "label": "extends HeadlessBackend" },
+        { "path": "src/backend/local/local-backend.ts", "line": 896, "end_line": 947, "label": "getOrCompileSystemPrompt" }
+      ] },
+    { "id": "store", "type": "database", "label": "LocalStore", "sublabel": "transcript + in-context ids", "pos": [820, 400], "size": [170, 64],
+      "sources": [
+        { "path": "src/backend/local/local-store.ts", "line": 1157, "end_line": 1209, "label": "compactConversationAll" },
+        { "path": "src/backend/local/local-transcript.ts", "line": 131, "end_line": 160, "label": "session entries" }
+      ] },
+    { "id": "executor", "type": "backend", "label": "HeadlessTurnExecutor", "sublabel": "one model step", "pos": [1080, 230], "size": [170, 64],
+      "sources": [
+        { "path": "src/backend/dev/headless-turn-executor.ts", "line": 17, "end_line": 32, "label": "interface" },
+        { "path": "src/backend/dev/provider-turn-executor.ts", "line": 552, "end_line": 565, "label": "ProviderTurnExecutor" }
+      ] },
+    { "id": "pi", "type": "external", "label": "PiStreamAdapter", "sublabel": "pi-ai Context + retries", "pos": [1080, 400], "size": [170, 64],
+      "sources": [
+        { "path": "src/backend/dev/pi-stream-adapter.ts", "line": 486, "end_line": 516, "label": "class PiStreamAdapter" },
+        { "path": "src/backend/dev/pi-stream-adapter.ts", "line": 795, "end_line": 963, "label": "stream(): bounded recovery" }
+      ] },
+    { "id": "memfs", "type": "database", "label": "MemFS", "sublabel": "git repo → core memory", "pos": [1080, 60], "size": [170, 64],
+      "sources": [
+        { "path": "src/agent/memory-format.ts", "line": 6, "end_line": 41, "label": "v1 / v2 layout" },
+        { "path": "src/backend/local/system-prompt-compilation.ts", "line": 432, "end_line": 461, "label": "compileLocalSystemPrompt" }
+      ] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "client harness (execution)", "wraps": ["skill", "loop", "stream", "classify", "tools", "subcfg"] },
+    { "kind": "region", "label": "in-process local backend", "wraps": ["local", "headless", "store", "executor", "pi", "memfs"] }
+  ],
+  "connections": [
+    { "id": "loop-backend", "from": "loop", "to": "backend", "label": "stream()", "variant": "emphasis" },
+    { "id": "loop-stream", "from": "loop", "to": "stream", "label": "drain" },
+    { "id": "skill-loop", "from": "skill", "to": "loop", "label": "client_skills", "fromSide": "bottom", "toSide": "top" },
+    { "id": "loop-classify", "from": "loop", "to": "classify", "label": "classify", "fromSide": "bottom", "toSide": "top" },
+    { "id": "classify-tools", "from": "classify", "to": "tools", "label": "allowed calls", "fromSide": "bottom", "toSide": "top" },
+    { "id": "tools-subcfg", "from": "tools", "to": "subcfg", "label": "Agent tool" },
+    { "id": "backend-api", "from": "api", "to": "backend", "label": "implements", "variant": "dashed", "fromSide": "bottom", "toSide": "top" },
+    { "id": "backend-headless", "from": "headless", "to": "backend", "label": "implements", "variant": "dashed" },
+    { "id": "local-headless", "from": "local", "to": "headless", "label": "extends", "variant": "dashed", "fromSide": "bottom", "toSide": "top" },
+    { "id": "headless-store", "from": "headless", "to": "store", "label": "owns", "fromSide": "bottom", "toSide": "top" },
+    { "id": "headless-executor", "from": "headless", "to": "executor", "label": "execute()" },
+    { "id": "executor-pi", "from": "executor", "to": "pi", "label": "adapter", "fromSide": "bottom", "toSide": "top" },
+    { "id": "local-memfs", "from": "local", "to": "memfs", "label": "compile" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "The seam", "items": ["Backend is typed against @letta-ai/letta-client", "both implementations speak the same chunk protocol"] },
+    { "dot": "emerald", "title": "Swappable step", "items": ["HeadlessTurnExecutor: pi-ai provider or deterministic test executors", "LETTA_LOCAL_BACKEND_EXECUTOR picks one"] },
+    { "dot": "violet", "title": "Declarative extension", "items": ["tools, skills and sub-agents are data (schemas, SKILL.md, md frontmatter)", "skills and sub-agent lists enter context as metadata only"] }
+  ]
+}
