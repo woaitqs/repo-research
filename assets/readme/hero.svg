@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="450" viewBox="0 0 1200 450" role="img" aria-labelledby="title desc">
+  <title id="title">Repo Research: read the source, not the README</title>
+  <desc id="desc">Source-level studies of AI agent repositories. An excerpt from the openai-agents-python study, pinned at commit 71c2da4, shows two facts with path:line citations and one labelled interpretation.</desc>
+  <!-- Light colours are presentation attributes (they are the fallback).
+       Dark colours come from the site's dark tokens in assets/css/site.css. -->
+  <style>
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #18191c; }
+      .surface { fill: #222429; stroke: #383b43; }
+      .ink { fill: #eeeef0; }
+      .muted { fill: #aaadb6; }
+      .rule { fill: #383b43; }
+      .accent { fill: #aac7ff; }
+      .accent-ink { fill: #243d66; }
+      .green { fill: #aac7ff; }
+      .dot { fill: #aac7ff; }
+      .outline { stroke: #aaadb6; }
+      .brand-r { fill: #243d66; }
+    }
+  </style>
+
+  <rect class="bg" width="1200" height="450" rx="10" fill="#fcfcf9"/>
+
+  <g id="title-block" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif">
+    <!-- brand: the site's "rr" mark -->
+    <rect class="ink" x="64" y="56" width="40" height="42" fill="#20231e"/>
+    <text x="67" y="86" font-size="27" font-weight="700" letter-spacing="-2"><tspan class="bg" fill="#fcfcf9">r</tspan><tspan class="brand-r" fill="#d8ed7a">r</tspan></text>
+    <text class="ink" x="120" y="75" font-size="20" font-weight="700" fill="#20231e">Repo Research</text>
+    <text class="muted" x="120" y="97" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" fill="#62675d">woaitqs/repo-research</text>
+
+    <circle class="dot" cx="68" cy="164" r="4" fill="#94a949"/>
+    <text class="ink" x="82" y="170" font-size="16" font-weight="700" letter-spacing="2.4" fill="#20231e">OPEN RESEARCH NOTEBOOK</text>
+
+    <text class="ink" x="62" y="252" font-size="62" font-weight="700" letter-spacing="-1.6" fill="#20231e">Read the source.</text>
+    <text class="ink" x="62" y="326" font-family="Newsreader, Georgia, 'Times New Roman', serif" font-size="62" font-style="italic" letter-spacing="-0.8" fill="#20231e">Not the README.</text>
+
+    <text class="ink" x="64" y="386" font-size="22" fill="#20231e">Source-level studies of AI agent repositories.</text>
+    <text class="muted" x="64" y="416" font-size="22" fill="#62675d">Every claim traces to a pinned commit.</text>
+  </g>
+
+  <g id="evidence-card" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif">
+    <rect class="surface" x="644.5" y="56.5" width="491" height="347" rx="6" fill="#f2f3ed" stroke="#dedfd7"/>
+
+    <!-- the pinned target -->
+    <text class="ink" x="672" y="95" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="18" fill="#20231e">openai/openai-agents-python</text>
+    <rect class="accent" x="1004" y="74" width="104" height="30" fill="#d8ed7a"/>
+    <text class="accent-ink" x="1056" y="95" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="18" font-weight="700" fill="#293019">@71c2da4</text>
+    <rect class="rule" x="672" y="120" width="436" height="1" fill="#dedfd7"/>
+
+    <!-- fact 1 -->
+    <rect class="accent" x="672" y="142" width="62" height="28" fill="#d8ed7a"/>
+    <text class="accent-ink" x="703" y="162" text-anchor="middle" font-size="16" font-weight="700" letter-spacing="1" fill="#293019">FACT</text>
+    <text class="ink" x="752" y="163" font-size="20" fill="#20231e"><tspan font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="19">_run_impl</tspan> is a <tspan font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="19">while True</tspan> loop</text>
+    <text class="green" x="752" y="193" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="18" fill="#5c761d">src/agents/run.py:1026</text>
+
+    <!-- fact 2 -->
+    <rect class="accent" x="672" y="216" width="62" height="28" fill="#d8ed7a"/>
+    <text class="accent-ink" x="703" y="236" text-anchor="middle" font-size="16" font-weight="700" letter-spacing="1" fill="#293019">FACT</text>
+    <text class="ink" x="752" y="237" font-size="20" fill="#20231e"><tspan font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="19">max_turns</tspan> caps turns, not tokens</text>
+    <text class="green" x="752" y="267" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="18" fill="#5c761d">src/agents/run_config.py:45</text>
+
+    <!-- interpretation: labelled, no citation, set in the reading face -->
+    <rect class="outline" x="672.75" y="290.75" width="178.5" height="26.5" fill="none" stroke="#62675d" stroke-width="1.5"/>
+    <text class="muted" x="762" y="310" text-anchor="middle" font-size="16" font-weight="700" letter-spacing="1" fill="#62675d">INTERPRETATION</text>
+    <text class="ink" x="672" y="350" font-family="Newsreader, Georgia, 'Times New Roman', serif" font-size="20" font-style="italic" fill="#20231e">Sandbox memory is the Codex “memories”</text>
+    <text class="ink" x="672" y="378" font-family="Newsreader, Georgia, 'Times New Roman', serif" font-size="20" font-style="italic" fill="#20231e">design, moved into a reusable SDK.</text>
+  </g>
+
+  <text class="muted" x="1136" y="432" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" fill="#62675d">excerpt · research/openai-agents-python.md</text>
+</svg>
