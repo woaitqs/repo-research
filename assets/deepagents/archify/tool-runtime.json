@@ -1,0 +1,342 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "deepagents \u2014 tool call path: reasoning vs. execution runtime",
+    "output": "diagrams/deepagents/tool-runtime.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/langchain-ai/deepagents.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "16e84d927e7e13c41a10c071380c875af6a562f5"
+    },
+    "viewBox": [
+      1040,
+      652
+    ]
+  },
+  "lanes": [
+    {
+      "id": "reasoning",
+      "label": "Agent reasoning"
+    },
+    {
+      "id": "gate",
+      "label": "Approval (HITL)",
+      "variant": "exception"
+    },
+    {
+      "id": "chain",
+      "label": "wrap_tool_call + tool"
+    },
+    {
+      "id": "runtime",
+      "label": "Execution runtime"
+    }
+  ],
+  "phases": [
+    {
+      "id": "decide",
+      "label": "Decide",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "execute",
+      "label": "Execute",
+      "fromCol": 2,
+      "toCol": 4,
+      "variant": "emphasis"
+    },
+    {
+      "id": "observe-phase",
+      "label": "Observe",
+      "fromCol": 5,
+      "toCol": 5
+    }
+  ],
+  "mainPath": [
+    "model",
+    "hitl",
+    "guard",
+    "tool",
+    "offload",
+    "observe"
+  ],
+  "nodes": [
+    {
+      "id": "model",
+      "lane": "reasoning",
+      "col": 0,
+      "type": "external",
+      "label": "Model",
+      "sublabel": "tool_calls",
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/_models.py",
+          "line": 36,
+          "end_line": 58,
+          "label": "resolve_model"
+        }
+      ]
+    },
+    {
+      "id": "observe",
+      "lane": "reasoning",
+      "col": 5,
+      "type": "external",
+      "label": "Observation",
+      "sublabel": "ToolMessage",
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/filesystem.py",
+          "line": 193,
+          "end_line": 195,
+          "label": "errors as ToolMessage"
+        }
+      ]
+    },
+    {
+      "id": "hitl",
+      "lane": "gate",
+      "col": 1,
+      "type": "security",
+      "label": "interrupt_on?",
+      "sublabel": "after_model",
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/graph.py",
+          "line": 946,
+          "end_line": 951,
+          "label": "HITL middleware"
+        },
+        {
+          "path": "libs/deepagents/deepagents/middleware/_fs_interrupt.py",
+          "line": 156,
+          "end_line": 183,
+          "label": "permission rules"
+        },
+        {
+          "path": "libs/code/deepagents_code/agent.py",
+          "line": 2278,
+          "end_line": 2282,
+          "label": "CLI gated tools"
+        }
+      ]
+    },
+    {
+      "id": "reject",
+      "lane": "gate",
+      "col": 2,
+      "type": "security",
+      "label": "Rejected",
+      "sublabel": "no execution",
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/_fs_interrupt.py",
+          "line": 169,
+          "end_line": 175,
+          "label": "decision set"
+        }
+      ]
+    },
+    {
+      "id": "guard",
+      "lane": "chain",
+      "col": 2,
+      "type": "backend",
+      "label": "Mutation guard",
+      "sublabel": "same-path edits",
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/filesystem.py",
+          "line": 198,
+          "end_line": 224,
+          "label": "_parallel_file_mutation_error"
+        }
+      ]
+    },
+    {
+      "id": "tool",
+      "lane": "chain",
+      "col": 3,
+      "type": "backend",
+      "label": "Tool function",
+      "sublabel": "permission check",
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/filesystem.py",
+          "line": 402,
+          "end_line": 412,
+          "label": "_check_fs_permission"
+        },
+        {
+          "path": "libs/deepagents/deepagents/middleware/filesystem.py",
+          "line": 3001,
+          "end_line": 3060,
+          "label": "execute tool checks"
+        }
+      ]
+    },
+    {
+      "id": "offload",
+      "lane": "chain",
+      "col": 4,
+      "type": "backend",
+      "label": "Offload check",
+      "sublabel": "> 20k tokens",
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/middleware/filesystem.py",
+          "line": 3682,
+          "end_line": 3710,
+          "label": "wrap_tool_call"
+        },
+        {
+          "path": "libs/deepagents/deepagents/middleware/_message_eviction.py",
+          "line": 260,
+          "end_line": 284,
+          "label": "write + stub"
+        }
+      ]
+    },
+    {
+      "id": "backend",
+      "lane": "runtime",
+      "col": 4,
+      "type": "database",
+      "label": "Backend",
+      "sublabel": "files + exec",
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/backends/protocol.py",
+          "line": 404,
+          "end_line": 433,
+          "label": "BackendProtocol"
+        },
+        {
+          "path": "libs/deepagents/deepagents/backends/composite.py",
+          "line": 814,
+          "end_line": 850,
+          "label": "execute -> default"
+        }
+      ]
+    },
+    {
+      "id": "sandbox",
+      "lane": "runtime",
+      "col": 5,
+      "type": "cloud",
+      "label": "Sandbox shell",
+      "sublabel": "BaseSandbox",
+      "sources": [
+        {
+          "path": "libs/deepagents/deepagents/backends/sandbox.py",
+          "line": 1536,
+          "end_line": 1569,
+          "label": "BaseSandbox"
+        },
+        {
+          "path": "libs/deepagents/deepagents/backends/sandbox.py",
+          "line": 1589,
+          "end_line": 1625,
+          "label": "capture-at-source"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "calls",
+      "from": "model",
+      "to": "hitl",
+      "label": "tool_calls",
+      "variant": "emphasis"
+    },
+    {
+      "id": "approved",
+      "from": "hitl",
+      "to": "guard",
+      "label": "approve / edit",
+      "variant": "emphasis"
+    },
+    {
+      "id": "rejected",
+      "from": "hitl",
+      "to": "reject",
+      "label": "reject",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "allowed",
+      "from": "guard",
+      "to": "tool",
+      "variant": "emphasis",
+      "label": "allowed"
+    },
+    {
+      "id": "result",
+      "from": "tool",
+      "to": "offload",
+      "label": "result",
+      "variant": "emphasis"
+    },
+    {
+      "id": "io",
+      "from": "tool",
+      "to": "backend",
+      "label": "file op / exec"
+    },
+    {
+      "id": "spill",
+      "from": "offload",
+      "to": "backend",
+      "label": "full text",
+      "variant": "dashed"
+    },
+    {
+      "id": "shell",
+      "from": "backend",
+      "to": "sandbox",
+      "label": "execute()",
+      "variant": "dashed",
+      "role": "branch"
+    },
+    {
+      "id": "message",
+      "from": "offload",
+      "to": "observe",
+      "label": "message or stub",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "violet",
+      "title": "Boundary",
+      "items": [
+        "the model only emits tool_calls and reads ToolMessages",
+        "execution lives in middleware tools + the backend"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Safety",
+      "items": [
+        "HITL pauses before tools; permissions deny or interrupt by path",
+        "LocalShellBackend has no isolation; sandboxes are BaseSandbox"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Errors",
+      "items": [
+        "validation failures return error ToolMessages, not exceptions",
+        "execute is hidden from the model when the backend has no shell"
+      ]
+    }
+  ]
+}

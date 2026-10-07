@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "deepagents — core abstractions and how they connect",
+    "output": "diagrams/deepagents/core-abstractions.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/langchain-ai/deepagents.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "16e84d927e7e13c41a10c071380c875af6a562f5"
+    }
+  },
+  "components": [
+    {
+      "id": "sdk", "type": "backend", "label": "create_deep_agent", "sublabel": "assembler, no runtime", "pos": [40, 60], "size": [190, 64],
+      "sources": [
+        { "path": "libs/deepagents/deepagents/graph.py", "line": 277, "end_line": 297, "label": "public entry" },
+        { "path": "libs/deepagents/deepagents/graph.py", "line": 888, "end_line": 969, "label": "stack assembly" }
+      ]
+    },
+    {
+      "id": "profile", "type": "security", "label": "HarnessProfile", "sublabel": "+ ProviderProfile", "pos": [320, 60], "size": [190, 64],
+      "sources": [
+        { "path": "libs/deepagents/deepagents/profiles/harness/harness_profiles.py", "line": 483, "end_line": 500, "label": "HarnessProfile" },
+        { "path": "libs/deepagents/deepagents/profiles/provider/provider_profiles.py", "line": 38, "end_line": 50, "label": "ProviderProfile" },
+        { "path": "libs/deepagents/deepagents/profiles/harness/harness_profiles.py", "line": 1319, "end_line": 1340, "label": "lookup by model" }
+      ]
+    },
+    {
+      "id": "agent", "type": "backend", "label": "create_agent graph", "sublabel": "LangChain loop", "pos": [40, 220], "size": [190, 64],
+      "sources": [{ "path": "libs/deepagents/deepagents/graph.py", "line": 989, "end_line": 1011, "label": "delegation" }]
+    },
+    {
+      "id": "model", "type": "external", "label": "BaseChatModel", "sublabel": "string or instance", "pos": [320, 220], "size": [190, 64],
+      "sources": [{ "path": "libs/deepagents/deepagents/_models.py", "line": 36, "end_line": 58, "label": "resolve_model" }]
+    },
+    {
+      "id": "fsmw", "type": "backend", "label": "FilesystemMiddleware", "sublabel": "tools · offload", "pos": [40, 380], "size": [190, 64],
+      "sources": [
+        { "path": "libs/deepagents/deepagents/middleware/filesystem.py", "line": 1693, "end_line": 1706, "label": "class" },
+        { "path": "libs/deepagents/deepagents/middleware/filesystem.py", "line": 3242, "end_line": 3302, "label": "wrap_model_call" }
+      ]
+    },
+    {
+      "id": "submw", "type": "backend", "label": "SubAgentMiddleware", "sublabel": "task tool", "pos": [320, 380], "size": [190, 64],
+      "sources": [{ "path": "libs/deepagents/deepagents/middleware/subagents.py", "line": 886, "end_line": 1031, "label": "class" }]
+    },
+    {
+      "id": "summw", "type": "backend", "label": "Summarization MW", "sublabel": "compaction event", "pos": [600, 380], "size": [190, 64],
+      "sources": [
+        { "path": "libs/deepagents/deepagents/middleware/summarization.py", "line": 523, "end_line": 546, "label": "class + alias" },
+        { "path": "libs/deepagents/deepagents/middleware/summarization.py", "line": 1487, "end_line": 1623, "label": "wrap_model_call" }
+      ]
+    },
+    {
+      "id": "memmw", "type": "backend", "label": "Skills + Memory MW", "sublabel": "prompt sections", "pos": [880, 380], "size": [190, 64],
+      "sources": [
+        { "path": "libs/deepagents/deepagents/middleware/skills.py", "line": 840, "end_line": 860, "label": "SkillsMiddleware" },
+        { "path": "libs/deepagents/deepagents/middleware/memory.py", "line": 180, "end_line": 200, "label": "MemoryMiddleware" }
+      ]
+    },
+    {
+      "id": "backend", "type": "database", "label": "BackendProtocol", "sublabel": "State·FS·Shell·Store", "pos": [40, 540], "size": [190, 64],
+      "sources": [
+        { "path": "libs/deepagents/deepagents/backends/protocol.py", "line": 404, "end_line": 433, "label": "file ops" },
+        { "path": "libs/deepagents/deepagents/backends/protocol.py", "line": 886, "end_line": 944, "label": "+ execute" },
+        { "path": "libs/deepagents/deepagents/backends/__init__.py", "line": 1, "end_line": 23, "label": "implementations" }
+      ]
+    },
+    {
+      "id": "specs", "type": "frontend", "label": "SubAgent specs", "sublabel": "declarative · compiled", "pos": [320, 540], "size": [190, 64],
+      "sources": [
+        { "path": "libs/deepagents/deepagents/middleware/subagents.py", "line": 72, "end_line": 95, "label": "SubAgent" },
+        { "path": "libs/deepagents/deepagents/middleware/subagents.py", "line": 226, "end_line": 240, "label": "CompiledSubAgent" },
+        { "path": "libs/deepagents/deepagents/middleware/async_subagents.py", "line": 34, "end_line": 40, "label": "AsyncSubAgent" }
+      ]
+    },
+    {
+      "id": "state", "type": "database", "label": "DeepAgentState", "sublabel": "messages · files · private", "pos": [600, 540], "size": [190, 64],
+      "sources": [
+        { "path": "libs/deepagents/deepagents/graph.py", "line": 74, "end_line": 77, "label": "DeltaChannel messages" },
+        { "path": "libs/deepagents/deepagents/middleware/summarization.py", "line": 198, "end_line": 211, "label": "private event fields" }
+      ]
+    },
+    {
+      "id": "memfiles", "type": "database", "label": "AGENTS.md · SKILL.md", "sublabel": "read via backend", "pos": [880, 540], "size": [190, 64],
+      "sources": [
+        { "path": "libs/deepagents/deepagents/middleware/memory.py", "line": 279, "end_line": 311, "label": "download_files" },
+        { "path": "libs/deepagents/deepagents/middleware/skills.py", "line": 665, "end_line": 725, "label": "list skills" }
+      ]
+    }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "middleware stack (onion: outer -> inner)", "wraps": ["fsmw", "submw", "summw", "memmw"] }
+  ],
+  "connections": [
+    { "id": "resolve-profile", "from": "sdk", "to": "profile", "label": "resolves" },
+    { "id": "build-graph", "from": "sdk", "to": "agent", "label": "create_agent()", "variant": "emphasis" },
+    { "id": "tune-model", "from": "profile", "to": "model", "label": "tunes" },
+    { "id": "call-model", "from": "agent", "to": "model", "label": "invoke()", "variant": "emphasis" },
+    { "id": "outer-hook", "from": "agent", "to": "fsmw", "label": "hooks", "variant": "emphasis" },
+    { "id": "next-1", "from": "fsmw", "to": "submw", "label": "handler()" },
+    { "id": "next-2", "from": "submw", "to": "summw", "label": "handler()" },
+    { "id": "next-3", "from": "summw", "to": "memmw", "label": "handler()" },
+    { "id": "file-ops", "from": "fsmw", "to": "backend", "label": "file ops" },
+    { "id": "compile-specs", "from": "submw", "to": "specs", "label": "compiles" },
+    { "id": "record-event", "from": "summw", "to": "state", "label": "event" },
+    { "id": "read-md", "from": "memmw", "to": "memfiles", "label": "reads" }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "Contract", "items": ["every capability is an AgentMiddleware: before_agent / wrap_model_call / wrap_tool_call", "the innermost handler is the model call itself"] },
+    { "dot": "cyan", "title": "Pluggable axes", "items": ["where data lives: BackendProtocol", "which model: profiles tune prompt, tools, middleware per model"] },
+    { "dot": "violet", "title": "Default order", "items": ["Filesystem, SubAgent, Summarization, PatchToolCalls, [caller], Skills, caching, Memory, HITL"] }
+  ]
+}

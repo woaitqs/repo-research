@@ -1,0 +1,33 @@
+---
+layout: default
+---
+<style>
+  /* Research articles carry wide tables and diagrams: widen minima's column. */
+  .wrapper { max-width: 1120px; }
+  .research-article table { display: block; overflow-x: auto; font-size: 0.92em; }
+  .research-article pre.mermaid { background: transparent; border: 0; text-align: center; overflow-x: auto; }
+  .research-article code { word-break: break-word; }
+</style>
+<article class="post research-article">
+  <div class="post-content">
+    {{ content }}
+  </div>
+</article>
+<script type="module">
+  // kramdown renders ```mermaid fences as highlighted code; turn them back into
+  // Mermaid sources so the same Markdown renders on GitHub and on Pages.
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+  const fences = document.querySelectorAll("div.language-mermaid, pre > code.language-mermaid");
+  fences.forEach((el) => {
+    const code = el.tagName === "CODE" ? el : el.querySelector("code");
+    if (!code) return;
+    const target = el.tagName === "CODE" ? el.parentElement : el;
+    const pre = document.createElement("pre");
+    pre.className = "mermaid";
+    pre.textContent = code.textContent;
+    target.replaceWith(pre);
+  });
+  const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  mermaid.initialize({ startOnLoad: false, securityLevel: "strict", theme: dark ? "dark" : "default" });
+  await mermaid.run({ querySelector: "pre.mermaid" });
+</script>
