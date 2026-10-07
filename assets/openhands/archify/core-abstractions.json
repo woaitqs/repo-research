@@ -1,0 +1,433 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "OpenHands SDK Core Abstractions",
+    "output": "diagrams/openhands/core-abstractions.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/OpenHands/software-agent-sdk.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "54daf056bd863bb46f922a2fe9324dd736b37ff6"
+    }
+  },
+  "components": [
+    {
+      "id": "factory",
+      "type": "frontend",
+      "label": "Conversation()",
+      "sublabel": "factory by workspace",
+      "pos": [
+        40,
+        200
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/conversation.py",
+          "line": 124,
+          "end_line": 200,
+          "label": "__new__"
+        }
+      ]
+    },
+    {
+      "id": "remote",
+      "type": "external",
+      "label": "RemoteConversation",
+      "sublabel": "REST + WebSocket",
+      "pos": [
+        40,
+        380
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/impl/remote_conversation.py",
+          "line": 1,
+          "end_line": 60,
+          "label": "client impl"
+        }
+      ]
+    },
+    {
+      "id": "local",
+      "type": "backend",
+      "label": "LocalConversation",
+      "sublabel": "loop, lock, callbacks",
+      "pos": [
+        290,
+        200
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/impl/local_conversation.py",
+          "line": 179,
+          "end_line": 247,
+          "label": "class"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/impl/local_conversation.py",
+          "line": 1917,
+          "end_line": 2046,
+          "label": "_run"
+        }
+      ]
+    },
+    {
+      "id": "agent",
+      "type": "backend",
+      "label": "Agent",
+      "sublabel": "frozen config + step()",
+      "pos": [
+        540,
+        200
+      ],
+      "size": [
+        150,
+        84
+      ],
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/base.py",
+          "line": 104,
+          "end_line": 128,
+          "label": "AgentBase frozen"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 693,
+          "end_line": 895,
+          "label": "step"
+        }
+      ]
+    },
+    {
+      "id": "context",
+      "type": "frontend",
+      "label": "AgentContext",
+      "sublabel": "skills, memory, suffix",
+      "pos": [
+        540,
+        40
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/context/agent_context.py",
+          "line": 56,
+          "end_line": 200,
+          "label": "fields"
+        }
+      ]
+    },
+    {
+      "id": "llm",
+      "type": "cloud",
+      "label": "LLM",
+      "sublabel": "LiteLLM + retries",
+      "pos": [
+        790,
+        40
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/llm/llm.py",
+          "line": 240,
+          "end_line": 260,
+          "label": "class LLM"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/llm/utils/retry_mixin.py",
+          "line": 77,
+          "end_line": 116,
+          "label": "tenacity retry"
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "type": "messagebus",
+      "label": "ToolDefinition",
+      "sublabel": "Action -> Observation",
+      "pos": [
+        790,
+        200
+      ],
+      "size": [
+        150,
+        84
+      ],
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/tool/tool.py",
+          "line": 347,
+          "end_line": 430,
+          "label": "ToolDefinition"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/tool/registry.py",
+          "line": 127,
+          "end_line": 181,
+          "label": "register / resolve"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/tool/spec.py",
+          "line": 12,
+          "end_line": 32,
+          "label": "Tool(name, params)"
+        }
+      ]
+    },
+    {
+      "id": "workspace",
+      "type": "security",
+      "label": "Workspace",
+      "sublabel": "local / remote / docker",
+      "pos": [
+        1040,
+        200
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/workspace/base.py",
+          "line": 28,
+          "end_line": 260,
+          "label": "BaseWorkspace"
+        }
+      ]
+    },
+    {
+      "id": "condenser",
+      "type": "security",
+      "label": "Condenser",
+      "sublabel": "View -> View | Condensation",
+      "pos": [
+        790,
+        380
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/context/condenser/base.py",
+          "line": 15,
+          "end_line": 75,
+          "label": "CondenserBase"
+        }
+      ]
+    },
+    {
+      "id": "state",
+      "type": "database",
+      "label": "ConversationState",
+      "sublabel": "base_state.json",
+      "pos": [
+        290,
+        380
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/state.py",
+          "line": 82,
+          "end_line": 258,
+          "label": "fields"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/state.py",
+          "line": 454,
+          "end_line": 593,
+          "label": "create or resume"
+        }
+      ]
+    },
+    {
+      "id": "view",
+      "type": "backend",
+      "label": "View",
+      "sublabel": "LLM-visible events",
+      "pos": [
+        540,
+        380
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/context/view/view.py",
+          "line": 22,
+          "end_line": 160,
+          "label": "View"
+        }
+      ]
+    },
+    {
+      "id": "eventlog",
+      "type": "database",
+      "label": "EventLog",
+      "sublabel": "immutable events",
+      "pos": [
+        290,
+        540
+      ],
+      "size": [
+        150,
+        64
+      ],
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/event_store.py",
+          "line": 34,
+          "end_line": 62,
+          "label": "EventLog"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/event/base.py",
+          "line": 20,
+          "end_line": 40,
+          "label": "frozen Event"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "factory-local",
+      "from": "factory",
+      "to": "local",
+      "label": "local path",
+      "variant": "emphasis"
+    },
+    {
+      "id": "factory-remote",
+      "from": "factory",
+      "to": "remote",
+      "label": "RemoteWorkspace",
+      "variant": "dashed"
+    },
+    {
+      "id": "local-agent",
+      "from": "local",
+      "to": "agent",
+      "label": "step()",
+      "variant": "emphasis"
+    },
+    {
+      "id": "agent-tools",
+      "from": "agent",
+      "to": "tools",
+      "label": "call",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "tools-workspace",
+      "from": "tools",
+      "to": "workspace",
+      "label": "side effects",
+      "variant": "security"
+    },
+    {
+      "id": "context-agent",
+      "from": "context",
+      "to": "agent",
+      "label": "prompt"
+    },
+    {
+      "id": "agent-llm",
+      "from": "agent",
+      "to": "llm",
+      "label": "generate"
+    },
+    {
+      "id": "local-state",
+      "from": "local",
+      "to": "state",
+      "label": "owns"
+    },
+    {
+      "id": "state-eventlog",
+      "from": "state",
+      "to": "eventlog",
+      "label": "append"
+    },
+    {
+      "id": "state-view",
+      "from": "state",
+      "to": "view",
+      "label": "projects"
+    },
+    {
+      "id": "view-agent",
+      "from": "view",
+      "to": "agent",
+      "label": "messages"
+    },
+    {
+      "id": "view-condenser",
+      "from": "view",
+      "to": "condenser",
+      "label": "condense(view)",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Stateless vs stateful",
+      "items": [
+        "Agent and LLM are frozen Pydantic models; they can be shared across conversations",
+        "All mutable state lives in ConversationState (+ EventLog); the agent reads conversation.state each step",
+        "Tools come from Tool(name, params) specs resolved per conversation via the registry"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "One API, two runtimes",
+      "items": [
+        "Conversation() returns LocalConversation for a path / LocalWorkspace",
+        "It returns RemoteConversation for a RemoteWorkspace; that client drives an agent-server running LocalConversation"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Resume contract",
+      "items": [
+        "base_state.json is the source of truth for the agent on resume",
+        "AgentBase.verify(): tools may be added but never removed mid-conversation"
+      ]
+    }
+  ]
+}

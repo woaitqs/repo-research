@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "OpenHands Sub-agent Delegation (TaskTool)",
+    "output": "diagrams/openhands/sub-agent-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "viewBox": [1080, 620],
+    "column_fit": "spread",
+    "repository": {
+      "url": "https://github.com/OpenHands/software-agent-sdk.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "54daf056bd863bb46f922a2fe9324dd736b37ff6"
+    }
+  },
+  "participants": [
+    {
+      "id": "parent", "type": "backend", "label": "Parent agent", "sublabel": "its own View",
+      "sources": [{ "path": "openhands-sdk/openhands/sdk/agent/agent.py", "line": 627, "end_line": 655, "label": "_execute_actions" }]
+    },
+    {
+      "id": "task", "type": "messagebus", "label": "TaskManager", "sublabel": "TaskTool executor",
+      "sources": [
+        { "path": "openhands-tools/openhands/tools/task/definition.py", "line": 179, "end_line": 185, "label": "TaskTool" },
+        { "path": "openhands-tools/openhands/tools/task/manager.py", "line": 132, "end_line": 142, "label": "subagents/ dir" }
+      ]
+    },
+    {
+      "id": "registry", "type": "database", "label": "Agent registry", "sublabel": "md + frontmatter",
+      "sources": [
+        { "path": "openhands-sdk/openhands/sdk/subagent/registry.py", "line": 160, "end_line": 285, "label": "definition -> factory" },
+        { "path": "openhands-sdk/openhands/sdk/subagent/load.py", "line": 50, "end_line": 90, "label": "discovery" }
+      ]
+    },
+    {
+      "id": "child", "type": "backend", "label": "Child conv", "sublabel": "new LocalConversation",
+      "sources": [{ "path": "openhands-tools/openhands/tools/task/manager.py", "line": 321, "end_line": 337, "label": "same workspace" }]
+    },
+    {
+      "id": "llm", "type": "cloud", "label": "LLM", "sublabel": "shared cache key",
+      "sources": [{ "path": "openhands-sdk/openhands/sdk/llm/call_context.py", "line": 24, "end_line": 41, "label": "for_conversation" }]
+    },
+    { "id": "ws", "type": "security", "label": "Workspace", "sublabel": "shared files" }
+  ],
+  "segments": [
+    { "from": 150, "to": 228, "label": "Resolve" },
+    { "from": 238, "to": 296, "label": "Spawn" },
+    { "from": 306, "to": 380, "label": "Child loop" },
+    { "from": 390, "to": 470, "label": "Return" }
+  ],
+  "messages": [
+    { "id": "call", "from": "parent", "to": "task", "y": 165, "label": "task(type, prompt)", "variant": "emphasis" },
+    { "id": "resolve", "from": "task", "to": "registry", "y": 193, "label": "factory(definition)", "variant": "default" },
+    { "id": "agentcfg", "from": "registry", "to": "task", "y": 221, "label": "Agent(tools, skills)", "variant": "return" },
+    { "id": "spawn", "from": "task", "to": "child", "y": 253, "label": "new conv, same cwd", "variant": "emphasis" },
+    { "id": "prompt", "from": "task", "to": "child", "y": 283, "label": "send_message(prompt)", "variant": "default" },
+    { "id": "think", "from": "child", "to": "llm", "y": 318, "label": "child View only", "variant": "default" },
+    { "id": "act", "from": "child", "to": "ws", "y": 348, "label": "edit / run", "variant": "security" },
+    { "id": "final", "from": "child", "to": "task", "y": 405, "label": "final response", "variant": "return" },
+    { "id": "obs", "from": "task", "to": "parent", "y": 440, "label": "TaskObservation text", "variant": "return" }
+  ],
+  "activations": [
+    { "participant": "task", "from": 160, "to": 445, "type": "messagebus" },
+    { "participant": "child", "from": 249, "to": 410, "type": "backend" },
+    { "participant": "llm", "from": 314, "to": 322, "type": "cloud" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Context isolation",
+      "items": [
+        "The child starts from the default system prompt + definition body and only the prompt string; no parent history",
+        "The parent sees one observation: the child's finish message (get_agent_final_response)",
+        "Child events live in <parent>/subagents/, not in the parent event log"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "What is shared",
+      "items": [
+        "Same workspace working_dir, so file changes are visible to the parent",
+        "LLMCallContext is inherited; fresh tasks reuse the parent prompt_cache_key",
+        "SubAgentScope can restrict child tools/MCP to a subset of the parent's"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Variants",
+      "items": [
+        "DelegateTool: spawn up to 5 named children, run them in parallel threads, join",
+        "WorkflowTool: an AST-checked async script calling run_agent / map_agents / pipeline over TaskManager"
+      ]
+    }
+  ]
+}

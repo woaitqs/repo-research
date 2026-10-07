@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Agent Canvas Local Stack (OpenHands/OpenHands)",
+    "output": "diagrams/openhands/canvas-stack.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/OpenHands/OpenHands.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "7ea83bab4fe71149b88b5a8a6b9efe9042cb362d"
+    }
+  },
+  "components": [
+    {
+      "id": "launcher", "type": "frontend", "label": "agent-canvas CLI", "sublabel": "starts the stack", "pos": [40, 40], "size": [150, 64],
+      "sources": [
+        { "path": "bin/agent-canvas.mjs", "line": 155, "end_line": 170, "label": "main(staticMode)" },
+        { "path": "scripts/dev-with-automation.mjs", "line": 1441, "end_line": 1460, "label": "startup order" }
+      ]
+    },
+    {
+      "id": "automation", "type": "backend", "label": "Automation :18001", "sublabel": "uvx openhands-automation", "pos": [560, 40], "size": [150, 64],
+      "sources": [{ "path": "scripts/dev-with-automation.mjs", "line": 993, "end_line": 1088, "label": "command + env" }]
+    },
+    {
+      "id": "browser", "type": "external", "label": "Browser SPA", "sublabel": "React + zustand", "pos": [40, 200], "size": [150, 64],
+      "sources": [
+        { "path": "src/api/conversation-service/agent-server-conversation-service.api.ts", "line": 478, "end_line": 621, "label": "createConversation" },
+        { "path": "src/utils/websocket-url.ts", "line": 98, "end_line": 114, "label": "/sockets/session" },
+        { "path": "src/stores/use-event-store.ts", "line": 150, "end_line": 200, "label": "event store" }
+      ]
+    },
+    {
+      "id": "ingress", "type": "security", "label": "Ingress :8000", "sublabel": "longest-prefix proxy", "pos": [300, 200], "size": [150, 64],
+      "sources": [
+        { "path": "scripts/ingress.mjs", "line": 130, "end_line": 219, "label": "HTTP + WS proxy" },
+        { "path": "scripts/dev-with-automation.mjs", "line": 759, "end_line": 811, "label": "route table" }
+      ]
+    },
+    {
+      "id": "agentserver", "type": "backend", "label": "Agent Server :18000", "sublabel": "uvx openhands-agent-server", "pos": [560, 200], "size": [150, 64],
+      "sources": [
+        { "path": "scripts/dev-safe.mjs", "line": 429, "end_line": 527, "label": "uvx command" },
+        { "path": "scripts/dev-safe.mjs", "line": 789, "end_line": 853, "label": "env (keys, paths)" },
+        { "path": "config/defaults.json", "line": 1, "end_line": 20, "label": "pinned versions" }
+      ]
+    },
+    {
+      "id": "sandbox", "type": "cloud", "label": "Docker sandbox", "sublabel": "OH_CONVERSATION_RUNTIME", "pos": [820, 200], "size": [150, 64],
+      "sources": [{ "path": "src/api/agent-server-adapter.ts", "line": 1120, "end_line": 1129, "label": "DockerExecutionWorkspace" }]
+    },
+    {
+      "id": "static", "type": "frontend", "label": "Static server", "sublabel": "built SPA", "pos": [300, 360], "size": [150, 64],
+      "sources": [{ "path": "scripts/dev-with-automation.mjs", "line": 1666, "end_line": 1700, "label": "startStaticFrontend" }]
+    },
+    {
+      "id": "state", "type": "database", "label": "~/.openhands", "sublabel": "conversations, automations.db", "pos": [560, 360], "size": [150, 64],
+      "sources": [{ "path": "config/defaults.json", "line": 21, "end_line": 35, "label": "paths" }]
+    },
+    {
+      "id": "clienttools", "type": "messagebus", "label": "Client tools", "sublabel": "canvas_ui_control", "pos": [820, 360], "size": [150, 64],
+      "sources": [
+        { "path": "src/api/canvas-ui-client-tool.ts", "line": 61, "end_line": 91, "label": "ClientToolSpec" },
+        { "path": "tools/canvas_ui_tool.py", "line": 1, "end_line": 40, "label": "legacy shim" }
+      ]
+    }
+  ],
+  "connections": [
+    { "id": "launch", "from": "launcher", "to": "ingress", "label": "spawn stack" },
+    { "id": "browser-ingress", "from": "browser", "to": "ingress", "label": "HTTP + WS", "variant": "emphasis" },
+    { "id": "ingress-server", "from": "ingress", "to": "agentserver", "label": "/api /sockets", "variant": "emphasis" },
+    { "id": "ingress-automation", "from": "ingress", "to": "automation", "label": "/api/automation" },
+    { "id": "ingress-static", "from": "ingress", "to": "static", "label": "other paths" },
+    { "id": "automation-server", "from": "automation", "to": "agentserver", "label": "start runs", "variant": "dashed" },
+    { "id": "server-sandbox", "from": "agentserver", "to": "sandbox", "label": "docker mode", "variant": "dashed" },
+    { "id": "server-state", "from": "agentserver", "to": "state", "label": "persist" },
+    { "id": "server-clienttools", "from": "agentserver", "to": "clienttools", "label": "ActionEvent to UI", "variant": "dashed" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "What this repo owns",
+      "items": [
+        "UI, frontend state, backend selection (local / cloud) and local-stack orchestration",
+        "It does not implement agent behaviour: AGENTS.md says Agent Server contract -> TS client -> Canvas"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Contract with the server",
+      "items": [
+        "POST /api/conversations with agent_settings, workspace, client_tools, confirmation_policy, secrets",
+        "POST /api/conversations/{id}/events run=true; WS /sockets/session/{id}?after_seq=N",
+        "Client tools are executed by the UI when their ActionEvent arrives"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,504 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "OpenHands SDK Context Flow",
+    "output": "diagrams/openhands/context-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/OpenHands/software-agent-sdk.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "54daf056bd863bb46f922a2fe9324dd736b37ff6"
+    },
+    "viewBox": [
+      1080,
+      690
+    ],
+    "legend": {
+      "entries": {
+        "emphasis": {
+          "label": "main context path"
+        },
+        "default": {
+          "label": "data flow"
+        },
+        "security": {
+          "label": "condensation"
+        },
+        "dashed": {
+          "label": "side input / offload"
+        },
+        "database": {
+          "label": "persisted store"
+        }
+      }
+    }
+  },
+  "stages": [
+    {
+      "label": "Inputs"
+    },
+    {
+      "label": "Events"
+    },
+    {
+      "label": "Event log"
+    },
+    {
+      "label": "Projection"
+    },
+    {
+      "label": "Model call"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "skills",
+      "type": "frontend",
+      "label": "AgentContext",
+      "sublabel": "skills, suffixes",
+      "stage": 0,
+      "row": 0,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/context/agent_context.py",
+          "line": 360,
+          "end_line": 403,
+          "label": "system suffix"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/context/prompts/sections/dynamic.py",
+          "line": 99,
+          "end_line": 116,
+          "label": "<SKILLS> block"
+        }
+      ],
+      "width": 118,
+      "height": 60
+    },
+    {
+      "id": "memory",
+      "type": "database",
+      "label": "MEMORY.md tiers",
+      "sublabel": "user + project",
+      "stage": 0,
+      "row": 1,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/context/memory.py",
+          "line": 55,
+          "end_line": 106,
+          "label": "load_memory"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/impl/local_conversation.py",
+          "line": 1191,
+          "end_line": 1205,
+          "label": "loaded at init"
+        }
+      ],
+      "width": 118,
+      "height": 60
+    },
+    {
+      "id": "user",
+      "type": "external",
+      "label": "User message",
+      "sublabel": "send_message()",
+      "stage": 0,
+      "row": 2,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/impl/local_conversation.py",
+          "line": 1807,
+          "end_line": 1869,
+          "label": "send_message"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/context/agent_context.py",
+          "line": 517,
+          "end_line": 575,
+          "label": "trigger skills"
+        }
+      ],
+      "width": 118,
+      "height": 60
+    },
+    {
+      "id": "tools",
+      "type": "backend",
+      "label": "Tool executor",
+      "sublabel": "returns Observation",
+      "stage": 0,
+      "row": 3,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 1468,
+          "end_line": 1530,
+          "label": "_execute_action_event"
+        }
+      ],
+      "width": 118,
+      "height": 60
+    },
+    {
+      "id": "sysprompt",
+      "type": "backend",
+      "label": "SystemPromptEvent",
+      "sublabel": "static + dynamic",
+      "stage": 1,
+      "row": 0,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 580,
+          "end_line": 600,
+          "label": "init_state"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/event/llm_convertible/system.py",
+          "line": 72,
+          "end_line": 85,
+          "label": "two blocks"
+        }
+      ],
+      "width": 118,
+      "height": 60
+    },
+    {
+      "id": "msgevent",
+      "type": "backend",
+      "label": "MessageEvent",
+      "sublabel": "+ extended_content",
+      "stage": 1,
+      "row": 2,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/impl/local_conversation.py",
+          "line": 1840,
+          "end_line": 1869,
+          "label": "activated skills"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/event/llm_convertible/message.py",
+          "line": 116,
+          "end_line": 119,
+          "label": "to_llm_message"
+        }
+      ],
+      "width": 118,
+      "height": 60
+    },
+    {
+      "id": "obsevent",
+      "type": "backend",
+      "label": "Observation events",
+      "sublabel": "tool / error / reject",
+      "stage": 1,
+      "row": 3,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/event/llm_convertible/observation.py",
+          "line": 66,
+          "end_line": 72,
+          "label": "role=tool"
+        }
+      ],
+      "width": 118,
+      "height": 60
+    },
+    {
+      "id": "eventlog",
+      "type": "database",
+      "label": "EventLog",
+      "sublabel": "event-NNNNN-id.json",
+      "stage": 2,
+      "row": 2,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/event_store.py",
+          "line": 188,
+          "end_line": 240,
+          "label": "append"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/state.py",
+          "line": 315,
+          "end_line": 337,
+          "label": "append_event"
+        }
+      ],
+      "width": 118,
+      "height": 60
+    },
+    {
+      "id": "offload",
+      "type": "database",
+      "label": "observations/",
+      "sublabel": "saved tool output",
+      "stage": 2,
+      "row": 3,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/state.py",
+          "line": 406,
+          "end_line": 411,
+          "label": "observation dir"
+        }
+      ],
+      "width": 118,
+      "height": 60
+    },
+    {
+      "id": "view",
+      "type": "backend",
+      "label": "View",
+      "sublabel": "active branch",
+      "stage": 3,
+      "row": 2,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/state.py",
+          "line": 339,
+          "end_line": 384,
+          "label": "state.view"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/context/view/view.py",
+          "line": 111,
+          "end_line": 141,
+          "label": "append_event"
+        }
+      ],
+      "width": 118,
+      "height": 60
+    },
+    {
+      "id": "condenser",
+      "type": "security",
+      "label": "Condenser",
+      "sublabel": "LLMSummarizing",
+      "stage": 3,
+      "row": 0,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/context/condenser/llm_summarizing_condenser.py",
+          "line": 136,
+          "end_line": 222,
+          "label": "triggers"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/context/condenser/llm_summarizing_condenser.py",
+          "line": 278,
+          "end_line": 353,
+          "label": "forget range"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/event/condenser.py",
+          "line": 83,
+          "end_line": 96,
+          "label": "apply"
+        }
+      ],
+      "width": 118,
+      "height": 60
+    },
+    {
+      "id": "messages",
+      "type": "backend",
+      "label": "Message list",
+      "sublabel": "events_to_messages",
+      "stage": 4,
+      "row": 2,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/utils.py",
+          "line": 581,
+          "end_line": 633,
+          "label": "prepare_llm_messages"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/event/base.py",
+          "line": 108,
+          "end_line": 156,
+          "label": "batch merge"
+        }
+      ],
+      "width": 118,
+      "height": 60
+    },
+    {
+      "id": "llm",
+      "type": "cloud",
+      "label": "LLM.generate",
+      "sublabel": "prompt-cache marks",
+      "stage": 4,
+      "row": 3,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/llm/llm.py",
+          "line": 2993,
+          "end_line": 3021,
+          "label": "_apply_prompt_caching"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 788,
+          "end_line": 796,
+          "label": "generate call"
+        }
+      ],
+      "width": 118,
+      "height": 60
+    }
+  ],
+  "flows": [
+    {
+      "id": "skills-dynamic",
+      "from": "skills",
+      "to": "sysprompt",
+      "label": "skills",
+      "variant": "default"
+    },
+    {
+      "id": "memory-dynamic",
+      "from": "memory",
+      "to": "sysprompt",
+      "label": "memory index",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "bottom",
+      "via": [
+        [
+          315,
+          272
+        ]
+      ]
+    },
+    {
+      "id": "user-message",
+      "from": "user",
+      "to": "msgevent",
+      "label": "user turn",
+      "variant": "emphasis"
+    },
+    {
+      "id": "tool-observation",
+      "from": "tools",
+      "to": "obsevent",
+      "label": "result",
+      "variant": "default"
+    },
+    {
+      "id": "append-system",
+      "from": "sysprompt",
+      "to": "eventlog",
+      "label": "append first",
+      "variant": "default"
+    },
+    {
+      "id": "append-message",
+      "from": "msgevent",
+      "to": "eventlog",
+      "label": "append",
+      "variant": "emphasis",
+      "route": "straight",
+      "labelAt": [
+        397,
+        372
+      ]
+    },
+    {
+      "id": "append-observation",
+      "from": "obsevent",
+      "to": "eventlog",
+      "label": "append",
+      "variant": "default"
+    },
+    {
+      "id": "offload-full",
+      "from": "obsevent",
+      "to": "offload",
+      "label": "full output",
+      "variant": "dashed",
+      "labelDy": 26,
+      "route": "straight"
+    },
+    {
+      "id": "project-view",
+      "from": "eventlog",
+      "to": "view",
+      "label": "replay",
+      "variant": "emphasis",
+      "route": "straight"
+    },
+    {
+      "id": "view-condense",
+      "from": "view",
+      "to": "condenser",
+      "label": "over budget?",
+      "variant": "security"
+    },
+    {
+      "id": "condensation-event",
+      "from": "condenser",
+      "to": "eventlog",
+      "label": "Condensation",
+      "variant": "security",
+      "fromSide": "left",
+      "toSide": "top",
+      "via": [
+        [
+          530,
+          158
+        ]
+      ]
+    },
+    {
+      "id": "view-messages",
+      "from": "view",
+      "to": "messages",
+      "label": "LLM-visible",
+      "variant": "emphasis"
+    },
+    {
+      "id": "messages-llm",
+      "from": "messages",
+      "to": "llm",
+      "label": "system first",
+      "variant": "emphasis",
+      "labelDy": 25
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "What reaches the model",
+      "items": [
+        "System prompt = static sections (cache-marked) + dynamic block (skills, memory, secrets names, datetime)",
+        "Only LLMConvertibleEvent subclasses enter the View; state updates and errors stay out",
+        "Parallel tool calls are stored one event each and re-merged into one assistant message"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "How size is bounded",
+      "items": [
+        "Condenser triggers on CondensationRequest, token limit, or len(view) > max_size (default 240)",
+        "Cuts snap to manipulation indices so tool_call/tool_result pairs and batches stay intact",
+        "Terminal: tmux keeps 10k lines, the session cuts to 30,000 chars, then head + tail is kept and that text is saved under observations/"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Runtime evidence (probe)",
+      "items": [
+        "Real SDK run with max_size=10: one Condensation forgot 8 events, summary inserted at offset 2",
+        "seq 1 200000 reached the model as 30000 chars; all 17 events stayed on disk"
+      ]
+    }
+  ]
+}

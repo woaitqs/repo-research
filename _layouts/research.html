@@ -7,8 +7,16 @@ layout: default
   .research-article table { display: block; overflow-x: auto; font-size: 0.92em; }
   .research-article pre.mermaid { background: transparent; border: 0; text-align: center; overflow-x: auto; }
   .research-article code { word-break: break-word; }
+  .research-nav { font-size: 0.9em; margin-bottom: 1.5em; }
 </style>
 <article class="post research-article">
+  {% if page.diagrams or page.experiment %}
+  <nav class="research-nav">
+    <a href="{{ '/' | relative_url }}">Repo Research</a> / {{ page.title }}
+    {% if page.diagrams %} · <a href="{{ page.diagrams | relative_url }}">Interactive diagrams</a>{% endif %}
+    {% if page.experiment %} · <a href="{{ page.experiment }}">Minimal reproduction</a>{% endif %}
+  </nav>
+  {% endif %}
   <div class="post-content">
     {{ content }}
   </div>

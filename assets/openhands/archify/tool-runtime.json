@@ -1,0 +1,332 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "OpenHands Tool Call: Reasoning to Runtime",
+    "output": "diagrams/openhands/tool-runtime.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "viewBox": [
+      1080,
+      670
+    ],
+    "column_fit": "spread",
+    "repository": {
+      "url": "https://github.com/OpenHands/software-agent-sdk.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "54daf056bd863bb46f922a2fe9324dd736b37ff6"
+    }
+  },
+  "participants": [
+    {
+      "id": "llm",
+      "type": "cloud",
+      "label": "LLM",
+      "sublabel": "tool_calls",
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 788,
+          "end_line": 796,
+          "label": "generate"
+        }
+      ]
+    },
+    {
+      "id": "agent",
+      "type": "backend",
+      "label": "Agent",
+      "sublabel": "_get_action_event",
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 1311,
+          "end_line": 1466,
+          "label": "validate + emit"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/response_dispatch.py",
+          "line": 145,
+          "end_line": 192,
+          "label": "_handle_tool_calls"
+        }
+      ]
+    },
+    {
+      "id": "policy",
+      "type": "security",
+      "label": "Confirmation",
+      "sublabel": "policy + analyzer",
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 1130,
+          "end_line": 1171,
+          "label": "_requires_user_confirmation"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/security/confirmation_policy.py",
+          "line": 9,
+          "end_line": 60,
+          "label": "policies"
+        }
+      ]
+    },
+    {
+      "id": "log",
+      "type": "database",
+      "label": "EventLog",
+      "sublabel": "persist first",
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/state.py",
+          "line": 315,
+          "end_line": 337,
+          "label": "append_event"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/impl/local_conversation.py",
+          "line": 424,
+          "end_line": 447,
+          "label": "persist before callbacks"
+        }
+      ]
+    },
+    {
+      "id": "pexec",
+      "type": "messagebus",
+      "label": "ToolExecutor",
+      "sublabel": "parallel + locks",
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/parallel_executor.py",
+          "line": 51,
+          "end_line": 120,
+          "label": "execute_batch"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/parallel_executor.py",
+          "line": 275,
+          "end_line": 300,
+          "label": "_run_safe"
+        }
+      ]
+    },
+    {
+      "id": "term",
+      "type": "backend",
+      "label": "Terminal tool",
+      "sublabel": "TerminalExecutor",
+      "sources": [
+        {
+          "path": "openhands-tools/openhands/tools/terminal/impl.py",
+          "line": 541,
+          "end_line": 560,
+          "label": "__call__"
+        },
+        {
+          "path": "openhands-tools/openhands/tools/terminal/definition.py",
+          "line": 287,
+          "end_line": 340,
+          "label": "create(conv_state)"
+        }
+      ]
+    },
+    {
+      "id": "shell",
+      "type": "external",
+      "label": "tmux session",
+      "sublabel": "workspace cwd",
+      "sources": [
+        {
+          "path": "openhands-tools/openhands/tools/terminal/terminal/tmux_terminal.py",
+          "line": 138,
+          "end_line": 163,
+          "label": "history-limit"
+        },
+        {
+          "path": "openhands-tools/openhands/tools/terminal/constants.py",
+          "line": 1,
+          "end_line": 40,
+          "label": "limits"
+        }
+      ]
+    }
+  ],
+  "segments": [
+    {
+      "from": 150,
+      "to": 290,
+      "label": "Reasoning side"
+    },
+    {
+      "from": 300,
+      "to": 470,
+      "label": "Execution runtime"
+    },
+    {
+      "from": 480,
+      "to": 560,
+      "label": "Back into context"
+    }
+  ],
+  "messages": [
+    {
+      "id": "calls",
+      "from": "llm",
+      "to": "agent",
+      "y": 165,
+      "label": "tool_calls + JSON args",
+      "variant": "emphasis"
+    },
+    {
+      "id": "action",
+      "from": "agent",
+      "to": "log",
+      "y": 195,
+      "label": "ActionEvent or AgentErrorEvent",
+      "variant": "default"
+    },
+    {
+      "id": "risk",
+      "from": "agent",
+      "to": "policy",
+      "y": 228,
+      "label": "security_risk per action",
+      "variant": "security"
+    },
+    {
+      "id": "verdict",
+      "from": "policy",
+      "to": "agent",
+      "y": 258,
+      "label": "run now / WAITING",
+      "variant": "return"
+    },
+    {
+      "id": "batch",
+      "from": "agent",
+      "to": "pexec",
+      "y": 310,
+      "label": "execute_batch(actions)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "invoke",
+      "from": "pexec",
+      "to": "term",
+      "y": 340,
+      "label": "tool(action, conversation)",
+      "variant": "default"
+    },
+    {
+      "id": "keys",
+      "from": "term",
+      "to": "shell",
+      "y": 370,
+      "label": "send command, poll PS1",
+      "variant": "default"
+    },
+    {
+      "id": "output",
+      "from": "shell",
+      "to": "term",
+      "y": 400,
+      "label": "<= 10k lines",
+      "variant": "return"
+    },
+    {
+      "id": "obs",
+      "from": "term",
+      "to": "pexec",
+      "y": 430,
+      "label": "TerminalObservation",
+      "variant": "return"
+    },
+    {
+      "id": "ordered",
+      "from": "pexec",
+      "to": "agent",
+      "y": 458,
+      "label": "results in call order",
+      "variant": "return"
+    },
+    {
+      "id": "record",
+      "from": "agent",
+      "to": "log",
+      "y": 495,
+      "label": "ObservationEvent",
+      "variant": "emphasis"
+    },
+    {
+      "id": "next",
+      "from": "log",
+      "to": "llm",
+      "y": 530,
+      "label": "next step: tool msg <= 30k chars",
+      "variant": "dashed"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "agent",
+      "from": 165,
+      "to": 500,
+      "type": "backend"
+    },
+    {
+      "participant": "policy",
+      "from": 224,
+      "to": 262,
+      "type": "security"
+    },
+    {
+      "participant": "pexec",
+      "from": 306,
+      "to": 462,
+      "type": "messagebus"
+    },
+    {
+      "participant": "term",
+      "from": 336,
+      "to": 434,
+      "type": "backend"
+    },
+    {
+      "participant": "shell",
+      "from": 366,
+      "to": 404,
+      "type": "external"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "The boundary",
+      "items": [
+        "Reasoning ends when an ActionEvent is persisted; everything after runs in the ToolExecutor",
+        "Executors bind to the conversation's workspace at create(conv_state) time",
+        "Locally the shell is tmux/subprocess in the workspace; remotely the same executors run inside the agent-server"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Failure handling",
+      "items": [
+        "Unknown tool, bad JSON or schema errors: ActionEvent(action=None) + AgentErrorEvent",
+        "ValueError from an executor becomes AgentErrorEvent; the loop continues",
+        "Cancelled before start: a synthetic error result keeps tool_call/result pairing"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Output bounding",
+      "items": [
+        "tmux history-limit 10,000 lines; session-level maybe_truncate to 30,000 chars",
+        "to_llm_content keeps head + tail within 30,000 chars and saves the text under observations/"
+      ]
+    }
+  ]
+}

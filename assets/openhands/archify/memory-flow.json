@@ -1,0 +1,318 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "OpenHands Persistent Memory Flow",
+    "output": "diagrams/openhands/memory-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "viewBox": [
+      1080,
+      600
+    ],
+    "repository": {
+      "url": "https://github.com/OpenHands/software-agent-sdk.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "54daf056bd863bb46f922a2fe9324dd736b37ff6"
+    },
+    "legend": {
+      "entries": {
+        "emphasis": {
+          "label": "main memory path"
+        },
+        "default": {
+          "label": "data flow"
+        },
+        "dashed": {
+          "label": "optional / on demand"
+        },
+        "database": {
+          "label": "Markdown file"
+        }
+      }
+    }
+  },
+  "stages": [
+    {
+      "label": "Writer"
+    },
+    {
+      "label": "Files"
+    },
+    {
+      "label": "Loader"
+    },
+    {
+      "label": "Prompt"
+    },
+    {
+      "label": "Model"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "agent",
+      "type": "backend",
+      "label": "Agent via tools",
+      "sublabel": "file_editor, terminal",
+      "stage": 0,
+      "row": 1,
+      "width": 128,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/context/prompts/sections/static.py",
+          "line": 137,
+          "end_line": 150,
+          "label": "write habits"
+        }
+      ]
+    },
+    {
+      "id": "userindex",
+      "type": "database",
+      "label": "User MEMORY.md",
+      "sublabel": "~/.openhands/memory",
+      "stage": 1,
+      "row": 0,
+      "width": 128,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/context/memory.py",
+          "line": 71,
+          "end_line": 80,
+          "label": "user tier"
+        }
+      ]
+    },
+    {
+      "id": "projindex",
+      "type": "database",
+      "label": "Project MEMORY.md",
+      "sublabel": ".openhands/memory",
+      "stage": 1,
+      "row": 1,
+      "width": 128,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/context/memory.py",
+          "line": 81,
+          "end_line": 83,
+          "label": "project tier"
+        }
+      ]
+    },
+    {
+      "id": "dailylog",
+      "type": "database",
+      "label": "Daily logs",
+      "sublabel": "YYYY-MM-DD.md",
+      "stage": 1,
+      "row": 2,
+      "width": 128,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/context/memory.py",
+          "line": 1,
+          "end_line": 10,
+          "label": "never auto-loaded"
+        }
+      ]
+    },
+    {
+      "id": "loader",
+      "type": "security",
+      "label": "load_memory()",
+      "sublabel": "6000-char budget",
+      "stage": 2,
+      "row": 1,
+      "width": 128,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/context/memory.py",
+          "line": 55,
+          "end_line": 106,
+          "label": "merge + truncate top"
+        },
+        {
+          "path": "openhands-sdk/openhands/sdk/conversation/impl/local_conversation.py",
+          "line": 1191,
+          "end_line": 1209,
+          "label": "first send/run"
+        }
+      ]
+    },
+    {
+      "id": "context",
+      "type": "backend",
+      "label": "AgentContext",
+      "sublabel": "memory_context",
+      "stage": 3,
+      "row": 2,
+      "width": 128,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/context/agent_context.py",
+          "line": 143,
+          "end_line": 171,
+          "label": "opt-in, not persisted"
+        }
+      ]
+    },
+    {
+      "id": "block",
+      "type": "security",
+      "label": "<MEMORY_CONTEXT>",
+      "sublabel": "untrusted wrapper",
+      "stage": 3,
+      "row": 1,
+      "width": 128,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/context/prompts/sections/dynamic.py",
+          "line": 75,
+          "end_line": 96,
+          "label": "dynamic section"
+        }
+      ]
+    },
+    {
+      "id": "sysprompt",
+      "type": "cloud",
+      "label": "System prompt",
+      "sublabel": "dynamic block",
+      "stage": 4,
+      "row": 1,
+      "width": 128,
+      "sources": [
+        {
+          "path": "openhands-sdk/openhands/sdk/agent/agent.py",
+          "line": 602,
+          "end_line": 625,
+          "label": "get_dynamic_context"
+        }
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "id": "write-user",
+      "from": "agent",
+      "to": "userindex",
+      "label": "durable facts",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "left",
+      "via": [
+        [
+          100,
+          157
+        ]
+      ]
+    },
+    {
+      "id": "write-project",
+      "from": "agent",
+      "to": "projindex",
+      "label": "append",
+      "variant": "emphasis",
+      "route": "straight"
+    },
+    {
+      "id": "write-log",
+      "from": "agent",
+      "to": "dailylog",
+      "label": "notes",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "left",
+      "via": [
+        [
+          100,
+          385
+        ]
+      ]
+    },
+    {
+      "id": "read-user",
+      "from": "userindex",
+      "to": "loader",
+      "label": "tier 1",
+      "variant": "default",
+      "fromSide": "right",
+      "toSide": "top",
+      "via": [
+        [
+          530,
+          157
+        ]
+      ]
+    },
+    {
+      "id": "read-project",
+      "from": "projindex",
+      "to": "loader",
+      "label": "tier 2",
+      "variant": "emphasis",
+      "route": "straight"
+    },
+    {
+      "id": "set-context",
+      "from": "loader",
+      "to": "context",
+      "label": "model_copy",
+      "variant": "default",
+      "fromSide": "bottom",
+      "toSide": "left",
+      "via": [
+        [
+          530,
+          385
+        ]
+      ]
+    },
+    {
+      "id": "render-block",
+      "from": "loader",
+      "to": "block",
+      "label": "text",
+      "variant": "emphasis",
+      "route": "straight"
+    },
+    {
+      "id": "into-prompt",
+      "from": "block",
+      "to": "sysprompt",
+      "label": "uncached tier",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Who writes, who reads",
+      "items": [
+        "No memory tool or store: the agent edits Markdown files with its normal tools, guided by the <MEMORY> prompt section",
+        "LocalConversation reads both indexes once, when the agent is first made ready (best-effort: read errors are ignored)",
+        "Daily logs are never injected; MEMORY.md may point to them and the agent reads them on demand"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Staleness and trust",
+      "items": [
+        "Over budget: whole lines are dropped from the top, so the newest appended facts survive",
+        "Content is wrapped in <UNTRUSTED_CONTENT> and labelled as possibly stale hints",
+        "memory_context is excluded from serialization, so it is re-read from disk every session"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Default without load_memory",
+      "items": [
+        "load_memory defaults to False; the <MEMORY> section then tells the agent to use repository AGENTS.md as memory",
+        "AGENTS.md reaches the prompt as an always-on repo skill, not through load_memory"
+      ]
+    }
+  ]
+}
