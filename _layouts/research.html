@@ -12,9 +12,10 @@ layout: default
 <article class="post research-article">
   {% if page.diagrams or page.experiment %}
   <nav class="research-nav">
+    {% assign zh = page.lang | default: "" | slice: 0, 2 %}
     <a href="{{ '/' | relative_url }}">Repo Research</a> / {{ page.title }}
-    {% if page.diagrams %} · <a href="{{ page.diagrams | relative_url }}">Interactive diagrams</a>{% endif %}
-    {% if page.experiment %} · <a href="{{ page.experiment }}">Minimal reproduction</a>{% endif %}
+    {% if page.diagrams %} · <a href="{{ page.diagrams | relative_url }}">{% if zh == "zh" %}交互式图表{% else %}Interactive diagrams{% endif %}</a>{% endif %}
+    {% if page.experiment %} · <a href="{{ page.experiment }}">{% if zh == "zh" %}最小复现{% else %}Minimal reproduction{% endif %}</a>{% endif %}
   </nav>
   {% endif %}
   <div class="post-content">

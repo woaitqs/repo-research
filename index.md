@@ -23,7 +23,7 @@ Each study includes:
 | Repository | Research | Architecture | Execution Flow | Experiment | Status |
 |---|---|---|---|---|---|
 | [langchain-ai/deepagents](https://github.com/langchain-ai/deepagents) @ `16e84d9` | [Read the study](research/deepagents.html) | [architecture.html](diagrams/deepagents/architecture.html) | [execution-flow.html](diagrams/deepagents/execution-flow.html) | [experiments/deepagents](https://github.com/woaitqs/repo-research/tree/main/experiments/deepagents) | Complete: 21 tests + demo pass, upstream probe 7/7, real-model scenarios 4/4 × 3 runs |
-| [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands) @ `7ea83ba` + [software-agent-sdk](https://github.com/OpenHands/software-agent-sdk) @ `v1.53.0` | [Read the study](research/openhands.html) | [architecture.html](diagrams/openhands/architecture.html) | [execution-flow.html](diagrams/openhands/execution-flow.html) | [experiments/openhands](https://github.com/woaitqs/repo-research/tree/main/experiments/openhands) | Complete: 19 tests + demo pass, 426 upstream SDK tests pass, real SDK probed offline and with a real model |
+| [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands) @ `7ea83ba` + [software-agent-sdk](https://github.com/OpenHands/software-agent-sdk) @ `v1.53.0` | [Read the study](research/openhands.html) · [中文](research/openhands.zh.html) | [architecture.html](diagrams/openhands/architecture.html) | [execution-flow.html](diagrams/openhands/execution-flow.html) | [experiments/openhands](https://github.com/woaitqs/repo-research/tree/main/experiments/openhands) | Complete: 19 tests + demo pass, 426 upstream SDK tests pass, real SDK probed offline and with a real model |
 
 ### deepagents: all diagrams
 
@@ -57,6 +57,9 @@ Each study includes:
 > One-line takeaway: `OpenHands/OpenHands` is now the Agent Canvas UI. The agent itself lives in
 > `software-agent-sdk`: an event-sourced conversation, a stateless agent `step()`, an LLM context that is
 > a projection of the event log, and compaction done by appending a `Condensation` event.
+>
+> 一句话结论（[中文版研究](research/openhands.zh.html)）：`OpenHands/OpenHands` 现在是 Agent Canvas 界面；agent 本体在
+> `software-agent-sdk` 中——事件溯源的会话、无状态的 `step()`、作为事件日志投影的 LLM 上下文，以及通过追加 `Condensation` 事件完成的压缩。
 
 ## Reading convention
 
