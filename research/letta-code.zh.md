@@ -823,4 +823,4 @@ python3 mutation_check.py        # 9/9 种架构回归都被测试抓到
 - 文档：<https://docs.letta.com/letta-code/>（记忆、MemFS、子 agent、权限）。
 - 背景：[MemGPT](https://arxiv.org/abs/2310.08560) 和 [Sleep-time compute](https://arxiv.org/abs/2504.13171)。*解读：* 后台 reflection 就是把这篇论文的思路用到了编码 agent 上。
 - 本地后端所依赖的模型提供方运行时 pi-ai：<https://github.com/earendil-works/pi>
-- 本系列的其他研究：[deepagents](deepagents.zh.md) 在框架循环上叠加中间件，[OpenHands](openhands.zh.md) 使用事件溯源的会话。letta-code 则用协议把循环拆在多个进程之间。
+- 本系列的其他研究：[deepagents](deepagents.zh.md) 在框架循环上叠加中间件，[OpenHands](openhands.zh.md) 使用事件溯源的会话，[openai-agents-python](openai-agents-python.zh.md) 把循环留在 SDK 内部，handoff 和子 Agent 都是工具调用。letta-code 则用协议把循环拆在多个进程之间。

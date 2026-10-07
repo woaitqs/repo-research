@@ -1,0 +1,293 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "openai-agents-python — handoff (control moves) vs Agent.as_tool (control stays)",
+    "output": "diagrams/openai-agents-python/sub-agent-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/openai/openai-agents-python",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "71c2da4de47159ccc37905b8fe781be805dbfa66"
+    },
+    "viewBox": [
+      1010,
+      648
+    ],
+    "column_fit": "spread"
+  },
+  "participants": [
+    {
+      "id": "runner",
+      "type": "backend",
+      "label": "Runner",
+      "sublabel": "outer loop",
+      "sources": [
+        {
+          "path": "src/agents/run.py",
+          "line": 2284,
+          "end_line": 2295,
+          "label": "handoff switches agent"
+        }
+      ]
+    },
+    {
+      "id": "parent",
+      "type": "external",
+      "label": "Parent",
+      "sublabel": "parent model"
+    },
+    {
+      "id": "target",
+      "type": "external",
+      "label": "Target",
+      "sublabel": "handoff agent",
+      "sources": [
+        {
+          "path": "src/agents/run_internal/turn_resolution.py",
+          "line": 640,
+          "end_line": 700,
+          "label": "filter / nest / keep"
+        }
+      ]
+    },
+    {
+      "id": "wrapper",
+      "type": "backend",
+      "label": "as_tool",
+      "sublabel": "FunctionTool",
+      "sources": [
+        {
+          "path": "src/agents/agent.py",
+          "line": 721,
+          "end_line": 790,
+          "label": "_run_agent_impl"
+        },
+        {
+          "path": "src/agents/agent.py",
+          "line": 1073,
+          "end_line": 1100,
+          "label": "output extraction"
+        }
+      ]
+    },
+    {
+      "id": "nested",
+      "type": "backend",
+      "label": "Nested run",
+      "sublabel": "Runner.run",
+      "sources": [
+        {
+          "path": "src/agents/agent.py",
+          "line": 1044,
+          "end_line": 1060,
+          "label": "Runner.run(self, input)"
+        }
+      ]
+    },
+    {
+      "id": "child",
+      "type": "external",
+      "label": "Child",
+      "sublabel": "child model"
+    }
+  ],
+  "segments": [
+    {
+      "from": 150,
+      "to": 254,
+      "label": "Handoff"
+    },
+    {
+      "from": 266,
+      "to": 538,
+      "label": "Agent.as_tool"
+    }
+  ],
+  "messages": [
+    {
+      "id": "h1",
+      "from": "runner",
+      "to": "parent",
+      "y": 160,
+      "label": "turn: items + handoffs",
+      "variant": "emphasis"
+    },
+    {
+      "id": "h2",
+      "from": "parent",
+      "to": "runner",
+      "y": 188,
+      "label": "transfer_to_target()",
+      "variant": "return"
+    },
+    {
+      "id": "h3",
+      "from": "runner",
+      "to": "target",
+      "y": 216,
+      "label": "same transcript + transfer output",
+      "variant": "emphasis",
+      "note": "default; nest_handoff_history or input_filter can change it"
+    },
+    {
+      "id": "h4",
+      "from": "target",
+      "to": "runner",
+      "y": 244,
+      "label": "final message",
+      "variant": "return",
+      "note": "last_agent becomes the target"
+    },
+    {
+      "id": "t1",
+      "from": "runner",
+      "to": "parent",
+      "y": 300,
+      "label": "turn: items + tools"
+    },
+    {
+      "id": "t2",
+      "from": "parent",
+      "to": "runner",
+      "y": 328,
+      "label": "call tool(input=brief)",
+      "variant": "return"
+    },
+    {
+      "id": "t3",
+      "from": "runner",
+      "to": "wrapper",
+      "y": 356,
+      "label": "invoke FunctionTool"
+    },
+    {
+      "id": "t4",
+      "from": "wrapper",
+      "to": "nested",
+      "y": 384,
+      "label": "Runner.run(child, brief)",
+      "variant": "emphasis",
+      "note": "fresh wrapper, shared app context"
+    },
+    {
+      "id": "t5",
+      "from": "nested",
+      "to": "child",
+      "y": 412,
+      "label": "[user: brief] only",
+      "variant": "emphasis",
+      "note": "no parent history"
+    },
+    {
+      "id": "t6",
+      "from": "child",
+      "to": "nested",
+      "y": 440,
+      "label": "final message",
+      "variant": "return"
+    },
+    {
+      "id": "t7",
+      "from": "nested",
+      "to": "wrapper",
+      "y": 468,
+      "label": "final_output",
+      "variant": "return"
+    },
+    {
+      "id": "t8",
+      "from": "wrapper",
+      "to": "runner",
+      "y": 496,
+      "label": "function_call_output",
+      "variant": "return"
+    },
+    {
+      "id": "t9",
+      "from": "runner",
+      "to": "parent",
+      "y": 524,
+      "label": "next turn",
+      "note": "parent keeps control"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "runner",
+      "from": 156,
+      "to": 528,
+      "type": "backend"
+    },
+    {
+      "participant": "parent",
+      "from": 156,
+      "to": 192,
+      "type": "external"
+    },
+    {
+      "participant": "target",
+      "from": 212,
+      "to": 248,
+      "type": "external"
+    },
+    {
+      "participant": "parent",
+      "from": 296,
+      "to": 332,
+      "type": "external"
+    },
+    {
+      "participant": "wrapper",
+      "from": 352,
+      "to": 500,
+      "type": "backend"
+    },
+    {
+      "participant": "nested",
+      "from": 380,
+      "to": 472,
+      "type": "backend"
+    },
+    {
+      "participant": "child",
+      "from": 408,
+      "to": 444,
+      "type": "external"
+    },
+    {
+      "participant": "parent",
+      "from": 520,
+      "to": 532,
+      "type": "external"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Handoff",
+      "items": [
+        "one switch per response; extra handoff calls get an 'ignored' output",
+        "server-managed conversations disable nesting and input filters"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "as_tool",
+      "items": [
+        "the parent model writes the brief; isolation is structural",
+        "nested approvals surface as the parent's interruptions"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Observed (real models)",
+      "items": [
+        "6/6 runs: children got exactly one user item, no leaked id",
+        "6/6 runs: Billing input = user, reasoning, call, output"
+      ]
+    }
+  ]
+}

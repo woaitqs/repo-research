@@ -1,0 +1,350 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "openai-agents-python — what reaches the model on each turn",
+    "output": "diagrams/openai-agents-python/context-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/openai/openai-agents-python",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "71c2da4de47159ccc37905b8fe781be805dbfa66"
+    },
+    "viewBox": [
+      1076,
+      690
+    ]
+  },
+  "stages": [
+    {
+      "label": "Sources"
+    },
+    {
+      "label": "Run state"
+    },
+    {
+      "label": "Assemble"
+    },
+    {
+      "label": "Last hook"
+    },
+    {
+      "label": "Request"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "session",
+      "type": "database",
+      "label": "Session history",
+      "sublabel": "get_items(limit)",
+      "stage": 0,
+      "row": 0,
+      "sources": [
+        {
+          "path": "src/agents/run_internal/session_persistence.py",
+          "line": 443,
+          "end_line": 488,
+          "label": "limit + prepend"
+        }
+      ],
+      "yOffset": -7
+    },
+    {
+      "id": "newinput",
+      "type": "frontend",
+      "label": "New input",
+      "sublabel": "str or items",
+      "stage": 0,
+      "row": 1
+    },
+    {
+      "id": "turnout",
+      "type": "backend",
+      "label": "Turn outputs",
+      "sublabel": "model + tool items",
+      "stage": 0,
+      "row": 2,
+      "sources": [
+        {
+          "path": "src/agents/run.py",
+          "line": 1899,
+          "end_line": 1905,
+          "label": "generated_items = pre + new"
+        }
+      ],
+      "yOffset": -7
+    },
+    {
+      "id": "agentcfg",
+      "type": "backend",
+      "label": "Agent config",
+      "sublabel": "prompt sources",
+      "stage": 0,
+      "row": 3,
+      "sources": [
+        {
+          "path": "src/agents/agent.py",
+          "line": 1129,
+          "end_line": 1158,
+          "label": "get_system_prompt"
+        },
+        {
+          "path": "src/agents/sandbox/runtime_agent_preparation.py",
+          "line": 173,
+          "end_line": 230,
+          "label": "sandbox prompt order"
+        }
+      ]
+    },
+    {
+      "id": "original",
+      "type": "database",
+      "label": "original_input",
+      "sublabel": "history + input",
+      "stage": 1,
+      "row": 0,
+      "sources": [
+        {
+          "path": "src/agents/run_internal/session_persistence.py",
+          "line": 414,
+          "end_line": 440,
+          "label": "prepare_input_with_session"
+        }
+      ]
+    },
+    {
+      "id": "generated",
+      "type": "database",
+      "label": "generated items",
+      "sublabel": "this run's items",
+      "stage": 1,
+      "row": 2,
+      "sources": [
+        {
+          "path": "src/agents/run_internal/items.py",
+          "line": 179,
+          "end_line": 209,
+          "label": "run_item_to_input_item"
+        }
+      ],
+      "yOffset": -7
+    },
+    {
+      "id": "prompt",
+      "type": "backend",
+      "label": "System prompt",
+      "sublabel": "per turn",
+      "stage": 2,
+      "row": 3
+    },
+    {
+      "id": "procctx",
+      "type": "security",
+      "label": "process_context",
+      "sublabel": "SandboxAgent only",
+      "stage": 2,
+      "row": 1,
+      "sources": [
+        {
+          "path": "src/agents/sandbox/runtime_agent_preparation.py",
+          "line": 160,
+          "end_line": 170,
+          "label": "prepare_sandbox_input"
+        },
+        {
+          "path": "src/agents/sandbox/capabilities/compaction.py",
+          "line": 210,
+          "end_line": 225,
+          "label": "cut at compaction"
+        }
+      ]
+    },
+    {
+      "id": "assemble",
+      "type": "backend",
+      "label": "prepare input",
+      "sublabel": "drop orphan calls",
+      "stage": 2,
+      "row": 2,
+      "sources": [
+        {
+          "path": "src/agents/run_internal/run_loop.py",
+          "line": 347,
+          "end_line": 354,
+          "label": "_prepare_turn_input_items"
+        },
+        {
+          "path": "src/agents/run_internal/items.py",
+          "line": 371,
+          "end_line": 382,
+          "label": "prepare_model_input_items"
+        }
+      ],
+      "yOffset": -7
+    },
+    {
+      "id": "filter",
+      "type": "security",
+      "label": "input filter",
+      "sublabel": "RunConfig hook",
+      "stage": 3,
+      "row": 2,
+      "sources": [
+        {
+          "path": "src/agents/run_internal/turn_preparation.py",
+          "line": 51,
+          "end_line": 93,
+          "label": "maybe_filter_model_input"
+        },
+        {
+          "path": "src/agents/extensions/tool_output_trimmer.py",
+          "line": 88,
+          "end_line": 120,
+          "label": "ToolOutputTrimmer"
+        }
+      ]
+    },
+    {
+      "id": "request",
+      "type": "external",
+      "label": "Model request",
+      "sublabel": "items + tools",
+      "stage": 4,
+      "row": 2,
+      "sources": [
+        {
+          "path": "src/agents/run_internal/run_loop.py",
+          "line": 2898,
+          "end_line": 2911,
+          "label": "model.get_response"
+        }
+      ]
+    },
+    {
+      "id": "server",
+      "type": "cloud",
+      "label": "Server state",
+      "sublabel": "deltas only",
+      "stage": 4,
+      "row": 0,
+      "sources": [
+        {
+          "path": "src/agents/run_internal/oai_conversation.py",
+          "line": 124,
+          "end_line": 150,
+          "label": "deltas only"
+        },
+        {
+          "path": "src/agents/model_settings.py",
+          "line": 191,
+          "end_line": 197,
+          "label": "context_management"
+        }
+      ],
+      "yOffset": -7
+    }
+  ],
+  "flows": [
+    {
+      "id": "hist",
+      "from": "session",
+      "to": "original",
+      "label": "prepend",
+      "variant": "emphasis"
+    },
+    {
+      "id": "new",
+      "from": "newinput",
+      "to": "original",
+      "label": "append"
+    },
+    {
+      "id": "gen",
+      "from": "turnout",
+      "to": "generated",
+      "label": "each turn"
+    },
+    {
+      "id": "cfg",
+      "from": "agentcfg",
+      "to": "prompt",
+      "label": "resolve"
+    },
+    {
+      "id": "cut",
+      "from": "original",
+      "to": "procctx",
+      "label": "caller items",
+      "variant": "dashed"
+    },
+    {
+      "id": "caller",
+      "from": "procctx",
+      "to": "assemble",
+      "label": "kept items",
+      "labelDy": 25
+    },
+    {
+      "id": "replay",
+      "from": "generated",
+      "to": "assemble",
+      "label": "replay"
+    },
+    {
+      "id": "items",
+      "from": "assemble",
+      "to": "filter",
+      "label": "items",
+      "variant": "emphasis"
+    },
+    {
+      "id": "sys",
+      "from": "prompt",
+      "to": "filter",
+      "label": "instructions"
+    },
+    {
+      "id": "send",
+      "from": "filter",
+      "to": "request",
+      "label": "ModelInputData",
+      "variant": "emphasis"
+    },
+    {
+      "id": "delta",
+      "from": "original",
+      "to": "server",
+      "label": "server-managed: deltas",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Enters context",
+      "items": [
+        "instructions + original input + generated items + tool/handoff schemas",
+        "tool outputs verbatim: no default truncation"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Shrinks it (all opt-in)",
+      "items": [
+        "SessionSettings.limit, session_input_callback, call_model_input_filter",
+        "server compaction (context_management) or OpenAIResponsesCompactionSession"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Never enters",
+      "items": [
+        "RunContextWrapper.context (local app state)",
+        "approval placeholders and SDK-only item metadata"
+      ]
+    }
+  ]
+}

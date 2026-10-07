@@ -820,4 +820,4 @@ Each one fails at least one test. The first version of the suite missed "compile
 - Docs: <https://docs.letta.com/letta-code/> (memory, MemFS, subagents, permissions).
 - Background: [MemGPT](https://arxiv.org/abs/2310.08560) and [Sleep-time compute](https://arxiv.org/abs/2504.13171). *Interpretation:* background reflection is this paper's idea applied to a coding agent.
 - pi-ai, the provider runtime the local backend delegates to: <https://github.com/earendil-works/pi>
-- Companion studies in this series: [deepagents](deepagents.md) puts middleware on a framework loop, and [OpenHands](openhands.md) uses an event-sourced conversation. letta-code instead splits the loop across processes with a protocol.
+- Companion studies in this series: [deepagents](deepagents.md) puts middleware on a framework loop, [OpenHands](openhands.md) uses an event-sourced conversation, and [openai-agents-python](openai-agents-python.md) keeps the loop inside the SDK, with handoffs and sub-agents as tool calls. letta-code instead splits the loop across processes with a protocol.

@@ -1,0 +1,306 @@
+{
+  "sdk_version": "0.23.1",
+  "python": "3.13.16",
+  "passed": 17,
+  "total": 17,
+  "results": [
+    {
+      "id": "P1",
+      "claim": "A handoff is a tool call; by default the next agent sees the full raw transcript",
+      "expected": "handoffs=[transfer_to_billing]; Billing input = [user, function_call, function_call_output]",
+      "observed": {
+        "triage_handoffs": [
+          "transfer_to_billing"
+        ],
+        "triage_function_tools": [],
+        "billing_system": "You are billing.",
+        "billing_input_kinds": [
+          "message:user",
+          "function_call",
+          "function_call_output"
+        ],
+        "transfer_output": "{\"assistant\": \"Billing\"}",
+        "last_agent": "Billing"
+      },
+      "pass": true
+    },
+    {
+      "id": "P2",
+      "claim": "nest_handoff_history=True collapses the transcript into one summary message",
+      "expected": "Billing input = 1 message wrapped in <CONVERSATION HISTORY>",
+      "observed": {
+        "billing_input_kinds": [
+          "message:assistant"
+        ],
+        "preview": "[{\"role\": \"assistant\", \"content\": \"For context, here is the conversation so far between the user and the previous agent:\\n<CONVERSATION HISTORY>\\n1. user: refund please\\n2. {\\\"arguments\\\": \\\"{}\\\", \\\"call_id\\\": \\\"h1\\\", \\\"name\\\": \\\"transfer_to_billing\\\", \\\"type\\\": \\\"function_call\\\", \\\"id\\\": \\\"h1\\\"}\\n3"
+      },
+      "pass": true
+    },
+    {
+      "id": "P3",
+      "claim": "Agent.as_tool runs a nested Runner with only the generated input; parent gets final text",
+      "expected": "child input = [user('find the answer')], parent sees function_call_output 'research result: 42'",
+      "observed": {
+        "child_input": [
+          {
+            "content": "find the answer",
+            "role": "user"
+          }
+        ],
+        "parent_tool_output": "research result: 42",
+        "tool_schema": {
+          "description": "Default input schema for agent-as-tool calls.",
+          "properties": {
+            "input": {
+              "title": "Input",
+              "type": "string"
+            }
+          },
+          "required": [
+            "input"
+          ],
+          "title": "AgentAsToolInput",
+          "type": "object",
+          "additionalProperties": false
+        },
+        "last_agent": "Orchestrator"
+      },
+      "pass": true
+    },
+    {
+      "id": "P4",
+      "claim": "Tool exceptions and bad JSON become a fixed, redacted observation; the loop continues",
+      "expected": "both outputs == default generic message, no exception text reaches the model",
+      "observed": {
+        "outputs": [
+          "An error occurred while running the tool. Please try again.",
+          "An error occurred while running the tool. Please try again."
+        ],
+        "final_output": "sorry"
+      },
+      "pass": true
+    },
+    {
+      "id": "P5",
+      "claim": "Unknown tool raises by default; return_error_to_model turns it into an observation",
+      "expected": "default -> ModelBehaviorError; opt-in -> function_call_output",
+      "observed": {
+        "default": "ModelBehaviorError: Tool ghost not found in agent A",
+        "opt_in_output": "Tool 'ghost' not found."
+      },
+      "pass": true
+    },
+    {
+      "id": "P6",
+      "claim": "max_turns bounds model invocations (a turn = one model call + its tool side effects)",
+      "expected": "MaxTurnsExceeded after exactly 2 model calls",
+      "observed": {
+        "outcome": "MaxTurnsExceeded: Max turns (2) exceeded",
+        "model_calls": 2
+      },
+      "pass": true
+    },
+    {
+      "id": "P7",
+      "claim": "needs_approval pauses before side effects; RunState JSON round-trip + approve resumes",
+      "expected": "interruption, no execution, then exactly one execution and one more model call",
+      "observed": {
+        "interruptions": [
+          "delete_file"
+        ],
+        "executed_before_approval": [],
+        "executed_after": [
+          "/tmp/a"
+        ],
+        "schema_version": "1.20",
+        "state_keys": [
+          "$schemaVersion",
+          "auto_previous_response_id",
+          "context",
+          "conversation_id",
+          "current_agent",
+          "current_response_generated_item_ownership",
+          "current_step",
+          "current_turn",
+          "current_turn_persisted_item_count",
+          "generated_items",
+          "generated_prompt_cache_key",
+          "generated_session_item_indexes"
+        ],
+        "model_calls_total": 2,
+        "final_output": "done"
+      },
+      "pass": true
+    },
+    {
+      "id": "P8",
+      "claim": "Session prepends stored history before each run; SessionSettings.limit keeps only the tail",
+      "expected": "run 2 input = [user, assistant, user]; limit=1 keeps 1 history item + new input",
+      "observed": {
+        "run2_input_kinds": [
+          "message:user",
+          "message",
+          "message:user"
+        ],
+        "stored_items": 4,
+        "limit1_run2_input": [
+          {
+            "id": "scripted-message",
+            "content": [
+              {
+                "annotations": [],
+                "text": "a",
+                "type": "output_text",
+                "logprobs": []
+              }
+            ],
+            "role": "assistant",
+            "status": "completed",
+            "type": "message"
+          },
+          {
+            "content": "second",
+            "role": "user"
+          }
+        ]
+      },
+      "pass": true
+    },
+    {
+      "id": "P9",
+      "claim": "Tool outputs are replayed verbatim by default; ToolOutputTrimmer (opt-in filter) trims old ones",
+      "expected": "default keeps 5000 chars; trimmer replaces the old output with a short preview",
+      "observed": {
+        "default_len": 5002,
+        "trimmed_len": 273,
+        "trimmed_preview": "[Trimmed: search output — 5000 chars → 200 char preview]\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+      },
+      "pass": true
+    },
+    {
+      "id": "P10",
+      "claim": "tool_use_behavior='stop_on_first_tool' makes the tool output the final output",
+      "expected": "final_output = tool output, model called once",
+      "observed": {
+        "final_output": "Paris: sunny",
+        "model_calls": 1
+      },
+      "pass": true
+    },
+    {
+      "id": "P11",
+      "claim": "Sequential input guardrails block before the model call; parallel ones race the model",
+      "expected": "sequential: 0 model calls; parallel: tripwire still raised",
+      "observed": {
+        "sequential": "tripped",
+        "sequential_model_calls": 0,
+        "parallel": "tripped",
+        "parallel_model_calls": 1
+      },
+      "pass": true
+    },
+    {
+      "id": "P12",
+      "claim": "Instructions are re-resolved every turn; tool_choice is reset after a tool call",
+      "expected": "system prompts v1,v2; tool_choice required -> reset",
+      "observed": {
+        "systems": [
+          "instructions v1",
+          "instructions v2"
+        ],
+        "tool_choice_turn1": "required",
+        "tool_choice_turn2": null
+      },
+      "pass": true
+    },
+    {
+      "id": "P13",
+      "claim": "Tool calls from one response run concurrently; outputs keep model order",
+      "expected": "wall time ~max(0.4,0.1) not sum; outputs [a, b] although b finishes first",
+      "observed": {
+        "elapsed_s": 0.407,
+        "outputs_in_order": [
+          "done-a",
+          "done-b"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "id": "P14",
+      "claim": "SandboxAgent = Agent prepared per run by capabilities (tools, prompt fragments, sampling params)",
+      "expected": "exec_command/apply_patch/view_image tools; skills index (no body) + memory summary in prompt; context_management compaction param; shell output reaches the model",
+      "observed": {
+        "tools": [
+          "apply_patch",
+          "exec_command",
+          "view_image",
+          "write_stdin"
+        ],
+        "system_prompt_chars": 23254,
+        "section_offsets": [
+          16796,
+          16846,
+          22689
+        ],
+        "skill_body_in_prompt": false,
+        "memory_summary_in_prompt": true,
+        "extra_args": {
+          "context_management": [
+            {
+              "type": "compaction",
+              "compact_threshold": 240000
+            }
+          ]
+        },
+        "exec_output_preview": "Chunk ID: 9bdd3b\nWall time: 0.0047 seconds\nProcess exited with code 0\nOutput:\nlaunch date: 2026-11-02\n",
+        "final_output": "2026-11-02",
+        "public_last_agent_is_original": true
+      },
+      "pass": true
+    },
+    {
+      "id": "P15",
+      "claim": "Compaction capability drops every item before the latest server compaction item",
+      "expected": "[compaction, user]",
+      "observed": {
+        "kept": [
+          "compaction",
+          "user"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "id": "P16",
+      "claim": "A slow parallel input guardrail can lose the race to tool side effects",
+      "expected": "tripwire raised in both modes; observe whether send_email already ran",
+      "observed": {
+        "non_streamed": {
+          "outcome": "tripped",
+          "executed": [
+            "a@b.c"
+          ]
+        },
+        "streamed": {
+          "outcome": "tripped",
+          "executed": [
+            "a@b.c"
+          ]
+        }
+      },
+      "pass": true
+    },
+    {
+      "id": "P17",
+      "claim": "Default sandbox capabilities need the Responses API; only Shell survives Chat Completions",
+      "expected": "default -> apply_patch rejected; Compaction -> context_management kwarg rejected; Shell -> reaches network",
+      "observed": {
+        "default (Filesystem, Shell, Compaction)": "UserError: Hosted tools are not supported with the ChatCompletions API. Got tool type: <class 'agents.sandbox.capabilitie",
+        "Shell + Compaction": "TypeError: AsyncCompletions.create() got an unexpected keyword argument 'context_management'",
+        "Shell only": "APIConnectionError: Connection error."
+      },
+      "pass": true
+    }
+  ]
+}

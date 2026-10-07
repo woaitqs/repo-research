@@ -1,0 +1,353 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "openai-agents-python — tool call path: reasoning vs. execution runtime",
+    "output": "diagrams/openai-agents-python/tool-runtime.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/openai/openai-agents-python",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "71c2da4de47159ccc37905b8fe781be805dbfa66"
+    },
+    "viewBox": [
+      1040,
+      652
+    ]
+  },
+  "lanes": [
+    {
+      "id": "reasoning",
+      "label": "Model"
+    },
+    {
+      "id": "plan",
+      "label": "Plan + approval",
+      "variant": "exception"
+    },
+    {
+      "id": "exec",
+      "label": "Local execution"
+    },
+    {
+      "id": "runtime",
+      "label": "Runtime"
+    }
+  ],
+  "phases": [
+    {
+      "id": "decide",
+      "label": "Decide",
+      "fromCol": 0,
+      "toCol": 2
+    },
+    {
+      "id": "execute",
+      "label": "Execute",
+      "fromCol": 3,
+      "toCol": 4,
+      "variant": "emphasis"
+    },
+    {
+      "id": "observe-phase",
+      "label": "Observe",
+      "fromCol": 5,
+      "toCol": 5
+    }
+  ],
+  "mainPath": [
+    "model",
+    "classify",
+    "approval",
+    "invoke",
+    "outguard",
+    "observe"
+  ],
+  "nodes": [
+    {
+      "id": "model",
+      "lane": "reasoning",
+      "col": 0,
+      "type": "external",
+      "label": "Model output",
+      "sublabel": "function_call items",
+      "sources": [
+        {
+          "path": "src/agents/models/interface.py",
+          "line": 65,
+          "end_line": 100,
+          "label": "get_response"
+        }
+      ]
+    },
+    {
+      "id": "observe",
+      "lane": "reasoning",
+      "col": 5,
+      "type": "external",
+      "label": "Next turn",
+      "sublabel": "function_call_output",
+      "sources": [
+        {
+          "path": "src/agents/items.py",
+          "line": 845,
+          "end_line": 900,
+          "label": "tool_call_output_item"
+        }
+      ],
+      "width": 124
+    },
+    {
+      "id": "classify",
+      "lane": "plan",
+      "col": 1,
+      "type": "backend",
+      "label": "classify",
+      "sublabel": "tool · handoff · hosted",
+      "sources": [
+        {
+          "path": "src/agents/run_internal/turn_resolution.py",
+          "line": 3576,
+          "end_line": 3666,
+          "label": "function vs handoff routing"
+        }
+      ],
+      "width": 124
+    },
+    {
+      "id": "approval",
+      "lane": "plan",
+      "col": 2,
+      "type": "security",
+      "label": "approval?",
+      "sublabel": "needs_approval",
+      "sources": [
+        {
+          "path": "src/agents/run_internal/tool_execution.py",
+          "line": 1880,
+          "end_line": 1925,
+          "label": "approval check"
+        }
+      ],
+      "width": 110
+    },
+    {
+      "id": "interrupt",
+      "lane": "plan",
+      "col": 3,
+      "type": "security",
+      "label": "Interruption",
+      "sublabel": "ToolApprovalItem",
+      "sources": [
+        {
+          "path": "src/agents/run_internal/turn_resolution.py",
+          "line": 939,
+          "end_line": 950,
+          "label": "return interruption"
+        }
+      ],
+      "width": 116
+    },
+    {
+      "id": "errfn",
+      "lane": "plan",
+      "col": 4,
+      "type": "security",
+      "label": "on exception",
+      "sublabel": "failure_error_function",
+      "sources": [
+        {
+          "path": "src/agents/tool.py",
+          "line": 640,
+          "end_line": 695,
+          "label": "failure handler"
+        },
+        {
+          "path": "src/agents/tool.py",
+          "line": 1980,
+          "end_line": 1985,
+          "label": "default message"
+        }
+      ],
+      "width": 132
+    },
+    {
+      "id": "invoke",
+      "lane": "exec",
+      "col": 3,
+      "type": "backend",
+      "label": "invoke",
+      "sublabel": "guards · to_thread",
+      "sources": [
+        {
+          "path": "src/agents/run_internal/tool_execution.py",
+          "line": 1547,
+          "end_line": 1600,
+          "label": "batch executor"
+        },
+        {
+          "path": "src/agents/tool.py",
+          "line": 2775,
+          "end_line": 2790,
+          "label": "to_thread for sync"
+        }
+      ],
+      "width": 124
+    },
+    {
+      "id": "outguard",
+      "lane": "exec",
+      "col": 4,
+      "type": "backend",
+      "label": "out guardrails",
+      "sublabel": "then accept",
+      "sources": [
+        {
+          "path": "src/agents/run_internal/tool_execution.py",
+          "line": 2766,
+          "end_line": 2805,
+          "label": "tool output guardrails"
+        }
+      ],
+      "width": 110
+    },
+    {
+      "id": "sandbox",
+      "lane": "runtime",
+      "col": 3,
+      "type": "cloud",
+      "label": "Sandbox",
+      "sublabel": "exec_command",
+      "sources": [
+        {
+          "path": "src/agents/sandbox/capabilities/tools/shell_tool.py",
+          "line": 105,
+          "end_line": 117,
+          "label": "session.exec"
+        }
+      ],
+      "width": 110
+    },
+    {
+      "id": "mcp",
+      "lane": "runtime",
+      "col": 4,
+      "type": "external",
+      "label": "MCP server",
+      "sublabel": "call_tool",
+      "sources": [
+        {
+          "path": "src/agents/mcp/util.py",
+          "line": 685,
+          "end_line": 700,
+          "label": "invoke_mcp_tool"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "calls",
+      "from": "model",
+      "to": "classify",
+      "label": "tool calls",
+      "variant": "emphasis"
+    },
+    {
+      "id": "fn",
+      "from": "classify",
+      "to": "approval",
+      "label": "FunctionTool",
+      "variant": "emphasis"
+    },
+    {
+      "id": "pending",
+      "from": "approval",
+      "to": "interrupt",
+      "label": "pending",
+      "variant": "security",
+      "role": "branch"
+    },
+    {
+      "id": "go",
+      "from": "approval",
+      "to": "invoke",
+      "label": "approved",
+      "variant": "emphasis"
+    },
+    {
+      "id": "out",
+      "from": "invoke",
+      "to": "outguard",
+      "label": "output",
+      "variant": "emphasis"
+    },
+    {
+      "id": "accept",
+      "from": "outguard",
+      "to": "observe",
+      "label": "output item",
+      "variant": "emphasis"
+    },
+    {
+      "id": "shell",
+      "from": "invoke",
+      "to": "sandbox",
+      "label": "capability tool",
+      "variant": "dashed",
+      "route": "drop",
+      "role": "branch"
+    },
+    {
+      "id": "mcpcall",
+      "from": "invoke",
+      "to": "mcp",
+      "label": "MCP tool",
+      "variant": "dashed",
+      "role": "branch"
+    },
+    {
+      "id": "raise",
+      "from": "invoke",
+      "to": "errfn",
+      "label": "exception",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "errtext",
+      "from": "errfn",
+      "to": "observe",
+      "label": "error text",
+      "variant": "security"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "violet",
+      "title": "Boundary",
+      "items": [
+        "the model only emits call items and reads output items",
+        "hosted tools (web/file search, hosted MCP) run on OpenAI's side"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Approval",
+      "items": [
+        "pending calls pause the run; siblings without approval still run",
+        "resume re-checks input guardrails, not the approval decision"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Failure modes",
+      "items": [
+        "tool exception -> fixed text unless failure_error_function=None",
+        "unknown tool -> ModelBehaviorError (opt-in: return error to model)"
+      ]
+    }
+  ]
+}
