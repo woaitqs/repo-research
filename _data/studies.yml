@@ -198,9 +198,11 @@
   status: "12,174 upstream tests pass · probe 17/17 · 40 tests + demo 11/11 · mutations 11/11 · real models: 6 scenarios × 2 models × 3 runs"
   pages:
     en: /research/openai-agents-python.html
+    zh: /research/openai-agents-python.zh.html
   diagrams_url: /diagrams/openai-agents-python/
   experiment:
     en: https://github.com/woaitqs/repo-research/tree/main/experiments/openai-agents-python
+    zh: https://github.com/woaitqs/repo-research/blob/main/experiments/openai-agents-python/README.zh.md
   diagrams:
     - slug: architecture
       title: Architecture

@@ -5,6 +5,8 @@ study: openai-agents-python
 permalink: /research/openai-agents-python.html
 ---
 
+**English** · [中文](openai-agents-python.zh.md)
+
 # OpenAI Agents SDK for Python (`openai/openai-agents-python`)
 
 > Studied at commit [`71c2da4`](https://github.com/openai/openai-agents-python/tree/71c2da4de47159ccc37905b8fe781be805dbfa66)
