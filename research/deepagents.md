@@ -2,7 +2,11 @@
 layout: research
 title: "deepagents — source-level study"
 permalink: /research/deepagents.html
+diagrams: /diagrams/deepagents/architecture.html
+experiment: https://github.com/woaitqs/repo-research/tree/main/experiments/deepagents
 ---
+
+**English** · [中文](deepagents.zh.md)
 
 # deepagents (`langchain-ai/deepagents`)
 
