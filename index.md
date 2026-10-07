@@ -22,7 +22,7 @@ Each study includes:
 
 | Repository | Research | Architecture | Execution Flow | Experiment | Status |
 |---|---|---|---|---|---|
-| [langchain-ai/deepagents](https://github.com/langchain-ai/deepagents) @ `16e84d9` | [Read the study](research/deepagents.html) | [architecture.html](diagrams/deepagents/architecture.html) | [execution-flow.html](diagrams/deepagents/execution-flow.html) | [experiments/deepagents](https://github.com/woaitqs/repo-research/tree/main/experiments/deepagents) | Complete: 21 tests + demo pass, upstream probe 7/7, real-model scenarios 4/4 × 3 runs |
+| [langchain-ai/deepagents](https://github.com/langchain-ai/deepagents) @ `16e84d9` | [Read the study](research/deepagents.html) · [中文](research/deepagents.zh.html) | [architecture.html](diagrams/deepagents/architecture.html) | [execution-flow.html](diagrams/deepagents/execution-flow.html) | [experiments/deepagents](https://github.com/woaitqs/repo-research/tree/main/experiments/deepagents) | Complete: 21 tests + demo pass, upstream probe 7/7, real-model scenarios 4/4 × 3 runs |
 | [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands) @ `7ea83ba` + [software-agent-sdk](https://github.com/OpenHands/software-agent-sdk) @ `v1.53.0` | [Read the study](research/openhands.html) · [中文](research/openhands.zh.html) | [architecture.html](diagrams/openhands/architecture.html) | [execution-flow.html](diagrams/openhands/execution-flow.html) | [experiments/openhands](https://github.com/woaitqs/repo-research/tree/main/experiments/openhands) | Complete: 19 tests + demo pass, 426 upstream SDK tests pass, real SDK probed offline and with a real model |
 
 ### deepagents: all diagrams
@@ -39,6 +39,9 @@ Each study includes:
 > One-line takeaway: deepagents is an ordered stack of middleware on top of LangChain's `create_agent`.
 > Its real product is context engineering: offloading large results to a virtual filesystem,
 > non-destructive summarization, and context-isolated sub-agents.
+>
+> 一句话结论（[中文版研究](research/deepagents.zh.html)）：deepagents 是叠在 LangChain `create_agent` 之上的一个有序中间件栈。
+> 它真正的产品是上下文工程：把大结果卸载到虚拟文件系统、非破坏性的摘要压缩，以及上下文隔离的子 Agent。
 
 ### OpenHands: all diagrams
 
