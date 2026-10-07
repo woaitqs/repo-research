@@ -413,7 +413,7 @@ tools        = client_tools                            (every request)
 | How does it enter context? | Compiled into the system prompt at conversation creation, explicit recompile, compaction, or a worker/reflection merge (`src/agent/subagents/memory-worker.ts:170`). A new commit mid-conversation adds a `<memory_update>` to the next call only (`local-backend.ts:917-939`). |
 | Scope | Per **agent**, across all of its conversations and machines. Skills can be per project (`.agents/skills`), per user (`~/.letta/skills`) or per agent (in MemFS). Shared-memory repos can be attached to several agents (Cloud). |
 | Updates and staleness | The prompt itself says "Editing memory does NOT change your behavior in the current turn" (`letta_root_memfs.md:53-56`). **Verified gap:** after the one-shot delta, later calls in the same conversation see neither the new memory nor the delta (probe P3b; real model S2: turn-2 calls reverted to the original prompt hash). The agent still knows about its own edits from the tool calls in its transcript; external edits stay invisible until a recompile. |
-| Explicit or implicit? | Explicit: the agent decides what to write. Reflection adds a periodic, out-of-band consolidation pass. The code default trigger is `compaction-event` with a 25-step fallback (`src/cli/helpers/memory-reminder.ts:15, 51-56`); our headless runs reported `step-count`/25 as the effective setting. *Uncertain:* which settings path produced that. |
+| Explicit or implicit? | Explicit: the agent decides what to write. Reflection adds a periodic, out-of-band consolidation pass. The effective default is every 25 steps: `DEFAULT_SETTINGS` sets `reflectionTrigger: "step-count"`, `reflectionStepCount: 25` (`src/settings-manager.ts:182-184`), and the headless init event of our runs reported `step-count`/25. The `compaction-event` default in `src/cli/helpers/memory-reminder.ts:51-56` is only reached without those settings, so it is effectively unused. No test pins the fresh-install default. |
 
 **Four things that are easy to confuse:**
 
@@ -466,7 +466,7 @@ In a new conversation the fact was in the compiled prompt, and the model answere
 - At most 32 background processes and tasks (`process_manager.ts:137-143`).
 
 **Sandbox (fact).**
-- OS-level filesystem isolation: bwrap on Linux (tmpfs-masks denied roots, `--die-with-parent`, **no `--unshare-net`**, `src/sandbox/bwrap.ts:15-22`), Seatbelt on macOS, and a restricted-token helper on Windows.
+- OS-level filesystem isolation: bwrap on Linux (tmpfs-masks denied roots, `--die-with-parent`, **no `--unshare-net`**, `src/sandbox/bwrap.ts:15-22`), and Seatbelt on macOS. `AGENTS.md:689-691` describes a Windows restricted-token helper, but at this commit the code has no Windows backend (`src/sandbox/policy.ts:48` allows only `seatbelt | bwrap`).
 - **Where it applies:**
   - (a) Agent shells, only with `LETTA_FS_SANDBOX=1`. Without an available backend it warns and runs unsandboxed (`src/sandbox/availability.ts:88-115`).
   - (b) The workspace sandbox requested by a runtime-start (Desktop); this one fails closed (`src/tools/impl/shell-sandbox.ts:62-91`).
@@ -551,7 +551,7 @@ sequenceDiagram
 - **Trade-offs:**
   - one round trip per tool step in Cloud mode;
   - the client must own the retry/resume logic;
-  - four hosts re-implement the stop-reason loop (duplicated constants are pinned by source-reading tests);
+  - four hosts re-implement the stop-reason loop (the three identical non-retriable stop-reason lists have no parity test);
   - tool schemas are re-sent on every request (75k chars here; mitigated by prefix caching).
 - **Where in source:** `provider-turn-executor.ts:496-529`; `headless.ts:2578-2667`; `agent/message.ts:310-337`.
 - **Reuse:** if your tools must run somewhere other than your model loop, make "tool call" a *stop reason* and "tool result" an *input message*. Then interruption, approval UIs and remote execution are all the same mechanism.
@@ -601,9 +601,9 @@ sequenceDiagram
 - **Problem solved:** Anthropic and other APIs reject or penalize mid-conversation system messages, and every byte changed in the prefix costs a cache miss.
 - **Evidence:** the S1 system prompt and tool schemas were byte-identical across the turn, and at least 98% of each S1 call's prompt tokens were served from the provider cache. The one S2 call whose system message changed (the `<memory_update>`, folded in by pi-ai) dropped to about 22% cached.
 - **Trade-offs:**
-  - reminders accumulate in history and are paid for again after each compaction;
+  - reminders are part of history: session-context and agent-info are sent on the first turn and re-sent after each compaction or working-directory change (`src/reminders/engine.ts:63-77, 291-312`; `src/reminders/state.ts:88-89`);
   - user-role text carries authority only because the prompt says so;
-  - the transcript echo must strip them before display.
+  - every place that displays history must strip them (`src/cli/helpers/backfill.ts:52-67`; `src/cli/app/system-reminders.ts:8`).
 - **Reuse:** classify context by volatility. Stable things go in the system prompt. Per-turn things go in tagged parts of the turn input. Never edit the prefix to announce state.
 
 ### 5. Append-only transcript, summary as a message, bounded recovery
@@ -654,7 +654,7 @@ sequenceDiagram
 
 ### 8. Learning off the critical path, landed through git
 - **What they did:**
-  - **Reflection:** the reflection sub-agent (slash commands `/dream`, `/reflect`; `src/agent/reflection-runs.ts:41`) reads a normalized transcript slice in a private worktree. It runs on a step-count or compaction trigger and only when the parent memory repo is clean (`reflection-launcher.ts:770-1000`).
+  - **Reflection:** the reflection sub-agent (slash commands `/dream`, `/reflect`; `src/agent/reflection-runs.ts:41`) reads a normalized transcript slice in a private worktree. By default it runs every 25 steps (a compaction trigger is also available), and only when the parent memory repo is clean (`reflection-launcher.ts:770-1000`).
   - **Landing:** the harness merges the result under a lock. The transcript is marked consumed only on `merged` or `no_changes` (`memory-worktree.ts:235-245, 363-666`).
   - **Repairs:** conflicts and invalid commits get one automatic repair per distinct state (`memory-conflict-repair.ts`).
 - **Problem solved:** continual learning without blocking the user's turn and without corrupting memory.
@@ -801,9 +801,9 @@ Each one fails at least one test. The first version of the suite missed "compile
 - **Memory freshness (P3b, S2):** is the one-call delta intentional, as cache-first policy, or an oversight? The test covering it (`src/backend/local-backend.test.ts:675-730`, added in `da372cb3`) asserts only the first call. *Uncertain about intent; not filed.*
 - **Compaction vs prompt floor (S4):** `assertPromptFloorFitsContextWindow` (`pi-stream-adapter.ts:361-386`) only rejects floors *larger than* the window, and nothing accounts for the floor in the compaction goal. Worth confirming with maintainers on small local models.
 - **One-shot sub-agents:** background reports are dropped in `-p` mode; the child is orphaned when the parent exits. *Possibly expected for one-shot use, but the tool description still promises a notification.*
-- **Cloud mode:** the server-side loop (`letta_agent_v1` running on `letta_agent_v3.py`, per `AGENTS.md`), server compaction and how Cloud renders MemFS into the prompt are not in this repository.
-- **Docs drift:** the reflection worktree states in `AGENTS.md` differ from the code. The tools README still says tools run serially.
-- **Not traced in depth:** channels (Slack/Telegram/Discord), mods/extensions, the app-server protocol v2, `Workflow`, the reflection arena, crons/schedules, LSP, Windows sandbox.
+- **Cloud mode:** the server-side loop (the `letta_agent_v1` agent type, which per `AGENTS.md:290-291` runs on `letta_agent_v3.py`), server compaction and how Cloud renders MemFS into the prompt are not in this repository.
+- **Docs drift:** the reflection worktree states in `AGENTS.md:762-771` differ from the code. `src/tools/README.md:11, 15` still says tools run serially. `AGENTS.md:689-691` describes a Windows sandbox helper that does not exist in the code. The `compaction-event` reflection default in `memory-reminder.ts` is overridden by the settings defaults.
+- **Not traced in depth:** channels (Slack/Telegram/Discord), mods/extensions, the app-server protocol v2, `Workflow`, the reflection arena, crons/schedules, LSP.
 
 ## Further Reading
 
