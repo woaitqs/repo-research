@@ -176,3 +176,77 @@
       question:
         en: What `agent-canvas` launches and how the ingress routes
         zh: "`agent-canvas` 启动了什么、入口代理如何路由"
+
+- id: openai-agents-python
+  number: "03"
+  name: openai-agents-python
+  category:
+    en: Agent SDK & runtime
+    zh: Agent SDK 与运行时
+  pins:
+    - label: openai/openai-agents-python
+      rev: 71c2da4
+      url: https://github.com/openai/openai-agents-python/tree/71c2da4de47159ccc37905b8fe781be805dbfa66
+  studied: 2026-10-07
+  tagline:
+    en: >-
+      The OpenAI Agents SDK owns its loop: a `while True` over four `NextStep` outcomes,
+      where handoffs and sub-agents are just tool calls and a human approval is a serializable
+      pause. Context policy is opt-in hooks plus server-side compaction; `SandboxAgent` adds
+      per-run capabilities and agent-written file memory.
+    zh: "OpenAI Agents SDK 自己掌控运行循环：一个围绕四种 `NextStep` 结局的 `while True`；handoff 和子 Agent 都只是工具调用，人工审批是一个可序列化的暂停点。上下文策略靠可选钩子加服务端压缩；`SandboxAgent` 增加了按运行准备的能力（capability）和由 Agent 写入的文件记忆。"
+  status: "12,174 upstream tests pass · probe 17/17 · 40 tests + demo 11/11 · mutations 11/11 · real models: 6 scenarios × 2 models × 3 runs"
+  pages:
+    en: /research/openai-agents-python.html
+  diagrams_url: /diagrams/openai-agents-python/
+  experiment:
+    en: https://github.com/woaitqs/repo-research/tree/main/experiments/openai-agents-python
+  diagrams:
+    - slug: architecture
+      title: Architecture
+      type: architecture
+      question:
+        en: How the Runner loop, model boundary, tools and sandbox fit together
+        zh: Runner 循环、模型边界、工具与沙箱如何组合
+    - slug: execution-flow
+      title: Execution flow
+      type: sequence
+      question:
+        en: One `Runner.run` with a session, two turns, end to end
+        zh: 一次带 Session 的 `Runner.run`：两个回合，端到端
+    - slug: core-abstractions
+      title: Core abstractions
+      type: architecture
+      question:
+        en: Which object owns what (Runner, Agent, Tool, Handoff, Model, RunState, SandboxAgent, Capability)
+        zh: 每个对象分别负责什么（Runner、Agent、Tool、Handoff、Model、RunState、SandboxAgent、Capability）
+    - slug: context-flow
+      title: Context flow
+      type: dataflow
+      question:
+        en: What reaches the model on each turn, and which hooks can change it
+        zh: 每个回合什么进入模型，哪些钩子可以改变它
+    - slug: memory-flow
+      title: Memory flow
+      type: dataflow
+      question:
+        en: "Two memories: `Session` history and sandbox `Memory` files"
+        zh: 两种记忆：`Session` 历史与沙箱 `Memory` 文件
+    - slug: tool-runtime
+      title: Tool runtime
+      type: workflow
+      question:
+        en: "Tool call path: classification, approval, invocation, error text"
+        zh: 工具调用路径：分类、审批、执行、错误文本
+    - slug: agent-loop
+      title: Agent loop
+      type: lifecycle
+      question:
+        en: The Runner loop as a `NextStep` state machine
+        zh: 作为 `NextStep` 状态机的 Runner 循环
+    - slug: sub-agent-flow
+      title: Sub-agent flow
+      type: sequence
+      question:
+        en: Handoff (control moves) vs `Agent.as_tool` (control stays)
+        zh: Handoff（控制权转移）与 `Agent.as_tool`（控制权保留）

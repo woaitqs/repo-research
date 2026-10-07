@@ -1,0 +1,119 @@
+{
+  "model": "deepseek-v4-1-flash-260910",
+  "runs": [
+    {
+      "triage_handoffs_offered": [
+        "transfer_to_refunds"
+      ],
+      "routed_to_refunds": true,
+      "refunds_first_input_kinds": [
+        "user",
+        "function_call",
+        "function_call_output"
+      ],
+      "policy_inputs": [
+        [
+          {
+            "role": "user",
+            "content": "Customer was charged twice on order 1042, 30.00 each (duplicate charge of 30.00). Is this refundable as a duplicate charge?"
+          }
+        ]
+      ],
+      "refunds_tool_calls": [
+        "lookup_order",
+        "check_policy",
+        "transfer_to_refunds",
+        "lookup_order",
+        "check_policy",
+        "issue_refund"
+      ],
+      "interrupted_on": [
+        "issue_refund"
+      ],
+      "executed_before_approval": [],
+      "executed_after": [
+        "1042"
+      ],
+      "model_calls_after_resume": 1,
+      "final": "Done — I've refunded the $30.00 duplicate charge on order 1042.",
+      "pass": true,
+      "seconds": 10.3
+    },
+    {
+      "triage_handoffs_offered": [
+        "transfer_to_refunds"
+      ],
+      "routed_to_refunds": true,
+      "refunds_first_input_kinds": [
+        "user",
+        "function_call",
+        "function_call_output"
+      ],
+      "policy_inputs": [
+        [
+          {
+            "role": "user",
+            "content": "Customer says they were charged twice, 30.00 each, on order 1042. Is the duplicate charge refundable?"
+          }
+        ]
+      ],
+      "refunds_tool_calls": [
+        "lookup_order",
+        "check_policy",
+        "transfer_to_refunds",
+        "lookup_order",
+        "check_policy",
+        "issue_refund"
+      ],
+      "interrupted_on": [
+        "issue_refund"
+      ],
+      "executed_before_approval": [],
+      "executed_after": [
+        "1042"
+      ],
+      "model_calls_after_resume": 1,
+      "final": "I've refunded the duplicate $30.00 charge on order 1042 — you'll see it back on your original payment method shortly.",
+      "pass": true,
+      "seconds": 9.5
+    },
+    {
+      "triage_handoffs_offered": [
+        "transfer_to_refunds"
+      ],
+      "routed_to_refunds": true,
+      "refunds_first_input_kinds": [
+        "user",
+        "function_call",
+        "function_call_output"
+      ],
+      "policy_inputs": [
+        [
+          {
+            "role": "user",
+            "content": "Order 1042 was charged twice, 30.00 each (duplicate charge of 30.00). Is this refundable as a duplicate charge refund?"
+          }
+        ]
+      ],
+      "refunds_tool_calls": [
+        "lookup_order",
+        "check_policy",
+        "transfer_to_refunds",
+        "lookup_order",
+        "check_policy",
+        "issue_refund"
+      ],
+      "interrupted_on": [
+        "issue_refund"
+      ],
+      "executed_before_approval": [],
+      "executed_after": [
+        "1042"
+      ],
+      "model_calls_after_resume": 1,
+      "final": "I've refunded the duplicate $30.00 charge on order 1042, so you'll see that amount returned to your original payment method.",
+      "pass": true,
+      "seconds": 11.1
+    }
+  ]
+}

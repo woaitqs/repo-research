@@ -1,0 +1,554 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "openai-agents-python — system architecture (Runner loop, model boundary, tools, sandbox)",
+    "output": "diagrams/openai-agents-python/architecture.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/openai/openai-agents-python",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "71c2da4de47159ccc37905b8fe781be805dbfa66"
+    }
+  },
+  "components": [
+    {
+      "id": "app",
+      "type": "external",
+      "label": "Your application",
+      "sublabel": "calls Runner.run",
+      "pos": [
+        320,
+        40
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/agents/run.py",
+          "line": 273,
+          "end_line": 290,
+          "label": "Runner.run signature"
+        },
+        {
+          "path": "src/agents/run.py",
+          "line": 344,
+          "end_line": 357,
+          "label": "delegates to AgentRunner"
+        }
+      ]
+    },
+    {
+      "id": "agent",
+      "type": "frontend",
+      "label": "Agent",
+      "sublabel": "config dataclass",
+      "pos": [
+        600,
+        40
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/agents/agent.py",
+          "line": 319,
+          "end_line": 418,
+          "label": "Agent fields"
+        },
+        {
+          "path": "src/agents/agent.py",
+          "line": 1129,
+          "end_line": 1158,
+          "label": "get_system_prompt"
+        }
+      ]
+    },
+    {
+      "id": "llm",
+      "type": "cloud",
+      "label": "LLM API",
+      "sublabel": "Responses · Chat Completions",
+      "pos": [
+        880,
+        40
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/agents/models/openai_responses.py",
+          "line": 513,
+          "end_line": 520,
+          "label": "OpenAIResponsesModel"
+        },
+        {
+          "path": "src/agents/models/openai_chatcompletions.py",
+          "line": 605,
+          "end_line": 640,
+          "label": "Chat Completions request"
+        }
+      ]
+    },
+    {
+      "id": "runstate",
+      "type": "database",
+      "label": "RunState",
+      "sublabel": "JSON pause point",
+      "pos": [
+        40,
+        230
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/agents/run_state.py",
+          "line": 835,
+          "end_line": 860,
+          "label": "class RunState"
+        },
+        {
+          "path": "src/agents/run_state.py",
+          "line": 1366,
+          "end_line": 1382,
+          "label": "approve()"
+        }
+      ]
+    },
+    {
+      "id": "session",
+      "type": "database",
+      "label": "Session",
+      "sublabel": "history store",
+      "pos": [
+        40,
+        420
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/agents/memory/session.py",
+          "line": 53,
+          "end_line": 97,
+          "label": "Session protocol"
+        },
+        {
+          "path": "src/agents/run_internal/session_persistence.py",
+          "line": 414,
+          "end_line": 460,
+          "label": "prepare_input_with_session"
+        }
+      ]
+    },
+    {
+      "id": "runner",
+      "type": "backend",
+      "label": "Runner",
+      "sublabel": "while True over NextStep",
+      "pos": [
+        320,
+        200
+      ],
+      "size": [
+        170,
+        330
+      ],
+      "sources": [
+        {
+          "path": "src/agents/run.py",
+          "line": 562,
+          "end_line": 572,
+          "label": "AgentRunner"
+        },
+        {
+          "path": "src/agents/run.py",
+          "line": 1026,
+          "end_line": 1032,
+          "label": "main loop"
+        },
+        {
+          "path": "src/agents/run.py",
+          "line": 1591,
+          "end_line": 1600,
+          "label": "turn counter + max_turns"
+        }
+      ]
+    },
+    {
+      "id": "turn",
+      "type": "backend",
+      "label": "run_single_turn",
+      "sublabel": "build input · call model",
+      "pos": [
+        600,
+        220
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/agents/run_internal/run_loop.py",
+          "line": 2665,
+          "end_line": 2745,
+          "label": "run_single_turn"
+        },
+        {
+          "path": "src/agents/run_internal/run_loop.py",
+          "line": 2711,
+          "end_line": 2723,
+          "label": "tools, prompt, handoffs"
+        },
+        {
+          "path": "src/agents/run_internal/run_loop.py",
+          "line": 2898,
+          "end_line": 2911,
+          "label": "model.get_response"
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "type": "backend",
+      "label": "Model adapter",
+      "sublabel": "items in, items out",
+      "pos": [
+        880,
+        220
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/agents/models/interface.py",
+          "line": 37,
+          "end_line": 100,
+          "label": "Model.get_response"
+        },
+        {
+          "path": "src/agents/models/multi_provider.py",
+          "line": 62,
+          "end_line": 75,
+          "label": "MultiProvider prefixes"
+        },
+        {
+          "path": "src/agents/models/openai_chatcompletions.py",
+          "line": 740,
+          "end_line": 742,
+          "label": "chat.completions.create"
+        }
+      ]
+    },
+    {
+      "id": "resolve",
+      "type": "backend",
+      "label": "turn_resolution",
+      "sublabel": "classify · pick NextStep",
+      "pos": [
+        600,
+        446
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/agents/run_internal/turn_resolution.py",
+          "line": 2926,
+          "end_line": 2940,
+          "label": "process_model_response"
+        },
+        {
+          "path": "src/agents/run_internal/run_steps.py",
+          "line": 164,
+          "end_line": 191,
+          "label": "NextStep variants"
+        },
+        {
+          "path": "src/agents/run.py",
+          "line": 2001,
+          "end_line": 2010,
+          "label": "branch on next_step"
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "type": "backend",
+      "label": "Tool execution",
+      "sublabel": "approve · guard · invoke",
+      "pos": [
+        880,
+        446
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/agents/run_internal/tool_execution.py",
+          "line": 1547,
+          "end_line": 1600,
+          "label": "_FunctionToolBatchExecutor"
+        },
+        {
+          "path": "src/agents/tool.py",
+          "line": 1649,
+          "end_line": 1664,
+          "label": "Tool union"
+        },
+        {
+          "path": "src/agents/sandbox/capabilities/tools/shell_tool.py",
+          "line": 105,
+          "end_line": 117,
+          "label": "session.exec"
+        }
+      ]
+    },
+    {
+      "id": "mcp",
+      "type": "external",
+      "label": "MCP servers",
+      "sublabel": "stdio · SSE · HTTP",
+      "pos": [
+        1160,
+        446
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/agents/mcp/server.py",
+          "line": 562,
+          "end_line": 580,
+          "label": "MCPServer"
+        },
+        {
+          "path": "src/agents/mcp/util.py",
+          "line": 266,
+          "end_line": 290,
+          "label": "MCP tools to FunctionTool"
+        },
+        {
+          "path": "src/agents/mcp/util.py",
+          "line": 685,
+          "end_line": 700,
+          "label": "invoke_mcp_tool"
+        }
+      ]
+    },
+    {
+      "id": "sandboxrt",
+      "type": "security",
+      "label": "SandboxRuntime",
+      "sublabel": "prepare SandboxAgent",
+      "pos": [
+        320,
+        640
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/agents/run.py",
+          "line": 1079,
+          "end_line": 1085,
+          "label": "prepare_agent each iteration"
+        },
+        {
+          "path": "src/agents/sandbox/runtime.py",
+          "line": 209,
+          "end_line": 230,
+          "label": "prepare_agent"
+        },
+        {
+          "path": "src/agents/sandbox/runtime.py",
+          "line": 233,
+          "end_line": 239,
+          "label": "ensure_session"
+        }
+      ]
+    },
+    {
+      "id": "sandbox",
+      "type": "security",
+      "label": "Sandbox session",
+      "sublabel": "UnixLocal · Docker · E2B …",
+      "pos": [
+        880,
+        640
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "src/agents/sandbox/session/base_sandbox_session.py",
+          "line": 200,
+          "end_line": 215,
+          "label": "BaseSandboxSession"
+        },
+        {
+          "path": "src/agents/sandbox/sandboxes/unix_local.py",
+          "line": 231,
+          "end_line": 240,
+          "label": "UnixLocalSandboxClient"
+        }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Run loop (run.py + run_internal/)",
+      "wraps": [
+        "runner",
+        "turn",
+        "resolve"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "app-run",
+      "from": "app",
+      "to": "runner",
+      "label": "Runner.run()",
+      "variant": "emphasis"
+    },
+    {
+      "id": "runner-turn",
+      "from": "runner",
+      "to": "turn",
+      "label": "each turn",
+      "variant": "emphasis"
+    },
+    {
+      "id": "turn-agent",
+      "from": "turn",
+      "to": "agent",
+      "label": "resolve per turn"
+    },
+    {
+      "id": "turn-model",
+      "from": "turn",
+      "to": "model",
+      "label": "get_response",
+      "variant": "emphasis"
+    },
+    {
+      "id": "model-llm",
+      "from": "model",
+      "to": "llm",
+      "label": "HTTP / WS"
+    },
+    {
+      "id": "turn-resolve",
+      "from": "turn",
+      "to": "resolve",
+      "label": "ModelResponse",
+      "variant": "emphasis"
+    },
+    {
+      "id": "resolve-tools",
+      "from": "resolve",
+      "to": "tools",
+      "label": "tool calls"
+    },
+    {
+      "id": "tools-mcp",
+      "from": "tools",
+      "to": "mcp",
+      "label": "call_tool",
+      "variant": "dashed"
+    },
+    {
+      "id": "resolve-runner",
+      "from": "resolve",
+      "to": "runner",
+      "label": "NextStep"
+    },
+    {
+      "id": "runner-state",
+      "from": "runner",
+      "to": "runstate",
+      "label": "interruption",
+      "variant": "security"
+    },
+    {
+      "id": "runner-session",
+      "from": "runner",
+      "to": "session",
+      "label": "load · save"
+    },
+    {
+      "id": "runner-sandbox",
+      "from": "runner",
+      "to": "sandboxrt",
+      "label": "prepare_agent"
+    },
+    {
+      "id": "sandboxrt-session",
+      "from": "sandboxrt",
+      "to": "sandbox",
+      "label": "create · resume"
+    },
+    {
+      "id": "tools-sandbox",
+      "from": "tools",
+      "to": "sandbox",
+      "label": "exec · files",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Items are the data model",
+      "items": [
+        "runner, sessions and RunState all store Responses-format items",
+        "Chat Completions and LiteLLM adapters convert at the model edge"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Agent owns no control flow",
+      "items": [
+        "Agent is a dataclass; the Runner resolves its prompt, tools and handoffs every turn",
+        "handoffs and Agent.as_tool are both tool calls from the model's view"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Pause, not block",
+      "items": [
+        "needs_approval returns an interruption plus a serializable RunState",
+        "SandboxRuntime clones a SandboxAgent per run; the public agent stays unchanged"
+      ]
+    }
+  ]
+}

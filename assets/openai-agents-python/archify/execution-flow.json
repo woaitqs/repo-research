@@ -1,0 +1,399 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "openai-agents-python — one Runner.run, two turns, end to end",
+    "output": "diagrams/openai-agents-python/execution-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "viewBox": [
+      1060,
+      670
+    ],
+    "column_fit": "spread",
+    "repository": {
+      "url": "https://github.com/openai/openai-agents-python",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "71c2da4de47159ccc37905b8fe781be805dbfa66"
+    }
+  },
+  "participants": [
+    {
+      "id": "app",
+      "type": "external",
+      "label": "App",
+      "sublabel": "caller",
+      "sources": [
+        {
+          "path": "src/agents/run.py",
+          "line": 273,
+          "end_line": 290,
+          "label": "Runner.run"
+        }
+      ]
+    },
+    {
+      "id": "runner",
+      "type": "backend",
+      "label": "AgentRunner",
+      "sublabel": "_run_impl loop",
+      "sources": [
+        {
+          "path": "src/agents/run.py",
+          "line": 623,
+          "end_line": 640,
+          "label": "_run_impl"
+        },
+        {
+          "path": "src/agents/run.py",
+          "line": 1026,
+          "end_line": 1032,
+          "label": "while True"
+        },
+        {
+          "path": "src/agents/run.py",
+          "line": 1591,
+          "end_line": 1600,
+          "label": "turn += 1, max_turns"
+        }
+      ]
+    },
+    {
+      "id": "session",
+      "type": "database",
+      "label": "Session",
+      "sublabel": "history store",
+      "sources": [
+        {
+          "path": "src/agents/run_internal/session_persistence.py",
+          "line": 414,
+          "end_line": 460,
+          "label": "prepare_input_with_session"
+        },
+        {
+          "path": "src/agents/run_internal/session_persistence.py",
+          "line": 743,
+          "end_line": 760,
+          "label": "save_result_to_session"
+        }
+      ]
+    },
+    {
+      "id": "turn",
+      "type": "backend",
+      "label": "Turn",
+      "sublabel": "run_single_turn",
+      "sources": [
+        {
+          "path": "src/agents/run_internal/run_loop.py",
+          "line": 2665,
+          "end_line": 2745,
+          "label": "run_single_turn"
+        },
+        {
+          "path": "src/agents/run_internal/run_loop.py",
+          "line": 2800,
+          "end_line": 2830,
+          "label": "get_new_response + filter"
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "type": "backend",
+      "label": "Model",
+      "sublabel": "adapter → LLM API",
+      "sources": [
+        {
+          "path": "src/agents/models/interface.py",
+          "line": 37,
+          "end_line": 100,
+          "label": "Model.get_response"
+        },
+        {
+          "path": "src/agents/models/chatcmpl_converter.py",
+          "line": 534,
+          "end_line": 560,
+          "label": "items_to_messages"
+        }
+      ]
+    },
+    {
+      "id": "resolve",
+      "type": "backend",
+      "label": "Resolver",
+      "sublabel": "turn_resolution",
+      "sources": [
+        {
+          "path": "src/agents/run_internal/turn_resolution.py",
+          "line": 3784,
+          "end_line": 3865,
+          "label": "get_single_step_result_from_response"
+        },
+        {
+          "path": "src/agents/run_internal/turn_resolution.py",
+          "line": 997,
+          "end_line": 1137,
+          "label": "final output vs run again"
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "type": "backend",
+      "label": "Tools",
+      "sublabel": "local execution",
+      "sources": [
+        {
+          "path": "src/agents/run_internal/tool_execution.py",
+          "line": 1547,
+          "end_line": 1600,
+          "label": "_FunctionToolBatchExecutor"
+        },
+        {
+          "path": "src/agents/tool.py",
+          "line": 1980,
+          "end_line": 1985,
+          "label": "default_tool_error_function"
+        }
+      ]
+    }
+  ],
+  "segments": [
+    {
+      "from": 150,
+      "to": 202,
+      "label": "Prepare"
+    },
+    {
+      "from": 206,
+      "to": 286,
+      "label": "Turn 1: model"
+    },
+    {
+      "from": 290,
+      "to": 398,
+      "label": "Turn 1: tools"
+    },
+    {
+      "from": 402,
+      "to": 538,
+      "label": "Turn 2"
+    },
+    {
+      "from": 542,
+      "to": 562,
+      "label": "Finish"
+    }
+  ],
+  "messages": [
+    {
+      "id": "run",
+      "from": "app",
+      "to": "runner",
+      "y": 160,
+      "label": "Runner.run(agent, input, session)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "get-history",
+      "from": "runner",
+      "to": "session",
+      "y": 188,
+      "label": "get_items(limit) → history",
+      "note": "history prepended; new input saved before turn 1"
+    },
+    {
+      "id": "turn1",
+      "from": "runner",
+      "to": "turn",
+      "y": 216,
+      "label": "run_single_turn()",
+      "variant": "emphasis",
+      "note": "turn 1 also starts input guardrails"
+    },
+    {
+      "id": "call1",
+      "from": "turn",
+      "to": "model",
+      "y": 244,
+      "label": "get_response(system, items, tools, handoffs)",
+      "variant": "emphasis",
+      "note": "call_model_input_filter runs just before"
+    },
+    {
+      "id": "resp1",
+      "from": "model",
+      "to": "turn",
+      "y": 272,
+      "label": "ModelResponse(items)",
+      "variant": "return",
+      "note": "adapter converts the provider reply into items"
+    },
+    {
+      "id": "process",
+      "from": "turn",
+      "to": "resolve",
+      "y": 300,
+      "label": "process_model_response",
+      "note": "message · function_call · handoff · hosted"
+    },
+    {
+      "id": "invoke",
+      "from": "resolve",
+      "to": "tools",
+      "y": 328,
+      "label": "invoke tool calls",
+      "variant": "emphasis",
+      "note": "approval check, tool guardrails, concurrent"
+    },
+    {
+      "id": "outputs",
+      "from": "tools",
+      "to": "resolve",
+      "y": 356,
+      "label": "outputs or error text",
+      "variant": "return"
+    },
+    {
+      "id": "step1",
+      "from": "resolve",
+      "to": "runner",
+      "y": 384,
+      "label": "NextStepRunAgain",
+      "variant": "return",
+      "note": "runner then appends the turn items to the session"
+    },
+    {
+      "id": "turn2",
+      "from": "runner",
+      "to": "turn",
+      "y": 412,
+      "label": "run_single_turn()",
+      "variant": "emphasis",
+      "note": "input = original + generated items"
+    },
+    {
+      "id": "call2",
+      "from": "turn",
+      "to": "model",
+      "y": 440,
+      "label": "get_response(...)"
+    },
+    {
+      "id": "resp2",
+      "from": "model",
+      "to": "turn",
+      "y": 468,
+      "label": "message, no tool calls",
+      "variant": "return"
+    },
+    {
+      "id": "process2",
+      "from": "turn",
+      "to": "resolve",
+      "y": 496,
+      "label": "process_model_response"
+    },
+    {
+      "id": "final",
+      "from": "resolve",
+      "to": "runner",
+      "y": 524,
+      "label": "NextStepFinalOutput",
+      "variant": "return",
+      "note": "output guardrails and final save follow"
+    },
+    {
+      "id": "result",
+      "from": "runner",
+      "to": "app",
+      "y": 552,
+      "label": "RunResult(final_output)",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "runner",
+      "from": 156,
+      "to": 556,
+      "type": "backend"
+    },
+    {
+      "participant": "session",
+      "from": 184,
+      "to": 192,
+      "type": "database"
+    },
+    {
+      "participant": "turn",
+      "from": 212,
+      "to": 304,
+      "type": "backend"
+    },
+    {
+      "participant": "turn",
+      "from": 408,
+      "to": 500,
+      "type": "backend"
+    },
+    {
+      "participant": "model",
+      "from": 240,
+      "to": 276,
+      "type": "backend"
+    },
+    {
+      "participant": "model",
+      "from": 436,
+      "to": 472,
+      "type": "backend"
+    },
+    {
+      "participant": "resolve",
+      "from": 296,
+      "to": 388,
+      "type": "backend"
+    },
+    {
+      "participant": "resolve",
+      "from": 492,
+      "to": 528,
+      "type": "backend"
+    },
+    {
+      "participant": "tools",
+      "from": 324,
+      "to": 360,
+      "type": "backend"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Turn",
+      "items": [
+        "one logical model call plus its local side effects",
+        "retries inside get_new_response do not charge a turn"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Fresh per turn",
+      "items": [
+        "instructions, enabled tools and handoffs are resolved again",
+        "model input is rebuilt from original input + generated items"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Errors are data",
+      "items": [
+        "tool exceptions become a fixed observation by default",
+        "an unknown tool raises ModelBehaviorError unless configured"
+      ]
+    }
+  ]
+}

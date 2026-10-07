@@ -10,6 +10,7 @@ This repository is not a collection of README summaries. Each study should trace
 |---|---|---|---|---|
 | [langchain-ai/deepagents](https://github.com/langchain-ai/deepagents) | `16e84d9` (SDK 0.7.22) | [research/deepagents.md](research/deepagents.md) · [web](https://woaitqs.github.io/repo-research/research/deepagents.html) · 中文: [deepagents.zh.md](research/deepagents.zh.md) · [web](https://woaitqs.github.io/repo-research/research/deepagents.zh.html) | [8 Archify diagrams](diagrams/deepagents/) | [experiments/deepagents](experiments/deepagents/) |
 | [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands) + [software-agent-sdk](https://github.com/OpenHands/software-agent-sdk) | `7ea83ba` (Canvas 1.25.0) + `54daf05` (SDK `v1.53.0`) | [research/openhands.md](research/openhands.md) · [web](https://woaitqs.github.io/repo-research/research/openhands.html) · 中文: [openhands.zh.md](research/openhands.zh.md) · [web](https://woaitqs.github.io/repo-research/research/openhands.zh.html) | [10 Archify diagrams](diagrams/openhands/) | [experiments/openhands](experiments/openhands/) |
+| [openai/openai-agents-python](https://github.com/openai/openai-agents-python) | `71c2da4` (0.23.1 + 22) | [research/openai-agents-python.md](research/openai-agents-python.md) · [web](https://woaitqs.github.io/repo-research/research/openai-agents-python.html) | [8 Archify diagrams](diagrams/openai-agents-python/) | [experiments/openai-agents-python](experiments/openai-agents-python/) |
 
 ## What each repository study should contain
 
@@ -31,10 +32,11 @@ For every target repository:
 1. **Pin the target.** Clone it into a temporary directory, never into this repo. Record `git rev-parse HEAD` and cite every source reference against that commit.
 2. **Map, then trace.** Read the manifests, entry points (console scripts, servers) and the composition root. Then follow real call sites end to end. Read the dependency source too when the target delegates to a framework. For deepagents that meant reading LangChain's `create_agent`.
 3. **Separate fact from interpretation.** Facts are backed by `path:line`, a test, or observed runtime behavior. Interpretations are labelled as such, and open questions stay explicit.
-4. **Verify claims at runtime when it is cheap.** For example, drive the real library with a scripted fake model. The deepagents probe found two behaviors that were not obvious from reading alone.
-5. **Run the target's own tests** with its locked dependencies, so environment noise is not mistaken for findings.
+4. **Verify claims at runtime when it is cheap.** For example, drive the real library with a scripted fake model. The deepagents probe found two behaviors that were not obvious from reading alone. If the target ships its own scripted model (openai-agents-python has `agents.testing.ScriptedModel`), use it.
+5. **Run the target's own tests** with its locked dependencies, so environment noise is not mistaken for findings. Check failures against the environment before reporting them: in the openai-agents-python study, 62 redaction tests failed only because the checkout path contained the word `user`, which the tests treat as a leaked credential.
 6. **Reproduce the architecture, not the product.** Build a small dependency-light version, test its architectural invariants, and mutation-test the tests.
-7. **Diagram from evidence.** Every Archify node carries `sources` pinned to the commit.
+7. **Check model-side assumptions with real models when the design depends on them** (for example: does the model follow a pointer, write a good brief, recover from an error?). Read API keys from the environment only; never write them into the repository.
+8. **Diagram from evidence.** Every Archify node carries `sources` pinned to the commit.
 
 ## Repository layout
 
@@ -96,7 +98,7 @@ repo-research/
 4. Add an entry to `_data/studies.yml` (pins, pages, diagrams, experiment link, one-line takeaway). The homepage,
    the study rail, the previous/next links and the gallery are all generated from it. Also add a row to the
    [Studies](#studies) table above.
-5. Avoid Liquid template delimiters (double curly braces, or a curly brace followed by a percent sign) anywhere in published Markdown, this README included. GitHub Pages evaluates them and the build fails.
+5. Avoid Liquid template delimiters (double curly braces, or a curly brace followed by a percent sign) anywhere in published Markdown, this README included. GitHub Pages evaluates them and the build fails. This includes Mermaid's hexagon node shape, which uses double curly braces; use another shape such as a parallelogram.
 
 ## Reading
 
@@ -155,7 +157,8 @@ How it is used here:
   ```
 
 - Optional perceptual review: `archify.mjs visual-check diagrams/<project>/<name>.html --summary --require-provenance` captures screenshots. Look at them before claiming visual quality.
-- `*.delivery.json` provenance sidecars contain absolute local paths and are git-ignored.
+- `*.delivery.json`, `*.finalize*.json` and `*.browser-check.json` sidecars contain absolute local paths and are git-ignored.
+- Schema limits to remember: only nodes and participants take `sources` (at most 3 each); a showcase canvas must have a width/height ratio of at least 1.55 or fit a 900 px viewport; in dataflow diagrams, two edges on one side of a node offset the port by 7 px, which can trip the 8 px micro-segment rule (fix with `yOffset`). Details in `assets/openai-agents-python/archify/README.md`.
 
 ## Running experiments
 
@@ -171,6 +174,8 @@ The deepagents study is bilingual as well: `research/deepagents.md` (English) an
 The OpenHands study is bilingual: `research/openhands.md` (English) and `research/openhands.zh.md` (Chinese), with `experiments/openhands/README.zh.md` for the reproduction; the Archify diagrams are shared and English-only. The OpenHands experiment is also stdlib-only at runtime (pytest for tests). `./run.sh --live` additionally runs the demo against a real OpenAI-compatible model, and `probe/` drives the real `openhands-sdk` (scripted or with a real model) to re-check the article's runtime claims.
 
 Experiments that call real models read API keys from environment variables only. Never commit keys: `.env` files are git-ignored, and published logs and reports are sanitized.
+
+The openai-agents-python experiment (`miniagents`) is also stdlib-only, with the same `run.sh` contract. It adds `mutation_check.py` (injects 11 architectural regressions), `upstream_probe/` (17 probes of the real SDK, no network) and `real_model/` (scripts that drive both the real SDK and the reproduction against an OpenAI-compatible endpoint; keys come from environment variables).
 
 ## Research principle
 
