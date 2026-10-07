@@ -1,0 +1,6 @@
+<p class="study-pins">
+  <span class="pins-label">{{ t.pinned }}</span>
+  {%- for pin in study.pins %}
+  <a href="{{ pin.url }}"><code>{{ pin.label }}</code><span>@{{ pin.rev }}</span></a>
+  {%- endfor %}
+</p>

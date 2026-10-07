@@ -1,0 +1,84 @@
+# Interface strings. Pages pick a set by the first two letters of `lang`
+# in their front matter (default: en).
+
+en:
+  code: en
+  lang_name: English
+  skip: Skip to content
+  tagline: Source-level studies
+  nav_main: Main navigation
+  nav_library: Library
+  nav_diagrams: Diagrams
+  nav_method: Method
+  nav_github: GitHub
+  library: Library
+  back_to_library: Back to library
+  studies: Studies
+  article: Article
+  diagrams: Interactive diagrams
+  diagrams_short: Diagrams
+  reproduction: Reproduction
+  experiments: All experiments
+  pinned: Pinned to
+  on_this_page: On this page
+  back_to_top: Back to top
+  min_read: "{n} min read"
+  language: Language
+  theme: Toggle color theme
+  open_menu: Open navigation
+  close: Close
+  text_size: Text size
+  smaller: Smaller text
+  larger: Larger text
+  reset: Reset
+  focus: Focus
+  read_study: Read the study
+  previous: Previous
+  next: Next study
+  practice_eyebrow: Put it into practice
+  practice_title: Run it yourself.
+  practice_text: Each study ships a small, dependency-light reproduction with its own tests, plus source-pinned diagrams of the real system.
+  explore_reproduction: Explore the reproduction
+  browse_diagrams: Browse the diagrams
+  view_source: View this page on GitHub
+
+zh:
+  code: zh-CN
+  lang_name: 简体中文
+  skip: 跳到正文
+  tagline: 源码级研究
+  nav_main: 主导航
+  nav_library: 研究目录
+  nav_diagrams: 交互式图表
+  nav_method: 研究方法
+  nav_github: GitHub
+  library: 研究目录
+  back_to_library: 返回目录
+  studies: 研究
+  article: 文章
+  diagrams: 交互式图表
+  diagrams_short: 图表
+  reproduction: 最小复现
+  experiments: 全部实验
+  pinned: 固定版本
+  on_this_page: 本页目录
+  back_to_top: 回到顶部
+  min_read: "约 {n} 分钟阅读"
+  language: 语言
+  theme: 切换深色模式
+  open_menu: 打开导航
+  close: 关闭
+  text_size: 字号
+  smaller: 缩小字号
+  larger: 放大字号
+  reset: 重置
+  focus: 专注阅读
+  read_study: 阅读研究
+  previous: 上一篇
+  next: 下一篇研究
+  practice_eyebrow: 动手实践
+  practice_title: 自己跑一遍。
+  practice_text: 每篇研究都附带一个依赖很少、自带测试的最小复现，以及固定到源码版本的真实系统图表。
+  explore_reproduction: 查看最小复现
+  browse_diagrams: 浏览交互式图表
+  view_source: 在 GitHub 上查看本页源码

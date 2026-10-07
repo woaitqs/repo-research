@@ -1,0 +1,37 @@
+<a class="skip-link" href="#main-content">{{ t.skip }}</a>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="{{ '/' | relative_url }}" aria-label="{{ site.title }}">
+      <span class="brand-mark" aria-hidden="true">r<span>r</span></span>
+      <span class="brand-text">{{ site.title }}<span class="brand-secondary">{{ t.tagline }}</span></span>
+    </a>
+    <nav class="header-nav" aria-label="{{ t.nav_main }}">
+      {%- include nav-links.html %}
+    </nav>
+    <div class="header-tools">
+      {%- if page.layout == "research" and study and study.pages.size > 1 %}
+      <details class="language-picker">
+        <summary aria-label="{{ t.language }}" title="{{ t.language }}">
+          {%- include icon.html name="globe" px=15 -%}
+          <span class="current-language">{{ t.lang_name }}</span>
+          {%- include icon.html name="chevron-down" px=14 -%}
+        </summary>
+        <nav aria-label="{{ t.language }}">
+          {%- for p in study.pages %}
+          {%- assign p_lang = p[0] %}
+          {%- assign l = site.data.i18n[p_lang] %}
+          <a href="{{ p[1] | relative_url }}" lang="{{ l.code }}" hreflang="{{ l.code }}"{% if p[0] == lang_key %} aria-current="page"{% endif %}>{{ l.lang_name }}{% if p[0] == lang_key %}{% include icon.html name="check" px=15 %}{% endif %}</a>
+          {%- endfor %}
+        </nav>
+      </details>
+      {%- endif %}
+      <button class="icon-button theme-toggle" type="button" aria-label="{{ t.theme }}" title="{{ t.theme }}" data-theme-toggle hidden>
+        <span class="moon-icon">{% include icon.html name="moon" px=19 %}</span>
+        <span class="sun-icon">{% include icon.html name="sun" px=19 %}</span>
+      </button>
+      <button class="icon-button menu-button" type="button" aria-label="{{ t.open_menu }}" aria-controls="nav-drawer" aria-expanded="false" data-drawer-open>
+        {%- include icon.html name="menu" px=19 -%}
+      </button>
+    </div>
+  </div>
+</header>

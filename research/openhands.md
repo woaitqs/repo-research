@@ -1,9 +1,8 @@
 ---
 layout: research
 title: "OpenHands — source-level study"
+study: openhands
 permalink: /research/openhands.html
-diagrams: /diagrams/openhands/
-experiment: https://github.com/woaitqs/repo-research/tree/main/experiments/openhands
 ---
 
 **English** · [中文](openhands.zh.md)

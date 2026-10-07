@@ -1,0 +1,144 @@
+---
+layout: default
+body_class: home-page
+---
+{%- include i18n.html -%}
+{%- assign studies = site.data.studies -%}
+{%- assign first_study = studies.first -%}
+{%- assign diagram_total = 0 -%}
+{%- assign article_total = 0 -%}
+{%- for s in studies -%}
+  {%- assign diagram_total = diagram_total | plus: s.diagrams.size -%}
+  {%- assign article_total = article_total | plus: s.pages.size -%}
+{%- endfor -%}
+<main id="main-content">
+  <section class="home-hero page-width">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span>Open research notebook</p>
+      <h1>Read the source.<em>Not the README.</em></h1>
+      <p class="hero-lede">{{ site.description }}</p>
+      <p class="hero-note">Every important claim traces to source code, tests, configuration, or verified runtime behavior — pinned to an exact commit.</p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="{{ first_study.pages.en | relative_url }}">Start with {{ first_study.name }}{% include icon.html name="arrow-right" %}</a>
+        <a class="text-link" href="#library">Browse the library{% include icon.html name="arrow-down" %}</a>
+      </div>
+    </div>
+
+    <aside class="anatomy" aria-labelledby="anatomy-title">
+      <div class="panel-head">
+        <span id="anatomy-title">Anatomy of a study</span>
+        <span>{{ site.data.home.anatomy.size }} parts</span>
+      </div>
+      <ol class="anatomy-list">
+        {%- for item in site.data.home.anatomy %}
+        <li><span class="anatomy-n">0{{ forloop.index }}</span><span>{{ item }}</span></li>
+        {%- endfor %}
+      </ol>
+      <dl class="anatomy-stats">
+        <div><dt>Studies</dt><dd>{{ studies.size }}</dd></div>
+        <div><dt>Interactive diagrams</dt><dd>{{ diagram_total }}</dd></div>
+        <div><dt>Articles · EN + 中文</dt><dd>{{ article_total }}</dd></div>
+      </dl>
+    </aside>
+  </section>
+
+  <section class="home-section page-width" id="library" aria-labelledby="library-title">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Research library</p>
+        <h2 id="library-title">Library<span class="dot">.</span></h2>
+      </div>
+      <p class="section-aside">Pinned commits.<br>Runnable reproductions.</p>
+    </div>
+    <div class="study-list">
+      {%- for s in studies %}
+      <article class="study-card">
+        <p class="study-card-head"><span class="badge">{{ s.number }}</span>{{ s.category.en }}</p>
+        <h3><a href="{{ s.pages.en | relative_url }}">{{ s.name }}</a></h3>
+        <p class="study-pins">
+          {%- for pin in s.pins %}
+          <a href="{{ pin.url }}"><code>{{ pin.label }}</code><span>@{{ pin.rev }}</span></a>
+          {%- endfor %}
+        </p>
+        <div class="study-card-tagline">{{ s.tagline.en | markdownify }}</div>
+        {%- if s.tagline.zh %}
+        <div class="study-card-tagline study-card-tagline--zh" lang="zh-CN">{{ s.tagline.zh | markdownify }}</div>
+        {%- endif %}
+        <p class="study-card-status">{% include icon.html name="check" px=15 %}<span>{{ s.status }}</span></p>
+        <div class="study-card-actions">
+          <a class="button button-primary button-small" href="{{ s.pages.en | relative_url }}">Read the study{% include icon.html name="arrow-right" px=15 %}</a>
+          {%- if s.pages.zh %}
+          <a class="button button-secondary button-small" href="{{ s.pages.zh | relative_url }}" lang="zh-CN">中文版</a>
+          {%- endif %}
+          <a class="text-link" href="{{ s.diagrams_url | relative_url }}">{{ s.diagrams.size }} diagrams</a>
+          <a class="text-link" href="{{ s.experiment.en }}">Reproduction{% include icon.html name="arrow-up-right" px=14 %}</a>
+        </div>
+      </article>
+      {%- endfor %}
+    </div>
+  </section>
+
+  <section class="home-section page-width" id="diagrams" aria-labelledby="diagrams-title">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Source-pinned · interactive</p>
+        <h2 id="diagrams-title">Diagrams<span class="dot">.</span></h2>
+      </div>
+      <p class="section-aside">Every node links to the exact<br>lines it was drawn from.</p>
+    </div>
+    {%- for s in studies %}
+    <div class="diagram-group">
+      <div class="diagram-group-head">
+        <h3><span class="badge">{{ s.number }}</span>{{ s.name }}</h3>
+        <a class="text-link" href="{{ s.diagrams_url | relative_url }}">Gallery{% include icon.html name="arrow-right" px=15 %}</a>
+      </div>
+      <ul class="chip-list">
+        {%- for d in s.diagrams %}
+        <li><a class="chip" href="{{ s.diagrams_url | append: d.slug | append: '.html' | relative_url }}"><span>{{ d.title }}</span><small>{{ d.type }}</small></a></li>
+        {%- endfor %}
+      </ul>
+    </div>
+    {%- endfor %}
+  </section>
+
+  <section class="home-section page-width" id="method" aria-labelledby="method-title">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">How research is performed</p>
+        <h2 id="method-title">Method<span class="dot">.</span></h2>
+      </div>
+      <p class="section-aside">Facts are backed by source.<br>Interpretations are labelled.</p>
+    </div>
+    <ol class="method-list">
+      {%- for step in site.data.home.method %}
+      <li>
+        <span class="method-n">0{{ forloop.index }}</span>
+        <h3>{{ step.title }}</h3>
+        <p>{{ step.text | markdownify | remove: "<p>" | remove: "</p>" | strip }}</p>
+      </li>
+      {%- endfor %}
+    </ol>
+  </section>
+
+  <section class="home-section home-notes page-width" id="conventions" aria-labelledby="conventions-title">
+    <div class="section-head section-head--compact">
+      <div>
+        <p class="eyebrow">Reading convention</p>
+        <h2 id="conventions-title">Conventions<span class="dot">.</span></h2>
+      </div>
+    </div>
+    <div class="prose prose--compact">
+{{ content }}
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer page-width">
+  <a class="brand" href="{{ '/' | relative_url }}" aria-label="{{ site.title }}">
+    <span class="brand-mark" aria-hidden="true">r<span>r</span></span>
+    <span class="brand-text">{{ site.title }}<span class="brand-secondary">{{ t.tagline }}</span></span>
+  </a>
+  <nav aria-label="{{ t.nav_main }}">
+    {%- include nav-links.html %}
+  </nav>
+</footer>

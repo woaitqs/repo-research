@@ -1,6 +1,7 @@
 ---
-layout: research
+layout: gallery
 title: "OpenHands — interactive diagrams"
+study: openhands
 permalink: /diagrams/openhands/
 ---
 
@@ -16,18 +17,10 @@ that link to the exact lines they were drawn from. Nine are pinned to
 其中 9 张固定在 `software-agent-sdk@54daf05`（标签 `v1.53.0`，即 Agent Canvas 固定的 agent-server 版本），
 1 张固定在 `OpenHands/OpenHands@7ea83ba`。图中文字为英文，中英文文章共用同一套图。
 
-| Diagram | Type | What it answers | 回答的问题 | Pinned to |
-|---|---|---|---|---|
-| [architecture.html](architecture.html) | architecture | How Canvas, Agent Server, SDK and runtime fit together | Canvas、Agent Server、SDK 和运行时如何组合 | software-agent-sdk |
-| [execution-flow.html](execution-flow.html) | sequence | What happens from `POST /api/conversations` to an `ObservationEvent` on the WebSocket | 从 `POST /api/conversations` 到 WebSocket 上出现 `ObservationEvent` 之间发生了什么 | software-agent-sdk |
-| [core-abstractions.html](core-abstractions.html) | architecture | Which object owns what (Conversation, State, EventLog, View, Agent, LLM, Tool, Workspace, Condenser) | 每个对象分别拥有什么（Conversation、State、EventLog、View、Agent、LLM、Tool、Workspace、Condenser） | software-agent-sdk |
-| [context-flow.html](context-flow.html) | dataflow | What enters the model context, what is excluded, how it is bounded | 什么进入模型上下文、什么被排除、如何限制大小 | software-agent-sdk |
-| [agent-loop.html](agent-loop.html) | workflow | `LocalConversation.run()` + `Agent.step()`, early returns and recovery | `LocalConversation.run()` + `Agent.step()`，提前返回与恢复 | software-agent-sdk |
-| [conversation-lifecycle.html](conversation-lifecycle.html) | lifecycle | `ConversationExecutionStatus` transitions | `ConversationExecutionStatus` 的状态转换 | software-agent-sdk |
-| [memory-flow.html](memory-flow.html) | dataflow | Two-tier `MEMORY.md`: writer, loader, injection, staleness | 两层 `MEMORY.md`：谁写、谁加载、如何注入、如何处理过时 | software-agent-sdk |
-| [tool-runtime.html](tool-runtime.html) | sequence | Tool call → validation → confirmation → executor → workspace → observation | 工具调用 → 校验 → 确认 → 执行器 → 工作区 → 观察结果 | software-agent-sdk |
-| [sub-agent-flow.html](sub-agent-flow.html) | sequence | `TaskTool` delegation and context isolation | `TaskTool` 委托与上下文隔离 | software-agent-sdk |
-| [canvas-stack.html](canvas-stack.html) | architecture | What `agent-canvas` launches and how the ingress routes | `agent-canvas` 启动了什么、入口代理如何路由 | OpenHands |
+<!-- diagram-cards -->
+
+The diagram list (titles, types, questions, pins) lives in
+[`_data/studies.yml`](https://github.com/woaitqs/repo-research/blob/main/_data/studies.yml).
 
 Each diagram passed `archify finalize --quality showcase --repo-root <pinned checkout>`
 (schema validation, verified delivery, strict provenance check, real-browser check)

@@ -1,10 +1,9 @@
 ---
 layout: research
 title: "deepagents — 源码级研究"
+study: deepagents
 permalink: /research/deepagents.zh.html
 lang: zh-CN
-diagrams: /diagrams/deepagents/architecture.html
-experiment: https://github.com/woaitqs/repo-research/blob/main/experiments/deepagents/README.zh.md
 ---
 
 [English](deepagents.md) · **中文**
