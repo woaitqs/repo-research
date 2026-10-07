@@ -1,6 +1,7 @@
 ---
 layout: research
 title: "deepagents — source-level study"
+study: deepagents
 permalink: /research/deepagents.html
 ---
 

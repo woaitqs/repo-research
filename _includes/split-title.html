@@ -1,0 +1,12 @@
+{%- comment -%}
+  Markdown pages keep their own H1 (and, for translated studies, an
+  "English · 中文" line above it) so they read well on GitHub. On the site the
+  layout renders the title and the language switch itself, so everything up to
+  and including the first H1 is dropped. Sets `article_body`.
+{%- endcomment -%}
+{%- if content contains "</h1>" -%}
+  {%- assign content_head = content | split: "</h1>" | first | append: "</h1>" -%}
+  {%- assign article_body = content | remove_first: content_head -%}
+{%- else -%}
+  {%- assign article_body = content -%}
+{%- endif -%}

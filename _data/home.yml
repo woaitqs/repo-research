@@ -1,0 +1,27 @@
+# Home page copy that is rendered as structured blocks (see _layouts/home.html).
+
+anatomy:
+  - Architecture overview
+  - Main execution flow
+  - Core abstractions
+  - Context / memory / tools / agents analysis
+  - Interactive Archify diagrams
+  - Five or more implementation decisions worth learning from
+  - A minimal runnable reproduction
+  - Verification notes
+
+method:
+  - title: Pin the target
+    text: Clone it outside this repo, record the commit, and cite every source reference against that commit.
+  - title: Map, then trace
+    text: Read manifests, entry points and the composition root, then follow real call sites end to end — into the framework too when the target delegates to one.
+  - title: Separate fact from interpretation
+    text: Facts are backed by `path:line`, a test, or observed runtime behavior. Interpretations are labelled, and open questions stay explicit.
+  - title: Verify claims at runtime
+    text: When it is cheap, drive the real library — for example with a scripted fake model — to confirm what reading alone suggests.
+  - title: Run the target's own tests
+    text: Use its locked dependencies, so environment noise is not mistaken for findings.
+  - title: Reproduce the architecture, not the product
+    text: Build a small, dependency-light version, test its architectural invariants, and mutation-test the tests.
+  - title: Diagram from evidence
+    text: Every Archify node carries sources pinned to the studied commit; its `SRC` badges link to the exact lines.

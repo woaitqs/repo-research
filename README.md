@@ -41,20 +41,31 @@ For every target repository:
 ```text
 repo-research/
 ├── README.md
-├── index.md                     # homepage (repository table)
-├── _config.yml                  # GitHub Pages (Jekyll, minima)
+├── index.md                     # homepage (layout: home; body = reading convention)
+├── _config.yml                  # GitHub Pages (Jekyll, own layouts, theme: null)
+├── _data/
+│   ├── studies.yml              # the study list: pins, pages, diagrams, experiment links
+│   ├── i18n.yml                 # interface strings (en / zh)
+│   └── home.yml                 # homepage blocks (study anatomy, method)
 ├── _layouts/
-│   └── research.html            # article layout: wider column + Mermaid rendering
-├── research/
-│   └── <project-name>.md        # the study (front matter: layout: research)
-├── diagrams/
-│   └── <project-name>/
-│       ├── architecture.html    # Archify output (self-contained HTML)
-│       ├── execution-flow.html
-│       └── ...
+│   ├── default.html             # header, navigation drawer, scripts
+│   ├── home.html                # homepage: hero, library, diagrams, method
+│   ├── research.html            # article: study rail · article · outline
+│   └── gallery.html             # diagram gallery: study rail · cards from _data/studies.yml
+├── _includes/                   # header, study rail, icons, ...
 ├── assets/
+│   ├── css/site.css             # all site styles (light + dark)
+│   ├── js/site.js               # theme, outline, reading aids, Mermaid rendering
 │   └── <project-name>/
 │       └── archify/*.json       # Archify candidates (diagram sources) + provenance README
+├── research/
+│   └── <project-name>.md        # the study (front matter: layout: research, study: <id>)
+├── diagrams/
+│   └── <project-name>/
+│       ├── index.md             # gallery page (layout: gallery)
+│       ├── architecture.html    # Archify output (self-contained HTML, never edited by hand)
+│       ├── execution-flow.html
+│       └── ...
 └── experiments/
     └── <project-name>/
         ├── README.md
@@ -70,13 +81,21 @@ repo-research/
    ---
    layout: research
    title: "<project> — source-level study"
+   study: <project-name>
    permalink: /research/<project-name>.html
    ---
    ```
-   Follow the section structure of `research/deepagents.md`.
+   Follow the section structure of `research/deepagents.md`. Keep the `# Title` heading: GitHub shows it,
+   while the site drops everything up to and including the first H1 and renders its own title,
+   language switch and navigation. A Chinese version uses `permalink: /research/<project-name>.zh.html`
+   and `lang: zh-CN` with the same `study:` id.
 2. Put Archify candidates in `assets/<project-name>/archify/` and finalize them into `diagrams/<project-name>/` (see [Archify](#archify)). At minimum create `architecture`, `execution-flow`, `core-abstractions` and `context-flow`.
+   Add `diagrams/<project-name>/index.md` (`layout: gallery`, `study: <project-name>`); the cards appear where
+   the page has an HTML comment `<!-- diagram-cards -->`.
 3. Put the reproduction in `experiments/<project-name>/`, with `README.md`, `src/`, `tests/` and `run.sh`.
-4. Add a row to the table in `index.md` and to the [Studies](#studies) table above.
+4. Add an entry to `_data/studies.yml` (pins, pages, diagrams, experiment link, one-line takeaway). The homepage,
+   the study rail, the previous/next links and the gallery are all generated from it. Also add a row to the
+   [Studies](#studies) table above.
 5. Avoid Liquid template delimiters (double curly braces, or a curly brace followed by a percent sign) anywhere in published Markdown, this README included. GitHub Pages evaluates them and the build fails.
 
 ## Reading
@@ -93,7 +112,7 @@ Each repository should get its own research page and its own diagram directory, 
 
 > GitHub Pages must be enabled once in **Settings → Pages → Deploy from a branch → main / (root)**.
 
-Mermaid code fences in research articles render natively on GitHub. On Pages, `_layouts/research.html` converts them in the browser using Mermaid from jsDelivr.
+Mermaid code fences in research articles render natively on GitHub. On Pages, `assets/js/site.js` converts them in the browser using Mermaid from jsDelivr (with the site's light/dark palette).
 
 ### Local preview
 

@@ -1,10 +1,9 @@
 ---
 layout: research
 title: "OpenHands — 源码级研究"
+study: openhands
 permalink: /research/openhands.zh.html
 lang: zh-CN
-diagrams: /diagrams/openhands/
-experiment: https://github.com/woaitqs/repo-research/blob/main/experiments/openhands/README.zh.md
 ---
 
 [English](openhands.md) · **中文**
