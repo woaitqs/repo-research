@@ -1,3 +1,5 @@
+**English** · [中文](README.zh.md)
+
 # mini_openhands — minimal reproduction of the OpenHands V1 agent core
 
 This is a small (~1.3k non-blank lines including docstrings and the demo), dependency-free Python package that rebuilds the **architectural
@@ -32,6 +34,7 @@ What it reproduces, and where each idea comes from:
 ```text
 experiments/openhands/
 ├── README.md
+├── README.zh.md
 ├── pyproject.toml
 ├── run.sh                      # install + build + tests + offline demo (+ --live)
 ├── src/mini_openhands/
@@ -116,3 +119,5 @@ and `PROBE_MAX_SIZE` (condenser `max_size`) from the environment.
 * Token-based condensation is replaced by an event-count threshold.
 * No security analyzer, hooks, skills, MCP, sub-agents or agent-server; those are
   documented in the research article instead.
+
+Research article: [English](../../research/openhands.md) · [中文](../../research/openhands.zh.md)

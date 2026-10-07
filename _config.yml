@@ -6,6 +6,11 @@ markdown: kramdown
 exclude:
   - experiments
 
+# Rewrite links between Markdown pages (e.g. the English/中文 switch) to their .html permalinks.
+# GitHub Pages enables this plugin by default; listing it keeps local builds identical.
+plugins:
+  - jekyll-relative-links
+
 # Keep the top navigation to the home page; studies are listed in the library table.
 header_pages:
   - index.md
