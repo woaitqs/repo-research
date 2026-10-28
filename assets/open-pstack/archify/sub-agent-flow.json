@@ -1,0 +1,315 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "open-pstack — arena: N candidates, a cross-judge after all are terminal, then a hand graft",
+    "output": "diagrams/open-pstack/sub-agent-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "viewBox": [
+      1080,
+      690
+    ],
+    "repository": {
+      "url": "https://github.com/ericlitman/open-pstack.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "b4c5e3d63318308b7e11f26b2bc156e7793d834a"
+    },
+    "column_fit": "spread"
+  },
+  "participants": [
+    {
+      "id": "parent",
+      "type": "frontend",
+      "label": "Parent",
+      "sublabel": "runs arena",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/arena/SKILL.md",
+          "line": 12,
+          "end_line": 19,
+          "label": "frame: rubric + outputs"
+        },
+        {
+          "path": "plugins/pstack/skills/arena/SKILL.md",
+          "line": 31,
+          "end_line": 41,
+          "label": "pick a base, graft"
+        }
+      ]
+    },
+    {
+      "id": "opus",
+      "type": "backend",
+      "label": "Opus lane",
+      "sublabel": "native agent",
+      "sources": [
+        {
+          "path": "plugins/pstack/agents/pstack-opus-max.md",
+          "line": 9,
+          "end_line": 11,
+          "label": "do not spawn or reroute"
+        }
+      ]
+    },
+    {
+      "id": "runner",
+      "type": "backend",
+      "label": "pstack-runner",
+      "sublabel": "Sol · Grok lanes",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/arena/SKILL.md",
+          "line": 21,
+          "end_line": 25,
+          "label": "fan out; dropout = N-1"
+        }
+      ]
+    },
+    {
+      "id": "cli",
+      "type": "external",
+      "label": "codex / grok",
+      "sublabel": "provider CLIs",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/references/model-catalog.md",
+          "line": 63,
+          "end_line": 77,
+          "label": "route table"
+        }
+      ]
+    },
+    {
+      "id": "outputs",
+      "type": "database",
+      "label": "Candidate outputs",
+      "sublabel": "worktree per lane",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/arena/SKILL.md",
+          "line": 19,
+          "end_line": 19,
+          "label": "own output location per candidate"
+        }
+      ]
+    },
+    {
+      "id": "judge",
+      "type": "backend",
+      "label": "Cross-judge",
+      "sublabel": "read-only, other provider",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/arena/SKILL.md",
+          "line": 27,
+          "end_line": 29,
+          "label": "cross-judge after Phase B"
+        }
+      ]
+    }
+  ],
+  "segments": [
+    {
+      "from": 150,
+      "to": 194,
+      "label": "Frame"
+    },
+    {
+      "from": 208,
+      "to": 278,
+      "label": "Fan out"
+    },
+    {
+      "from": 292,
+      "to": 418,
+      "label": "Candidates"
+    },
+    {
+      "from": 432,
+      "to": 502,
+      "label": "Judge"
+    },
+    {
+      "from": 516,
+      "to": 586,
+      "label": "Graft"
+    }
+  ],
+  "messages": [
+    {
+      "id": "worktrees",
+      "from": "parent",
+      "to": "outputs",
+      "y": 160,
+      "label": "one worktree per candidate"
+    },
+    {
+      "id": "rubric",
+      "from": "parent",
+      "to": "outputs",
+      "y": 188,
+      "label": "rubric kept from candidates",
+      "note": "candidates only see the task"
+    },
+    {
+      "id": "spawn-opus",
+      "from": "parent",
+      "to": "opus",
+      "y": 216,
+      "label": "same prompt, background",
+      "variant": "emphasis"
+    },
+    {
+      "id": "spawn-sol",
+      "from": "parent",
+      "to": "runner",
+      "y": 244,
+      "label": "same prompt: sol",
+      "variant": "emphasis"
+    },
+    {
+      "id": "spawn-grok",
+      "from": "parent",
+      "to": "runner",
+      "y": 272,
+      "label": "same prompt: grok",
+      "variant": "emphasis"
+    },
+    {
+      "id": "calls",
+      "from": "runner",
+      "to": "cli",
+      "y": 300,
+      "label": "one call per lane"
+    },
+    {
+      "id": "dropout",
+      "from": "cli",
+      "to": "runner",
+      "y": 328,
+      "label": "grok missing: dropout",
+      "variant": "return",
+      "note": "recorded, never replaced"
+    },
+    {
+      "id": "cand-a",
+      "from": "opus",
+      "to": "outputs",
+      "y": 356,
+      "label": "candidate A + rationale"
+    },
+    {
+      "id": "cand-b",
+      "from": "runner",
+      "to": "outputs",
+      "y": 384,
+      "label": "candidate B + receipt"
+    },
+    {
+      "id": "terminal",
+      "from": "runner",
+      "to": "parent",
+      "y": 412,
+      "label": "all lanes terminal",
+      "variant": "return"
+    },
+    {
+      "id": "judge",
+      "from": "parent",
+      "to": "judge",
+      "y": 440,
+      "label": "rubric + candidates by label",
+      "variant": "emphasis"
+    },
+    {
+      "id": "judge-read",
+      "from": "judge",
+      "to": "outputs",
+      "y": 468,
+      "label": "read every candidate"
+    },
+    {
+      "id": "scores",
+      "from": "judge",
+      "to": "parent",
+      "y": 496,
+      "label": "scores + base pick",
+      "variant": "return"
+    },
+    {
+      "id": "graft",
+      "from": "parent",
+      "to": "outputs",
+      "y": 524,
+      "label": "pick base, graft by hand",
+      "variant": "emphasis"
+    },
+    {
+      "id": "verify",
+      "from": "parent",
+      "to": "outputs",
+      "y": 552,
+      "label": "verify the synthesis"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "parent",
+      "from": 156,
+      "to": 586,
+      "type": "frontend"
+    },
+    {
+      "participant": "opus",
+      "from": 212,
+      "to": 360,
+      "type": "backend"
+    },
+    {
+      "participant": "runner",
+      "from": 240,
+      "to": 416,
+      "type": "backend"
+    },
+    {
+      "participant": "cli",
+      "from": 296,
+      "to": 332,
+      "type": "external"
+    },
+    {
+      "participant": "judge",
+      "from": 436,
+      "to": 500,
+      "type": "backend"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Same prompt, different models",
+      "items": [
+        "the prompt is the contract; the rubric stays with the parent",
+        "convergence is strong agreement; wild divergence means reframe"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Judge after terminal",
+      "items": [
+        "the cross-judge prefers a provider other than the parent and the likely base",
+        "the parent still reads every candidate and scores criterion by criterion"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Graft by hand",
+      "items": [
+        "one or two parts per losing candidate, folded in under one mental model",
+        "a dropout leaves N-1 candidates and is named in the synthesis note"
+      ]
+    }
+  ]
+}

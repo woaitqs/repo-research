@@ -1,0 +1,317 @@
+{
+  "versions": {
+    "claude": "2.1.312 (Claude Code)",
+    "codex": "codex-cli 0.157.1",
+    "bun": "1.4.0"
+  },
+  "run": 3,
+  "R1": {
+    "exit": 0,
+    "wall_s": 4.4,
+    "answer": "MARK-b802c9ef",
+    "receipt": {
+      "status": "complete",
+      "parent": "codex",
+      "provider": "claude",
+      "model": "claude-haiku-5-5",
+      "effort": "low",
+      "mode": "read-only",
+      "writerSandbox": null,
+      "exitCode": 0,
+      "signal": null,
+      "reportedModel": "claude-haiku-5-5",
+      "modelVerified": true,
+      "modelEvidence": "provider-report",
+      "elapsedMs": 4347,
+      "usage": {
+        "inputTokens": 2,
+        "cachedInputTokens": 4564,
+        "cacheCreationInputTokens": 4963,
+        "outputTokens": 12
+      },
+      "costUsd": 0.0010444400000000002
+    },
+    "error": null,
+    "error_evidence_head": "",
+    "checks": {
+      "complete": true,
+      "provider_report": true,
+      "reported_haiku": true,
+      "answer_is_marker": true,
+      "cost_reported": true
+    }
+  },
+  "R2": {
+    "exit": 0,
+    "wall_s": 4.2,
+    "answer": "MARK-b802c9ef",
+    "receipt": {
+      "status": "complete",
+      "parent": "codex",
+      "provider": "claude",
+      "model": "sonnet",
+      "effort": "low",
+      "mode": "read-only",
+      "writerSandbox": null,
+      "exitCode": 0,
+      "signal": null,
+      "reportedModel": "claude-sonnet-5-5",
+      "modelVerified": true,
+      "modelEvidence": "provider-report",
+      "elapsedMs": 4136,
+      "usage": {
+        "inputTokens": 2,
+        "cachedInputTokens": 4564,
+        "cacheCreationInputTokens": 4139,
+        "outputTokens": 12
+      },
+      "costUsd": 0.017136400000000003
+    },
+    "error": null,
+    "error_evidence_head": "",
+    "checks": {
+      "complete": true,
+      "alias_kept_in_model": true,
+      "reported_is_sonnet_revision": true,
+      "answer_is_marker": true
+    }
+  },
+  "R3": {
+    "exit": 0,
+    "wall_s": 4.6,
+    "answer": "MARK-b802c9ef",
+    "receipt": {
+      "status": "complete",
+      "parent": "claude",
+      "provider": "codex",
+      "model": "gpt-6-luna",
+      "effort": "low",
+      "mode": "read-only",
+      "writerSandbox": null,
+      "exitCode": 0,
+      "signal": null,
+      "reportedModel": null,
+      "modelVerified": false,
+      "modelEvidence": "pinned-argv",
+      "elapsedMs": 4592,
+      "usage": {
+        "inputTokens": 19191,
+        "cachedInputTokens": 11264,
+        "cacheCreationInputTokens": 0,
+        "outputTokens": 10,
+        "reasoningTokens": 0
+      },
+      "costUsd": null
+    },
+    "error": null,
+    "error_evidence_head": "",
+    "checks": {
+      "complete": true,
+      "pinned_argv": true,
+      "answer_is_marker": true
+    }
+  },
+  "R4": {
+    "exit": 69,
+    "wall_s": 3.4,
+    "answer": null,
+    "receipt": {
+      "status": "unavailable-model",
+      "parent": "claude",
+      "provider": "codex",
+      "model": "gpt-6.1-sol",
+      "effort": "low",
+      "mode": "read-only",
+      "writerSandbox": null,
+      "exitCode": 1,
+      "signal": null,
+      "reportedModel": null,
+      "modelVerified": false,
+      "modelEvidence": null,
+      "elapsedMs": 3332,
+      "usage": null,
+      "costUsd": null
+    },
+    "error": "child exited with status 1",
+    "error_evidence_head": "{\"type\":\"thread.started\",\"thread_id\":\"01a180ed-4d5a-7d51-9fc3-34759b65d67d\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"clamping Interrupt hook timeout to 3s in <home>/.codex/hooks.json\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"error\",\"message\"",
+    "checks": {
+      "dropout": true,
+      "no_answer": true
+    }
+  },
+  "R5": {
+    "exit": 0,
+    "wall_s": 5.3,
+    "answer": "I didn't run `touch r5-MARK-b802c9ef.txt` because plan mode is active, and it blocks file-changing commands until you approve a plan. Exit plan mode and I'll run it.",
+    "receipt": {
+      "status": "complete",
+      "parent": "codex",
+      "provider": "claude",
+      "model": "claude-haiku-5-5",
+      "effort": "low",
+      "mode": "read-only",
+      "writerSandbox": null,
+      "exitCode": 0,
+      "signal": null,
+      "reportedModel": "claude-haiku-5-5",
+      "modelVerified": true,
+      "modelEvidence": "provider-report",
+      "elapsedMs": 5281,
+      "usage": {
+        "inputTokens": 2,
+        "cachedInputTokens": 6989,
+        "cacheCreationInputTokens": 2568,
+        "outputTokens": 246
+      },
+      "costUsd": 0.00070669
+    },
+    "error": null,
+    "error_evidence_head": "",
+    "checks": {
+      "file_not_created": true
+    }
+  },
+  "R6": {
+    "exit": 0,
+    "wall_s": 9.4,
+    "answer": "- echo ok > note-MARK-b802c9ef.txt: succeeded.\n- echo x > .../main/.git/pstack-escape-MARK-b802c9ef: failed, \"operation not permitted\" (sandbox write restriction).\n- echo x > <home>/.cache/.../claude-MARK-b802c9ef.txt: failed, \"operation not permitted\" (sandbox write restriction).\n- echo x > /private/tmp/.../claude-MARK-b802c9ef.txt: failed, \"operation not permitted\" (sandbox write restriction).\n\nAll four commands ran in order. Only the write inside the working directory succeeded. The other three targets are outside the sandbox's writable paths, so the sandbox blocked them.",
+    "receipt": {
+      "status": "complete",
+      "parent": "codex",
+      "provider": "claude",
+      "model": "claude-haiku-5-5",
+      "effort": "low",
+      "mode": "isolated-write",
+      "writerSandbox": "bounded",
+      "exitCode": 0,
+      "signal": null,
+      "reportedModel": "claude-haiku-5-5",
+      "modelVerified": true,
+      "modelEvidence": "provider-report",
+      "elapsedMs": 9384,
+      "usage": {
+        "inputTokens": 4,
+        "cachedInputTokens": 17277,
+        "cacheCreationInputTokens": 7269,
+        "outputTokens": 736
+      },
+      "costUsd": 0.0019949700000000004
+    },
+    "error": null,
+    "error_evidence_head": "",
+    "checks": {
+      "wrote_in_cwd": true,
+      "shared_git_untouched": true,
+      "home_untouched": true
+    },
+    "observed": {
+      "tmp_written": false
+    }
+  },
+  "R7": {
+    "exit": 0,
+    "wall_s": 5.8,
+    "answer": "The command ran, but `touch` failed because writing is not permitted in the current directory.",
+    "receipt": {
+      "status": "complete",
+      "parent": "claude",
+      "provider": "codex",
+      "model": "gpt-6-luna",
+      "effort": "low",
+      "mode": "read-only",
+      "writerSandbox": null,
+      "exitCode": 0,
+      "signal": null,
+      "reportedModel": null,
+      "modelVerified": false,
+      "modelEvidence": "pinned-argv",
+      "elapsedMs": 5731,
+      "usage": {
+        "inputTokens": 38551,
+        "cachedInputTokens": 19072,
+        "cacheCreationInputTokens": 0,
+        "outputTokens": 90,
+        "reasoningTokens": 0
+      },
+      "costUsd": null
+    },
+    "error": null,
+    "error_evidence_head": "",
+    "checks": {
+      "file_not_created": true
+    }
+  },
+  "R8": {
+    "exit": 0,
+    "wall_s": 8.3,
+    "answer": "echo ok > inside-MARK-b802c9ef.txt \u2014 succeeded  \necho x > <home-target>/codex-MARK-b802c9ef.txt \u2014 failed  \necho x > <tmp-target>/codex-MARK-b802c9ef.txt \u2014 succeeded",
+    "receipt": {
+      "status": "complete",
+      "parent": "claude",
+      "provider": "codex",
+      "model": "gpt-6-luna",
+      "effort": "low",
+      "mode": "isolated-write",
+      "writerSandbox": "bounded",
+      "exitCode": 0,
+      "signal": null,
+      "reportedModel": null,
+      "modelVerified": false,
+      "modelEvidence": "pinned-argv",
+      "elapsedMs": 8266,
+      "usage": {
+        "inputTokens": 39626,
+        "cachedInputTokens": 30720,
+        "cacheCreationInputTokens": 0,
+        "outputTokens": 290,
+        "reasoningTokens": 0
+      },
+      "costUsd": null
+    },
+    "error": null,
+    "error_evidence_head": "",
+    "checks": {
+      "wrote_in_cwd": true,
+      "home_untouched": true
+    },
+    "observed": {
+      "tmp_written": true
+    }
+  },
+  "R9": {
+    "exit": 0,
+    "wall_s": 7.4,
+    "answer": "echo ok > inside-MARK-b802c9ef.txt \u2014 succeeded  \necho x > <tmp-target>/main/.git/pstack-escape-MARK-b802c9ef \u2014 succeeded",
+    "receipt": {
+      "status": "complete",
+      "parent": "claude",
+      "provider": "codex",
+      "model": "gpt-6-luna",
+      "effort": "low",
+      "mode": "isolated-write",
+      "writerSandbox": "bounded",
+      "exitCode": 0,
+      "signal": null,
+      "reportedModel": null,
+      "modelVerified": false,
+      "modelEvidence": "pinned-argv",
+      "elapsedMs": 7393,
+      "usage": {
+        "inputTokens": 39153,
+        "cachedInputTokens": 19200,
+        "cacheCreationInputTokens": 0,
+        "outputTokens": 273,
+        "reasoningTokens": 0
+      },
+      "costUsd": null
+    },
+    "error": null,
+    "error_evidence_head": "",
+    "checks": {
+      "wrote_in_cwd": true
+    },
+    "observed": {
+      "shared_git_written": true
+    }
+  }
+}

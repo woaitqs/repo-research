@@ -31,6 +31,7 @@ It is not a collection of README summaries. Each study pins the target to one co
 | 02 | [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands)<br>+ [software-agent-sdk](https://github.com/OpenHands/software-agent-sdk)<br><sub>Agent SDK & runtime</sub> | `7ea83ba` + `54daf05`<br><sub>Canvas 1.25.0 · SDK v1.53.0</sub> | [English](research/openhands.md)&nbsp;·&nbsp;[web](https://woaitqs.github.io/repo-research/research/openhands.html)<br>[中文](research/openhands.zh.md)&nbsp;·&nbsp;[web](https://woaitqs.github.io/repo-research/research/openhands.zh.html) | [10 diagrams](diagrams/openhands/) | [reproduction](experiments/openhands/) |
 | 03 | [openai/openai-agents-python](https://github.com/openai/openai-agents-python)<br><sub>Agent SDK & runtime</sub> | `71c2da4`<br><sub>0.23.1 + 22</sub> | [English](research/openai-agents-python.md)&nbsp;·&nbsp;[web](https://woaitqs.github.io/repo-research/research/openai-agents-python.html)<br>[中文](research/openai-agents-python.zh.md)&nbsp;·&nbsp;[web](https://woaitqs.github.io/repo-research/research/openai-agents-python.zh.html) | [8 diagrams](diagrams/openai-agents-python/) | [reproduction](experiments/openai-agents-python/) |
 | 04 | [letta-ai/letta-code](https://github.com/letta-ai/letta-code)<br><sub>Stateful agent harness</sub> | `4b028fa`<br><sub>v0.34.4</sub> | [English](research/letta-code.md)&nbsp;·&nbsp;[web](https://woaitqs.github.io/repo-research/research/letta-code.html)<br>[中文](research/letta-code.zh.md)&nbsp;·&nbsp;[web](https://woaitqs.github.io/repo-research/research/letta-code.zh.html) | [8 diagrams](diagrams/letta-code/) | [reproduction](experiments/letta-code/) |
+| 05 | [ericlitman/open-pstack](https://github.com/ericlitman/open-pstack)<br>+ upstream [cursor/plugins pstack](https://github.com/cursor/plugins/tree/main/pstack)<br><sub>Agent skill pack & cross-model runner</sub> | `b4c5e3d` + `88d4751`<br><sub>Open Pstack 1.16.0 · pstack 0.15.29</sub> | [English](research/open-pstack.md)&nbsp;·&nbsp;[web](https://woaitqs.github.io/repo-research/research/open-pstack.html)<br>[中文](research/open-pstack.zh.md)&nbsp;·&nbsp;[web](https://woaitqs.github.io/repo-research/research/open-pstack.zh.html) | [8 diagrams](diagrams/open-pstack/) | [reproduction](experiments/open-pstack/) |
 
 ### What each study found
 
@@ -42,6 +43,8 @@ It is not a collection of README summaries. Each study pins the target to one co
   <sub>Verified: 12,174 upstream tests pass · probe 17/17 · 40 tests + demo 11/11 · mutations 11/11 · real models: 6 scenarios × 2 models × 3 runs</sub>
 - **letta-code** splits the agent loop across a protocol. A stateful backend runs one model step per run and stops at every tool call; the client harness executes tools on the user's machine and resumes. Memory is a per-agent git repository compiled into a cache-stable system prompt.<br>
   <sub>Verified: 24 tests + demo 11/11 · mutation 9/9 · upstream unit tests 8,778 pass · probe 9 claims (1 disproved) · real-model 6 scenarios × 3 runs</sub>
+- **open-pstack** has no agent loop of its own: it ports Cursor's pstack skill pack to Claude Code and Codex and steers the host's loop with prose. Its owned code is a runner that calls another vendor's model as a lane: one model call, model proof in every receipt, and a dropout instead of a fallback. Measured: the prose layer is followed loosely.<br>
+  <sub>Verified: 505 upstream tests pass · probe 20/20 · real CLIs 9 scenarios × 3 · 33 real Claude Code sessions · 40 tests + demo 12/12 · mutations 21/21</sub>
 
 <a name="anatomy"></a>
 
@@ -227,6 +230,10 @@ Every study is bilingual: `research/<project-name>.md` (English) and `research/<
   - `./run.sh probe <letta-code clone>` runs a TypeScript probe against the real `LocalBackend` with Bun. It needs no network.
   - `real_model/run_letta_real.py` drives the built `letta.js` with Node against an OpenAI-compatible model. It reads the API key from `ARK_API_KEY`.
   - `python3 mutation_check.py` injects architectural regressions and checks that the tests catch each one.
+- **open-pstack** (`minipstack`) is stdlib-only Python at runtime (pytest for tests) and needs `git` on `PATH`. The extra checks:
+  - `./run.sh probe <open-pstack clone>` drives the real `pstack-runner` launcher with scripted provider CLIs. It needs Bun and no network.
+  - `real_model/` drives the real launcher, the plugin itself (in headless Claude Code) and the reproduction against the operator's existing `claude` and `codex` logins. It never reads credential files.
+  - `python3 mutation_check.py` injects 21 architectural regressions and checks that the tests catch each one.
 
 Experiments that call real models read API keys from environment variables only. Never commit keys: `.env` files are git-ignored, and published logs and reports are sanitized.
 

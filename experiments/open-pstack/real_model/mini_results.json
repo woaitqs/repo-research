@@ -1,0 +1,703 @@
+{
+  "versions": {
+    "claude": "2.1.312 (Claude Code)",
+    "codex": "codex-cli 0.157.1"
+  },
+  "intent": "Add percentile(values, p) with linear interpolation for p in 0..100.",
+  "diff": "--- a/stats.py\n+++ b/stats.py\n@@ -0,0 +1,7 @@\n 1 +def percentile(values, p):\n 2 +    ordered = sorted(values)\n 3 +    k = (len(ordered) - 1) * p / 100\n 4 +    lower = int(k)\n 5 +    upper = lower + 1\n 6 +    weight = k - lower\n 7 +    return ordered[lower] * (1 - weight) + ordered[upper] * weight\n",
+  "planted_lines": [
+    5,
+    7
+  ],
+  "runs": [
+    {
+      "run": 1,
+      "checks": {
+        "p1_counts": true,
+        "p1_dropouts_named": true,
+        "p1_codex_pinned_argv": true,
+        "p2_all_counted": true,
+        "p2_claude_provider_report": true
+      },
+      "panel_claude_parent": {
+        "intent": "Add percentile(values, p) with linear interpolation for p in 0..100.",
+        "reviewers": [
+          {
+            "label": "A",
+            "descriptor": "claude:claude-haiku-5-5@low",
+            "route": "native",
+            "status": "complete",
+            "counted": true,
+            "reason": null
+          },
+          {
+            "label": "B",
+            "descriptor": "codex:gpt-6-luna@low",
+            "route": "external",
+            "status": "complete",
+            "counted": true,
+            "reason": null
+          },
+          {
+            "label": "C",
+            "descriptor": "codex:gpt-6.1-sol@low",
+            "route": "external",
+            "status": "unavailable-model",
+            "counted": false,
+            "reason": "child exited with status 1"
+          },
+          {
+            "label": "D",
+            "descriptor": "grok:grok-4.7@xhigh",
+            "route": "external",
+            "status": "unavailable-cli",
+            "counted": false,
+            "reason": "grok executable not found"
+          }
+        ],
+        "dropouts": [
+          "codex:gpt-6.1-sol@low",
+          "grok:grok-4.7@xhigh"
+        ],
+        "agreement": [
+          {
+            "line": 7,
+            "raised_by": [
+              "claude:claude-haiku-5-5@low",
+              "codex:gpt-6-luna@low"
+            ],
+            "texts": [
+              "If `ordered[upper]` is `inf` and `weight` is 0, `inf * 0` yields NaN, so `percentile([1, inf], 0)` returns NaN instead of 1.",
+              "For p=100, `upper` is out of range, so the function raises `IndexError` instead of returning the maximum value."
+            ]
+          }
+        ],
+        "single": [
+          {
+            "line": 2,
+            "raised_by": [
+              "claude:claude-haiku-5-5@low"
+            ],
+            "texts": [
+              "Empty `values` is not rejected, so `ordered[0]` on line 7 raises a bare IndexError instead of a clear error."
+            ]
+          },
+          {
+            "line": 3,
+            "raised_by": [
+              "claude:claude-haiku-5-5@low"
+            ],
+            "texts": [
+              "`p` is not validated, so values outside 0..100 are accepted, and negative `p` silently extrapolates instead of raising."
+            ]
+          },
+          {
+            "line": 4,
+            "raised_by": [
+              "claude:claude-haiku-5-5@low"
+            ],
+            "texts": [
+              "`int()` truncates toward zero, so for negative `k` it selects the wrong lower index; `math.floor` is needed."
+            ]
+          },
+          {
+            "line": 5,
+            "raised_by": [
+              "claude:claude-haiku-5-5@low"
+            ],
+            "texts": [
+              "When `p` is 100 (or there is one element), `upper = lower + 1` equals `len(ordered)`, so line 7 raises IndexError even though `weight` is 0."
+            ]
+          }
+        ],
+        "planted_found_by": [
+          "claude:claude-haiku-5-5@low",
+          "codex:gpt-6-luna@low"
+        ],
+        "planted_in_agreement": true,
+        "lines_cited": [
+          2,
+          3,
+          4,
+          5,
+          7
+        ],
+        "receipts": [
+          {
+            "provider": "codex",
+            "model": "gpt-6-luna",
+            "status": "complete",
+            "reportedModel": null,
+            "modelEvidence": "pinned-argv",
+            "costUsd": null,
+            "elapsedMs": 5111
+          },
+          {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "status": "unavailable-model",
+            "reportedModel": null,
+            "modelEvidence": null,
+            "costUsd": null,
+            "elapsedMs": 4594
+          },
+          {
+            "provider": "grok",
+            "model": "grok-4.7",
+            "status": "unavailable-cli",
+            "reportedModel": null,
+            "modelEvidence": null,
+            "costUsd": null,
+            "elapsedMs": 8
+          }
+        ]
+      },
+      "panel_codex_parent": {
+        "intent": "Add percentile(values, p) with linear interpolation for p in 0..100.",
+        "reviewers": [
+          {
+            "label": "A",
+            "descriptor": "claude:claude-haiku-5-5@low",
+            "route": "external",
+            "status": "complete",
+            "counted": true,
+            "reason": null
+          },
+          {
+            "label": "B",
+            "descriptor": "claude:sonnet@low",
+            "route": "external",
+            "status": "complete",
+            "counted": true,
+            "reason": null
+          },
+          {
+            "label": "C",
+            "descriptor": "codex:gpt-6-luna@low",
+            "route": "native",
+            "status": "complete",
+            "counted": true,
+            "reason": null
+          }
+        ],
+        "dropouts": [],
+        "agreement": [
+          {
+            "line": 7,
+            "raised_by": [
+              "claude:claude-haiku-5-5@low",
+              "claude:sonnet@low",
+              "codex:gpt-6-luna@low"
+            ],
+            "texts": [
+              "Indexing `ordered[lower]` raises IndexError when `values` is empty, since `len(ordered) - 1` is -1 and the index is out of range.",
+              "With p=100 (or any single-element input), `upper` equals `len(ordered)`, so `ordered[upper]` raises IndexError, and p=100 is within the stated 0..100 range.",
+              "When `p` is 100, `upper` is out of range, so the function raises `IndexError` instead of returning the maximum."
+            ]
+          }
+        ],
+        "single": [
+          {
+            "line": 3,
+            "raised_by": [
+              "claude:sonnet@low"
+            ],
+            "texts": [
+              "There is no validation of `p` outside 0..100 or of empty `values`, so bad input gives a confusing IndexError or silently wrong extrapolated indexing, including negative indices that wrap around."
+            ]
+          },
+          {
+            "line": 4,
+            "raised_by": [
+              "claude:claude-haiku-5-5@low"
+            ],
+            "texts": [
+              "No check that `p` is within 0..100, so out-of-range `p` silently extrapolates or produces an invalid index, and `int()` truncates toward zero, which mishandles negative `k`."
+            ]
+          }
+        ],
+        "planted_found_by": [
+          "claude:claude-haiku-5-5@low",
+          "claude:sonnet@low",
+          "codex:gpt-6-luna@low"
+        ],
+        "planted_in_agreement": true,
+        "lines_cited": [
+          3,
+          4,
+          7
+        ],
+        "receipts": [
+          {
+            "provider": "claude",
+            "model": "claude-haiku-5-5",
+            "status": "complete",
+            "reportedModel": "claude-haiku-5-5",
+            "modelEvidence": "provider-report",
+            "costUsd": 0.0016809400000000001,
+            "elapsedMs": 11141
+          },
+          {
+            "provider": "claude",
+            "model": "sonnet",
+            "status": "complete",
+            "reportedModel": "claude-sonnet-5-5",
+            "modelEvidence": "provider-report",
+            "costUsd": 0.0212384,
+            "elapsedMs": 8346
+          }
+        ]
+      }
+    },
+    {
+      "run": 2,
+      "checks": {
+        "p1_counts": true,
+        "p1_dropouts_named": true,
+        "p1_codex_pinned_argv": true,
+        "p2_all_counted": true,
+        "p2_claude_provider_report": true
+      },
+      "panel_claude_parent": {
+        "intent": "Add percentile(values, p) with linear interpolation for p in 0..100.",
+        "reviewers": [
+          {
+            "label": "A",
+            "descriptor": "claude:claude-haiku-5-5@low",
+            "route": "native",
+            "status": "complete",
+            "counted": true,
+            "reason": null
+          },
+          {
+            "label": "B",
+            "descriptor": "codex:gpt-6-luna@low",
+            "route": "external",
+            "status": "complete",
+            "counted": true,
+            "reason": null
+          },
+          {
+            "label": "C",
+            "descriptor": "codex:gpt-6.1-sol@low",
+            "route": "external",
+            "status": "unavailable-model",
+            "counted": false,
+            "reason": "child exited with status 1"
+          },
+          {
+            "label": "D",
+            "descriptor": "grok:grok-4.7@xhigh",
+            "route": "external",
+            "status": "unavailable-cli",
+            "counted": false,
+            "reason": "grok executable not found"
+          }
+        ],
+        "dropouts": [
+          "codex:gpt-6.1-sol@low",
+          "grok:grok-4.7@xhigh"
+        ],
+        "agreement": [
+          {
+            "line": 7,
+            "raised_by": [
+              "claude:claude-haiku-5-5@low",
+              "codex:gpt-6-luna@low"
+            ],
+            "texts": [
+              "`ordered[upper]` raises IndexError when p=100 because `upper` equals `len(ordered)`, and `ordered[lower]` raises IndexError for empty input.",
+              "When `p` is 100, `upper` is out of range, so the function raises `IndexError` instead of returning the maximum value."
+            ]
+          }
+        ],
+        "single": [
+          {
+            "line": 3,
+            "raised_by": [
+              "claude:claude-haiku-5-5@low"
+            ],
+            "texts": [
+              "Negative or greater-than-100 values of `p` are not rejected, so `k` falls outside the valid index range and the function returns a silently wrong or crashing result."
+            ]
+          },
+          {
+            "line": 5,
+            "raised_by": [
+              "claude:claude-haiku-5-5@low"
+            ],
+            "texts": [
+              "At p=100, `k` equals `len-1`, so `upper` becomes `len` and is out of range."
+            ]
+          }
+        ],
+        "planted_found_by": [
+          "claude:claude-haiku-5-5@low",
+          "codex:gpt-6-luna@low"
+        ],
+        "planted_in_agreement": true,
+        "lines_cited": [
+          3,
+          5,
+          7
+        ],
+        "receipts": [
+          {
+            "provider": "codex",
+            "model": "gpt-6-luna",
+            "status": "complete",
+            "reportedModel": null,
+            "modelEvidence": "pinned-argv",
+            "costUsd": null,
+            "elapsedMs": 5222
+          },
+          {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "status": "unavailable-model",
+            "reportedModel": null,
+            "modelEvidence": null,
+            "costUsd": null,
+            "elapsedMs": 3433
+          },
+          {
+            "provider": "grok",
+            "model": "grok-4.7",
+            "status": "unavailable-cli",
+            "reportedModel": null,
+            "modelEvidence": null,
+            "costUsd": null,
+            "elapsedMs": 8
+          }
+        ]
+      },
+      "panel_codex_parent": {
+        "intent": "Add percentile(values, p) with linear interpolation for p in 0..100.",
+        "reviewers": [
+          {
+            "label": "A",
+            "descriptor": "claude:claude-haiku-5-5@low",
+            "route": "external",
+            "status": "complete",
+            "counted": true,
+            "reason": null
+          },
+          {
+            "label": "B",
+            "descriptor": "claude:sonnet@low",
+            "route": "external",
+            "status": "complete",
+            "counted": true,
+            "reason": null
+          },
+          {
+            "label": "C",
+            "descriptor": "codex:gpt-6-luna@low",
+            "route": "native",
+            "status": "complete",
+            "counted": true,
+            "reason": null
+          }
+        ],
+        "dropouts": [],
+        "agreement": [
+          {
+            "line": 7,
+            "raised_by": [
+              "claude:claude-haiku-5-5@low",
+              "claude:sonnet@low",
+              "codex:gpt-6-luna@low"
+            ],
+            "texts": [
+              "When `p` is 100, `upper` equals `len(ordered)`, so `ordered[upper]` raises IndexError.",
+              "When p=100, or when the list has one element, `upper` equals `len(ordered)` and `ordered[upper]` raises IndexError, so the upper index must be clamped to `len(ordered) - 1`.",
+              "For a single value or p = 100, `upper` is out of range, so the function raises `IndexError` instead of returning the percentile."
+            ]
+          },
+          {
+            "line": 3,
+            "raised_by": [
+              "claude:claude-haiku-5-5@low",
+              "claude:sonnet@low"
+            ],
+            "texts": [
+              "`p` is not range-checked, so values outside 0..100 return silently wrong results instead of raising ValueError.",
+              "There is no check that p is within 0..100 or that `values` is non-empty, so p above 100 gives an IndexError, a negative p gives a wrong result through negative indexing, and empty input fails with an unhelpful IndexError."
+            ]
+          }
+        ],
+        "single": [
+          {
+            "line": 2,
+            "raised_by": [
+              "claude:claude-haiku-5-5@low"
+            ],
+            "texts": [
+              "An empty `values` list yields a negative `k` and an IndexError on line 7 instead of a defined result or a clear error."
+            ]
+          },
+          {
+            "line": 4,
+            "raised_by": [
+              "claude:claude-haiku-5-5@low"
+            ],
+            "texts": [
+              "`int()` truncates toward zero, so for negative `k` (from `p < 0`) `lower` is wrong and `math.floor` is needed."
+            ]
+          }
+        ],
+        "planted_found_by": [
+          "claude:claude-haiku-5-5@low",
+          "claude:sonnet@low",
+          "codex:gpt-6-luna@low"
+        ],
+        "planted_in_agreement": true,
+        "lines_cited": [
+          2,
+          3,
+          4,
+          7
+        ],
+        "receipts": [
+          {
+            "provider": "claude",
+            "model": "claude-haiku-5-5",
+            "status": "complete",
+            "reportedModel": "claude-haiku-5-5",
+            "modelEvidence": "provider-report",
+            "costUsd": 0.0017429400000000001,
+            "elapsedMs": 10070
+          },
+          {
+            "provider": "claude",
+            "model": "sonnet",
+            "status": "complete",
+            "reportedModel": "claude-sonnet-5-5",
+            "modelEvidence": "provider-report",
+            "costUsd": 0.0218244,
+            "elapsedMs": 7937
+          }
+        ]
+      }
+    },
+    {
+      "run": 3,
+      "checks": {
+        "p1_counts": true,
+        "p1_dropouts_named": true,
+        "p1_codex_pinned_argv": true,
+        "p2_all_counted": true,
+        "p2_claude_provider_report": true
+      },
+      "panel_claude_parent": {
+        "intent": "Add percentile(values, p) with linear interpolation for p in 0..100.",
+        "reviewers": [
+          {
+            "label": "A",
+            "descriptor": "claude:claude-haiku-5-5@low",
+            "route": "native",
+            "status": "complete",
+            "counted": true,
+            "reason": null
+          },
+          {
+            "label": "B",
+            "descriptor": "codex:gpt-6-luna@low",
+            "route": "external",
+            "status": "complete",
+            "counted": true,
+            "reason": null
+          },
+          {
+            "label": "C",
+            "descriptor": "codex:gpt-6.1-sol@low",
+            "route": "external",
+            "status": "unavailable-model",
+            "counted": false,
+            "reason": "child exited with status 1"
+          },
+          {
+            "label": "D",
+            "descriptor": "grok:grok-4.7@xhigh",
+            "route": "external",
+            "status": "unavailable-cli",
+            "counted": false,
+            "reason": "grok executable not found"
+          }
+        ],
+        "dropouts": [
+          "codex:gpt-6.1-sol@low",
+          "grok:grok-4.7@xhigh"
+        ],
+        "agreement": [
+          {
+            "line": 7,
+            "raised_by": [
+              "claude:claude-haiku-5-5@low",
+              "codex:gpt-6-luna@low"
+            ],
+            "texts": [
+              "`upper` reaches `len(ordered)` when `p=100` (or the list has one element, or it is empty), so `ordered[upper]` raises IndexError even when `weight` is 0.",
+              "For `p == 100` or a one-element input, `upper` is out of range, so the function raises `IndexError`."
+            ]
+          }
+        ],
+        "single": [
+          {
+            "line": 3,
+            "raised_by": [
+              "claude:claude-haiku-5-5@low"
+            ],
+            "texts": [
+              "`p` is never validated against 0..100, so out-of-range values extrapolate silently instead of raising an error."
+            ]
+          }
+        ],
+        "planted_found_by": [
+          "claude:claude-haiku-5-5@low",
+          "codex:gpt-6-luna@low"
+        ],
+        "planted_in_agreement": true,
+        "lines_cited": [
+          3,
+          7
+        ],
+        "receipts": [
+          {
+            "provider": "codex",
+            "model": "gpt-6-luna",
+            "status": "complete",
+            "reportedModel": null,
+            "modelEvidence": "pinned-argv",
+            "costUsd": null,
+            "elapsedMs": 5120
+          },
+          {
+            "provider": "codex",
+            "model": "gpt-6.1-sol",
+            "status": "unavailable-model",
+            "reportedModel": null,
+            "modelEvidence": null,
+            "costUsd": null,
+            "elapsedMs": 3700
+          },
+          {
+            "provider": "grok",
+            "model": "grok-4.7",
+            "status": "unavailable-cli",
+            "reportedModel": null,
+            "modelEvidence": null,
+            "costUsd": null,
+            "elapsedMs": 7
+          }
+        ]
+      },
+      "panel_codex_parent": {
+        "intent": "Add percentile(values, p) with linear interpolation for p in 0..100.",
+        "reviewers": [
+          {
+            "label": "A",
+            "descriptor": "claude:claude-haiku-5-5@low",
+            "route": "external",
+            "status": "complete",
+            "counted": true,
+            "reason": null
+          },
+          {
+            "label": "B",
+            "descriptor": "claude:sonnet@low",
+            "route": "external",
+            "status": "complete",
+            "counted": true,
+            "reason": null
+          },
+          {
+            "label": "C",
+            "descriptor": "codex:gpt-6-luna@low",
+            "route": "native",
+            "status": "complete",
+            "counted": true,
+            "reason": null
+          }
+        ],
+        "dropouts": [],
+        "agreement": [
+          {
+            "line": 7,
+            "raised_by": [
+              "claude:claude-haiku-5-5@low",
+              "claude:sonnet@low",
+              "codex:gpt-6-luna@low"
+            ],
+            "texts": [
+              "For empty input `ordered[lower]` indexes an empty list and raises IndexError instead of returning a defined result or a clear error.",
+              "When p=100 (or a single-element list), `upper` equals `len(ordered)`, so `ordered[upper]` raises IndexError.",
+              "For p=100, upper is len(ordered), so indexing ordered[upper] raises IndexError instead of returning the maximum."
+            ]
+          }
+        ],
+        "single": [
+          {
+            "line": 2,
+            "raised_by": [
+              "claude:sonnet@low"
+            ],
+            "texts": [
+              "Empty `values` leaves `ordered[lower]` with nothing to index, so the function raises IndexError instead of a clear error."
+            ]
+          },
+          {
+            "line": 3,
+            "raised_by": [
+              "claude:sonnet@low"
+            ],
+            "texts": [
+              "There is no check that p is within 0..100, so out-of-range p gives a negative or oversized index and a wrong result or IndexError."
+            ]
+          },
+          {
+            "line": 5,
+            "raised_by": [
+              "claude:claude-haiku-5-5@low"
+            ],
+            "texts": [
+              "When p is 100 or the input has one element, `lower` equals `len - 1`, so `upper` points past the end and line 7 raises IndexError."
+            ]
+          }
+        ],
+        "planted_found_by": [
+          "claude:claude-haiku-5-5@low",
+          "claude:sonnet@low",
+          "codex:gpt-6-luna@low"
+        ],
+        "planted_in_agreement": true,
+        "lines_cited": [
+          2,
+          3,
+          5,
+          7
+        ],
+        "receipts": [
+          {
+            "provider": "claude",
+            "model": "claude-haiku-5-5",
+            "status": "complete",
+            "reportedModel": "claude-haiku-5-5",
+            "modelEvidence": "provider-report",
+            "costUsd": 0.0017767399999999997,
+            "elapsedMs": 13404
+          },
+          {
+            "provider": "claude",
+            "model": "sonnet",
+            "status": "complete",
+            "reportedModel": "claude-sonnet-5-5",
+            "modelEvidence": "provider-report",
+            "costUsd": 0.019476399999999998,
+            "elapsedMs": 7880
+          }
+        ]
+      }
+    }
+  ]
+}

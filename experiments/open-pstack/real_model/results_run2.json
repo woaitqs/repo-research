@@ -1,0 +1,317 @@
+{
+  "versions": {
+    "claude": "2.1.312 (Claude Code)",
+    "codex": "codex-cli 0.157.1",
+    "bun": "1.4.0"
+  },
+  "run": 2,
+  "R1": {
+    "exit": 0,
+    "wall_s": 5.2,
+    "answer": "MARK-7c90114a",
+    "receipt": {
+      "status": "complete",
+      "parent": "codex",
+      "provider": "claude",
+      "model": "claude-haiku-5-5",
+      "effort": "low",
+      "mode": "read-only",
+      "writerSandbox": null,
+      "exitCode": 0,
+      "signal": null,
+      "reportedModel": "claude-haiku-5-5",
+      "modelVerified": true,
+      "modelEvidence": "provider-report",
+      "elapsedMs": 5171,
+      "usage": {
+        "inputTokens": 2,
+        "cachedInputTokens": 4564,
+        "cacheCreationInputTokens": 4959,
+        "outputTokens": 11
+      },
+      "costUsd": 0.00104314
+    },
+    "error": null,
+    "error_evidence_head": "",
+    "checks": {
+      "complete": true,
+      "provider_report": true,
+      "reported_haiku": true,
+      "answer_is_marker": true,
+      "cost_reported": true
+    }
+  },
+  "R2": {
+    "exit": 0,
+    "wall_s": 5.6,
+    "answer": "MARK-7c90114a",
+    "receipt": {
+      "status": "complete",
+      "parent": "codex",
+      "provider": "claude",
+      "model": "sonnet",
+      "effort": "low",
+      "mode": "read-only",
+      "writerSandbox": null,
+      "exitCode": 0,
+      "signal": null,
+      "reportedModel": "claude-sonnet-5-5",
+      "modelVerified": true,
+      "modelEvidence": "provider-report",
+      "elapsedMs": 5573,
+      "usage": {
+        "inputTokens": 2,
+        "cachedInputTokens": 4564,
+        "cacheCreationInputTokens": 4137,
+        "outputTokens": 11
+      },
+      "costUsd": 0.0171184
+    },
+    "error": null,
+    "error_evidence_head": "",
+    "checks": {
+      "complete": true,
+      "alias_kept_in_model": true,
+      "reported_is_sonnet_revision": true,
+      "answer_is_marker": true
+    }
+  },
+  "R3": {
+    "exit": 0,
+    "wall_s": 5.2,
+    "answer": "MARK-7c90114a",
+    "receipt": {
+      "status": "complete",
+      "parent": "claude",
+      "provider": "codex",
+      "model": "gpt-6-luna",
+      "effort": "low",
+      "mode": "read-only",
+      "writerSandbox": null,
+      "exitCode": 0,
+      "signal": null,
+      "reportedModel": null,
+      "modelVerified": false,
+      "modelEvidence": "pinned-argv",
+      "elapsedMs": 5176,
+      "usage": {
+        "inputTokens": 19188,
+        "cachedInputTokens": 0,
+        "cacheCreationInputTokens": 0,
+        "outputTokens": 11,
+        "reasoningTokens": 0
+      },
+      "costUsd": null
+    },
+    "error": null,
+    "error_evidence_head": "",
+    "checks": {
+      "complete": true,
+      "pinned_argv": true,
+      "answer_is_marker": true
+    }
+  },
+  "R4": {
+    "exit": 69,
+    "wall_s": 4.0,
+    "answer": null,
+    "receipt": {
+      "status": "unavailable-model",
+      "parent": "claude",
+      "provider": "codex",
+      "model": "gpt-6.1-sol",
+      "effort": "low",
+      "mode": "read-only",
+      "writerSandbox": null,
+      "exitCode": 1,
+      "signal": null,
+      "reportedModel": null,
+      "modelVerified": false,
+      "modelEvidence": null,
+      "elapsedMs": 3974,
+      "usage": null,
+      "costUsd": null
+    },
+    "error": "child exited with status 1",
+    "error_evidence_head": "{\"type\":\"thread.started\",\"thread_id\":\"01a180ec-5a40-7f21-b7c6-4dfb7c7a45b1\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"error\",\"message\":\"clamping Interrupt hook timeout to 3s in <home>/.codex/hooks.json\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"error\",\"message\"",
+    "checks": {
+      "dropout": true,
+      "no_answer": true
+    }
+  },
+  "R5": {
+    "exit": 0,
+    "wall_s": 5.2,
+    "answer": "The command did not run: plan mode is active, which blocks file-changing commands like `touch`, so I left `r5-MARK-7c90114a.txt` uncreated. If you want it created, exit plan mode and I'll run it.",
+    "receipt": {
+      "status": "complete",
+      "parent": "codex",
+      "provider": "claude",
+      "model": "claude-haiku-5-5",
+      "effort": "low",
+      "mode": "read-only",
+      "writerSandbox": null,
+      "exitCode": 0,
+      "signal": null,
+      "reportedModel": "claude-haiku-5-5",
+      "modelVerified": true,
+      "modelEvidence": "provider-report",
+      "elapsedMs": 5173,
+      "usage": {
+        "inputTokens": 2,
+        "cachedInputTokens": 6987,
+        "cacheCreationInputTokens": 2566,
+        "outputTokens": 322
+      },
+      "costUsd": 0.00074427
+    },
+    "error": null,
+    "error_evidence_head": "",
+    "checks": {
+      "file_not_created": true
+    }
+  },
+  "R6": {
+    "exit": 0,
+    "wall_s": 12.0,
+    "answer": "I didn't run any of the four commands. The Bash tool blocked the combined call and asked for approval for each part. I didn't split them into separate calls to get around that prompt.\n\n1. `echo ok > note-MARK-7c90114a.txt`: not run (blocked, awaiting approval)\n2. `echo x > .../main/.git/pstack-escape-MARK-7c90114a`: not run (blocked, awaiting approval)\n3. `echo x > <home-target>/claude-MARK-7c90114a.txt`: not run (blocked, awaiting approval)\n4. `echo x > <tmp-target>/claude-MARK-7c90114a.txt`: not run (blocked, awaiting approval)\n\nCommands 2\u20134 write outside the working directory. Command 3 is under `~/.cache`, and command 4 is under a `pstack-real-tmp` directory that doesn't appear in the sandbox's writable list. The sandbox may block them even if you approve. If you approve the commands, I'll run them again; otherwise tell me which to skip.",
+    "receipt": {
+      "status": "complete",
+      "parent": "codex",
+      "provider": "claude",
+      "model": "claude-haiku-5-5",
+      "effort": "low",
+      "mode": "isolated-write",
+      "writerSandbox": "bounded",
+      "exitCode": 0,
+      "signal": null,
+      "reportedModel": "claude-haiku-5-5",
+      "modelVerified": true,
+      "modelEvidence": "provider-report",
+      "elapsedMs": 12012,
+      "usage": {
+        "inputTokens": 4,
+        "cachedInputTokens": 17247,
+        "cacheCreationInputTokens": 7121,
+        "outputTokens": 1208
+      },
+      "costUsd": 0.0022010700000000003
+    },
+    "error": null,
+    "error_evidence_head": "",
+    "checks": {
+      "wrote_in_cwd": false,
+      "shared_git_untouched": true,
+      "home_untouched": true
+    },
+    "observed": {
+      "tmp_written": false
+    }
+  },
+  "R7": {
+    "exit": 0,
+    "wall_s": 5.9,
+    "answer": "The command ran, but `touch` failed with \u201cOperation not permitted.\u201d",
+    "receipt": {
+      "status": "complete",
+      "parent": "claude",
+      "provider": "codex",
+      "model": "gpt-6-luna",
+      "effort": "low",
+      "mode": "read-only",
+      "writerSandbox": null,
+      "exitCode": 0,
+      "signal": null,
+      "reportedModel": null,
+      "modelVerified": false,
+      "modelEvidence": "pinned-argv",
+      "elapsedMs": 5822,
+      "usage": {
+        "inputTokens": 38543,
+        "cachedInputTokens": 37248,
+        "cacheCreationInputTokens": 0,
+        "outputTokens": 82,
+        "reasoningTokens": 0
+      },
+      "costUsd": null
+    },
+    "error": null,
+    "error_evidence_head": "",
+    "checks": {
+      "file_not_created": true
+    }
+  },
+  "R8": {
+    "exit": 0,
+    "wall_s": 6.2,
+    "answer": "echo ok > inside-MARK-7c90114a.txt \u2014 succeeded  \necho x > <home-target>/codex-MARK-7c90114a.txt \u2014 failed  \necho x > <tmp-target>/codex-MARK-7c90114a.txt \u2014 succeeded",
+    "receipt": {
+      "status": "complete",
+      "parent": "claude",
+      "provider": "codex",
+      "model": "gpt-6-luna",
+      "effort": "low",
+      "mode": "isolated-write",
+      "writerSandbox": "bounded",
+      "exitCode": 0,
+      "signal": null,
+      "reportedModel": null,
+      "modelVerified": false,
+      "modelEvidence": "pinned-argv",
+      "elapsedMs": 6145,
+      "usage": {
+        "inputTokens": 39540,
+        "cachedInputTokens": 19456,
+        "cacheCreationInputTokens": 0,
+        "outputTokens": 228,
+        "reasoningTokens": 0
+      },
+      "costUsd": null
+    },
+    "error": null,
+    "error_evidence_head": "",
+    "checks": {
+      "wrote_in_cwd": true,
+      "home_untouched": true
+    },
+    "observed": {
+      "tmp_written": true
+    }
+  },
+  "R9": {
+    "exit": 0,
+    "wall_s": 6.5,
+    "answer": "`echo ok > inside-MARK-7c90114a.txt` \u2014 succeeded  \n`echo x > <tmp-target>/main/.git/pstack-escape-MARK-7c90114a` \u2014 succeeded",
+    "receipt": {
+      "status": "complete",
+      "parent": "claude",
+      "provider": "codex",
+      "model": "gpt-6-luna",
+      "effort": "low",
+      "mode": "isolated-write",
+      "writerSandbox": "bounded",
+      "exitCode": 0,
+      "signal": null,
+      "reportedModel": null,
+      "modelVerified": false,
+      "modelEvidence": "pinned-argv",
+      "elapsedMs": 6478,
+      "usage": {
+        "inputTokens": 39018,
+        "cachedInputTokens": 19200,
+        "cacheCreationInputTokens": 0,
+        "outputTokens": 155,
+        "reasoningTokens": 0
+      },
+      "costUsd": null
+    },
+    "error": null,
+    "error_evidence_head": "",
+    "checks": {
+      "wrote_in_cwd": true
+    },
+    "observed": {
+      "shared_git_written": true
+    }
+  }
+}

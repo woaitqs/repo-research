@@ -1,0 +1,452 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "open-pstack — what outlives a session, and the gate in front of each write",
+    "output": "diagrams/open-pstack/memory-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/ericlitman/open-pstack.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "b4c5e3d63318308b7e11f26b2bc156e7793d834a"
+    },
+    "viewBox": [
+      1080,
+      696
+    ],
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "dashed": {
+          "label": "read back later"
+        }
+      }
+    }
+  },
+  "stages": [
+    {
+      "label": "Writer"
+    },
+    {
+      "label": "Gate"
+    },
+    {
+      "label": "Durable state"
+    },
+    {
+      "label": "Read back by"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "setup",
+      "type": "frontend",
+      "label": "setup-pstack",
+      "sublabel": "operator-run",
+      "stage": 0,
+      "row": 0,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/setup-pstack/SKILL.md",
+          "line": 62,
+          "end_line": 81,
+          "label": "probe the requested pairs"
+        }
+      ]
+    },
+    {
+      "id": "probe",
+      "type": "security",
+      "label": "Probe every pair",
+      "sublabel": "snapshot · readback",
+      "stage": 1,
+      "row": 0,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/setup-pstack/SKILL.md",
+          "line": 73,
+          "end_line": 73,
+          "label": "failed probe writes nothing"
+        },
+        {
+          "path": "plugins/pstack/skills/setup-pstack/SKILL.md",
+          "line": 114,
+          "end_line": 114,
+          "label": "snapshot, readback, restore"
+        }
+      ]
+    },
+    {
+      "id": "sheet",
+      "type": "database",
+      "label": "Model sheet",
+      "sublabel": "+ import / mirror block",
+      "stage": 2,
+      "row": 0,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/setup-pstack/SKILL.md",
+          "line": 106,
+          "end_line": 112,
+          "label": "wire it in"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/references/codex-tools.md",
+          "line": 16,
+          "end_line": 22,
+          "label": "one import line"
+        }
+      ]
+    },
+    {
+      "id": "dispatch",
+      "type": "external",
+      "label": "Every dispatch",
+      "sublabel": "role → descriptor",
+      "stage": 3,
+      "row": 0,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/SKILL.md",
+          "line": 96,
+          "end_line": 96,
+          "label": "defaults for every delegation"
+        }
+      ]
+    },
+    {
+      "id": "coord",
+      "type": "frontend",
+      "label": "Coordinator",
+      "sublabel": "Orchestrate playbook",
+      "stage": 0,
+      "row": 1,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/playbooks/orchestrate.md",
+          "line": 70,
+          "end_line": 77,
+          "label": "queue and drain"
+        }
+      ]
+    },
+    {
+      "id": "orch",
+      "type": "security",
+      "label": "orch CLI",
+      "sublabel": "lock · atomic write",
+      "stage": 1,
+      "row": 1,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/orch/store.ts",
+          "line": 337,
+          "end_line": 348,
+          "label": "atomicWrite"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/orch/store.ts",
+          "line": 369,
+          "end_line": 442,
+          "label": "lock, dead holder"
+        }
+      ]
+    },
+    {
+      "id": "store",
+      "type": "database",
+      "label": "Program store",
+      "sublabel": "~/.claude/orchestrate/<slug>",
+      "stage": 2,
+      "row": 1,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/playbooks/orchestrate.md",
+          "line": 21,
+          "end_line": 32,
+          "label": "store layout"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/orch/store.ts",
+          "line": 17,
+          "end_line": 26,
+          "label": "units · ledger · verdicts"
+        }
+      ]
+    },
+    {
+      "id": "restart",
+      "type": "external",
+      "label": "Next session",
+      "sublabel": "after a restart",
+      "stage": 3,
+      "row": 1,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/playbooks/orchestrate.md",
+          "line": 103,
+          "end_line": 103,
+          "label": "after a session restart"
+        }
+      ]
+    },
+    {
+      "id": "reflect",
+      "type": "frontend",
+      "label": "reflect · correct",
+      "sublabel": "lessons from a run",
+      "stage": 0,
+      "row": 2,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/reflect/SKILL.md",
+          "line": 18,
+          "end_line": 32,
+          "label": "three lenses + synthesizer"
+        },
+        {
+          "path": "plugins/pstack/skills/correct/SKILL.md",
+          "line": 17,
+          "end_line": 26,
+          "label": "fix each mistake class"
+        }
+      ]
+    },
+    {
+      "id": "approve",
+      "type": "security",
+      "label": "Operator approval",
+      "sublabel": "or a failing check",
+      "stage": 1,
+      "row": 2,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/reflect/SKILL.md",
+          "line": 34,
+          "end_line": 42,
+          "label": "structural check, then approval"
+        }
+      ]
+    },
+    {
+      "id": "edits",
+      "type": "database",
+      "label": "Skill edits · checks",
+      "sublabel": "in the repo",
+      "stage": 2,
+      "row": 2,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/correct/SKILL.md",
+          "line": 28,
+          "end_line": 30,
+          "label": "rule table"
+        }
+      ]
+    },
+    {
+      "id": "future",
+      "type": "external",
+      "label": "Future agents",
+      "sublabel": "read the skill",
+      "stage": 3,
+      "row": 2,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/reflect/SKILL.md",
+          "line": 40,
+          "end_line": 40,
+          "label": "affects every future agent"
+        }
+      ]
+    },
+    {
+      "id": "trail",
+      "type": "frontend",
+      "label": "show-me-your-work",
+      "sublabel": "long or unattended runs",
+      "stage": 0,
+      "row": 3,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/show-me-your-work/SKILL.md",
+          "line": 10,
+          "end_line": 21,
+          "label": "TSV columns"
+        }
+      ]
+    },
+    {
+      "id": "logsh",
+      "type": "security",
+      "label": "log.sh",
+      "sublabel": "append-only, cells cleaned",
+      "stage": 1,
+      "row": 3,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/show-me-your-work/scripts/log.sh",
+          "line": 1,
+          "end_line": 42,
+          "label": "row writer"
+        }
+      ]
+    },
+    {
+      "id": "tsv",
+      "type": "database",
+      "label": "decisions.tsv",
+      "sublabel": "one row per decision",
+      "stage": 2,
+      "row": 3,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/show-me-your-work/SKILL.md",
+          "line": 49,
+          "end_line": 52,
+          "label": "append-only"
+        }
+      ]
+    },
+    {
+      "id": "audit",
+      "type": "external",
+      "label": "Audit + review",
+      "sublabel": "other model family",
+      "stage": 3,
+      "row": 3,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/show-me-your-work/SKILL.md",
+          "line": 54,
+          "end_line": 73,
+          "label": "audit, cross-model review"
+        }
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "id": "s1",
+      "from": "setup",
+      "to": "probe",
+      "label": "pairs",
+      "variant": "emphasis"
+    },
+    {
+      "id": "s2",
+      "from": "probe",
+      "to": "sheet",
+      "label": "all pass",
+      "variant": "emphasis"
+    },
+    {
+      "id": "s3",
+      "from": "sheet",
+      "to": "dispatch",
+      "label": "read",
+      "variant": "dashed"
+    },
+    {
+      "id": "o1",
+      "from": "coord",
+      "to": "orch",
+      "label": "one command"
+    },
+    {
+      "id": "o2",
+      "from": "orch",
+      "to": "store",
+      "label": "one writer"
+    },
+    {
+      "id": "o3",
+      "from": "store",
+      "to": "restart",
+      "label": "reattach",
+      "variant": "dashed"
+    },
+    {
+      "id": "r1",
+      "from": "reflect",
+      "to": "approve",
+      "label": "Accepted"
+    },
+    {
+      "id": "r2",
+      "from": "approve",
+      "to": "edits",
+      "label": "approved"
+    },
+    {
+      "id": "r3",
+      "from": "edits",
+      "to": "future",
+      "label": "loaded",
+      "variant": "dashed"
+    },
+    {
+      "id": "t1",
+      "from": "trail",
+      "to": "logsh",
+      "label": "row"
+    },
+    {
+      "id": "t2",
+      "from": "logsh",
+      "to": "tsv",
+      "label": "append"
+    },
+    {
+      "id": "t3",
+      "from": "tsv",
+      "to": "audit",
+      "label": "end of run",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "No hidden memory",
+      "items": [
+        "everything durable is a file the operator can read",
+        "the store lives outside the repo and the session"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "A gate before every write",
+      "items": [
+        "setup writes only after every probe passes, then reads back",
+        "reflect waits for approval; correct proves a check fails on a real past mistake"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Verdicts expire",
+      "items": [
+        "the ledger is keyed by PR and head SHA",
+        "a new head means 'unverified' until a verifier writes a new row"
+      ]
+    }
+  ]
+}

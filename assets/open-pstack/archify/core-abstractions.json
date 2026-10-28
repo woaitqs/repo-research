@@ -1,0 +1,396 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "open-pstack — the core abstractions and who owns what",
+    "output": "diagrams/open-pstack/core-abstractions.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/ericlitman/open-pstack.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "b4c5e3d63318308b7e11f26b2bc156e7793d834a"
+    }
+  },
+  "components": [
+    {
+      "id": "skill",
+      "type": "frontend",
+      "label": "Skill · playbook · leaf",
+      "sublabel": "SKILL.md, read when needed",
+      "pos": [
+        40,
+        60
+      ],
+      "size": [
+        190,
+        64
+      ],
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/SKILL.md",
+          "line": 39,
+          "end_line": 80,
+          "label": "principles index"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/SKILL.md",
+          "line": 122,
+          "end_line": 150,
+          "label": "playbooks index"
+        }
+      ]
+    },
+    {
+      "id": "pointer",
+      "type": "frontend",
+      "label": "Role pointer",
+      "sublabel": "names a role, not a model",
+      "pos": [
+        300,
+        60
+      ],
+      "size": [
+        190,
+        64
+      ],
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/arena/SKILL.md",
+          "line": 18,
+          "end_line": 18,
+          "label": "arena runners or role default"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/registry.test.ts",
+          "line": 329,
+          "end_line": 365,
+          "label": "ROLE_POINTERS check"
+        }
+      ]
+    },
+    {
+      "id": "catalog",
+      "type": "database",
+      "label": "Generated catalog",
+      "sublabel": "model-catalog.md + 25 agents",
+      "pos": [
+        560,
+        60
+      ],
+      "size": [
+        190,
+        64
+      ],
+      "tag": "drift-tested",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/references/model-catalog.md",
+          "line": 1,
+          "end_line": 1,
+          "label": "generated header"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/registry/render.ts",
+          "line": 56,
+          "end_line": 80,
+          "label": "renderCatalog"
+        }
+      ]
+    },
+    {
+      "id": "sheet",
+      "type": "database",
+      "label": "Model sheet",
+      "sublabel": "role: provider:model@effort",
+      "pos": [
+        40,
+        240
+      ],
+      "size": [
+        190,
+        64
+      ],
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/setup-pstack/SKILL.md",
+          "line": 12,
+          "end_line": 26,
+          "label": "sheet + integration"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/references/provider-dispatch.md",
+          "line": 3,
+          "end_line": 7,
+          "label": "descriptor grammar"
+        }
+      ]
+    },
+    {
+      "id": "family",
+      "type": "backend",
+      "label": "Family entry",
+      "sublabel": "provider · model · efforts · alias",
+      "pos": [
+        300,
+        240
+      ],
+      "size": [
+        190,
+        64
+      ],
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/registry/family.ts",
+          "line": 13,
+          "end_line": 29,
+          "label": "FamilyEntry"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/registry/models.ts",
+          "line": 6,
+          "end_line": 168,
+          "label": "FAMILIES"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/registry/index.ts",
+          "line": 43,
+          "end_line": 53,
+          "label": "resolveModel"
+        }
+      ]
+    },
+    {
+      "id": "lane",
+      "type": "backend",
+      "label": "Lane",
+      "sublabel": "branded; only resolveLane builds it",
+      "pos": [
+        560,
+        240
+      ],
+      "size": [
+        190,
+        64
+      ],
+      "tag": "refuses before launch",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/registry/contract.ts",
+          "line": 30,
+          "end_line": 49,
+          "label": "interface Lane"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/registry/index.ts",
+          "line": 62,
+          "end_line": 121,
+          "label": "resolveLane"
+        }
+      ]
+    },
+    {
+      "id": "access",
+      "type": "security",
+      "label": "Access",
+      "sublabel": "read-only | isolated-write + sandbox",
+      "pos": [
+        820,
+        240
+      ],
+      "size": [
+        190,
+        64
+      ],
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/registry/contract.ts",
+          "line": 15,
+          "end_line": 28,
+          "label": "branded Access"
+        }
+      ]
+    },
+    {
+      "id": "adapter",
+      "type": "backend",
+      "label": "ProviderAdapter",
+      "sublabel": "argv · preflight · parse · proof · env",
+      "pos": [
+        300,
+        420
+      ],
+      "size": [
+        190,
+        64
+      ],
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/registry/contract.ts",
+          "line": 117,
+          "end_line": 156,
+          "label": "the adapter contract"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/registry/providers.ts",
+          "line": 11,
+          "end_line": 11,
+          "label": "ADAPTERS"
+        }
+      ]
+    },
+    {
+      "id": "runlane",
+      "type": "backend",
+      "label": "runLane",
+      "sublabel": "deadline · cancel · proof · status",
+      "pos": [
+        560,
+        420
+      ],
+      "size": [
+        190,
+        64
+      ],
+      "tag": "all policy lives here",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts",
+          "line": 1005,
+          "end_line": 1083,
+          "label": "runLane"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts",
+          "line": 523,
+          "end_line": 570,
+          "label": "exit codes + model proof"
+        }
+      ]
+    },
+    {
+      "id": "receipt",
+      "type": "database",
+      "label": "RunnerReceipt",
+      "sublabel": "schemaVersion 1 · 8 statuses",
+      "pos": [
+        820,
+        420
+      ],
+      "size": [
+        190,
+        64
+      ],
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/types.ts",
+          "line": 37,
+          "end_line": 93,
+          "label": "ReceiptStatus + RunnerReceipt"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "names",
+      "from": "skill",
+      "to": "pointer",
+      "label": "names a role"
+    },
+    {
+      "id": "links",
+      "from": "pointer",
+      "to": "catalog",
+      "label": "links"
+    },
+    {
+      "id": "rendered",
+      "from": "family",
+      "to": "catalog",
+      "label": "rendered into",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "descriptor",
+      "from": "sheet",
+      "to": "family",
+      "label": "descriptor",
+      "variant": "emphasis"
+    },
+    {
+      "id": "resolve",
+      "from": "family",
+      "to": "lane",
+      "label": "resolveLane",
+      "variant": "emphasis"
+    },
+    {
+      "id": "access",
+      "from": "access",
+      "to": "lane",
+      "label": "access()",
+      "fromSide": "left",
+      "toSide": "right"
+    },
+    {
+      "id": "provider",
+      "from": "adapter",
+      "to": "family",
+      "label": "ProviderId",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "run",
+      "from": "lane",
+      "to": "runlane",
+      "label": "runLane(lane)",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "calls",
+      "from": "adapter",
+      "to": "runlane",
+      "label": "argv · parse"
+    },
+    {
+      "id": "writes",
+      "from": "runlane",
+      "to": "receipt",
+      "label": "one receipt",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Types carry the rules",
+      "items": [
+        "a family's provider must be a registered adapter (ProviderId)",
+        "only resolveLane builds a Lane; full access exists only on a writer"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Generated, not hand-kept",
+      "items": [
+        "the catalog and 25 native agent files come from render.ts",
+        "skills name roles; a text scan rejects descriptors in prose"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Policy stays in run.ts",
+      "items": [
+        "an adapter has no field for a timeout, a retry or another provider",
+        "every lane ends in one receipt: complete or a named dropout"
+      ]
+    }
+  ]
+}

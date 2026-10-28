@@ -1,0 +1,349 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "open-pstack — one interrogate panel from a Claude Code parent (Opus native, Sol and Grok external)",
+    "output": "diagrams/open-pstack/execution-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "viewBox": [
+      1080,
+      690
+    ],
+    "repository": {
+      "url": "https://github.com/ericlitman/open-pstack.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "b4c5e3d63318308b7e11f26b2bc156e7793d834a"
+    },
+    "column_fit": "spread"
+  },
+  "participants": [
+    {
+      "id": "operator",
+      "type": "external",
+      "label": "Operator",
+      "sublabel": "/pstack:interrogate"
+    },
+    {
+      "id": "parent",
+      "type": "frontend",
+      "label": "Parent",
+      "sublabel": "Claude Code",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/interrogate/SKILL.md",
+          "line": 26,
+          "end_line": 34,
+          "label": "spawn reviewers"
+        },
+        {
+          "path": "plugins/pstack/skills/interrogate/SKILL.md",
+          "line": 36,
+          "end_line": 47,
+          "label": "synthesize + lead judgment"
+        }
+      ]
+    },
+    {
+      "id": "skills",
+      "type": "database",
+      "label": "Skill files",
+      "sublabel": "dispatch · catalog",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/references/provider-dispatch.md",
+          "line": 27,
+          "end_line": 33,
+          "label": "the parent owns the route"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/references/model-catalog.md",
+          "line": 211,
+          "end_line": 235,
+          "label": "role defaults"
+        }
+      ]
+    },
+    {
+      "id": "native",
+      "type": "backend",
+      "label": "Native lane",
+      "sublabel": "pstack-opus-max",
+      "sources": [
+        {
+          "path": "plugins/pstack/agents/pstack-opus-max.md",
+          "line": 1,
+          "end_line": 11,
+          "label": "generated agent"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/references/provider-dispatch.md",
+          "line": 35,
+          "end_line": 42,
+          "label": "native lanes"
+        }
+      ]
+    },
+    {
+      "id": "runner",
+      "type": "backend",
+      "label": "pstack-runner",
+      "sublabel": "one per external lane",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/references/provider-dispatch.md",
+          "line": 44,
+          "end_line": 63,
+          "label": "external lanes"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts",
+          "line": 619,
+          "end_line": 1003,
+          "label": "executeLane"
+        }
+      ]
+    },
+    {
+      "id": "cli",
+      "type": "external",
+      "label": "Provider CLI",
+      "sublabel": "codex exec · grok",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/providers/codex.ts",
+          "line": 60,
+          "end_line": 108,
+          "label": "codex adapter"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/providers/grok.ts",
+          "line": 85,
+          "end_line": 148,
+          "label": "grok adapter"
+        }
+      ]
+    },
+    {
+      "id": "receipts",
+      "type": "database",
+      "label": "Lane files",
+      "sublabel": "output + receipt",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts",
+          "line": 94,
+          "end_line": 129,
+          "label": "reserveOutputs"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/references/provider-dispatch.md",
+          "line": 92,
+          "end_line": 99,
+          "label": "what counts as success"
+        }
+      ]
+    }
+  ],
+  "segments": [
+    {
+      "from": 150,
+      "to": 222,
+      "label": "Resolve"
+    },
+    {
+      "from": 236,
+      "to": 278,
+      "label": "Fan out"
+    },
+    {
+      "from": 292,
+      "to": 446,
+      "label": "External lane"
+    },
+    {
+      "from": 460,
+      "to": 530,
+      "label": "Collect"
+    },
+    {
+      "from": 544,
+      "to": 586,
+      "label": "Verdict"
+    }
+  ],
+  "messages": [
+    {
+      "id": "ask",
+      "from": "operator",
+      "to": "parent",
+      "y": 160,
+      "label": "interrogate this diff",
+      "variant": "emphasis"
+    },
+    {
+      "id": "read",
+      "from": "parent",
+      "to": "skills",
+      "y": 188,
+      "label": "read sheet line or role default",
+      "note": "descriptors, not host-native slugs"
+    },
+    {
+      "id": "panel",
+      "from": "skills",
+      "to": "parent",
+      "y": 216,
+      "label": "opus · sol · grok",
+      "variant": "return"
+    },
+    {
+      "id": "spawn",
+      "from": "parent",
+      "to": "native",
+      "y": 244,
+      "label": "Agent, background",
+      "variant": "emphasis"
+    },
+    {
+      "id": "launch",
+      "from": "parent",
+      "to": "runner",
+      "y": 272,
+      "label": "Bash, background, argv",
+      "variant": "emphasis",
+      "note": "one runner per external lane"
+    },
+    {
+      "id": "reserve",
+      "from": "runner",
+      "to": "receipts",
+      "y": 300,
+      "label": "reserve wx 0600"
+    },
+    {
+      "id": "preflight",
+      "from": "runner",
+      "to": "cli",
+      "y": 328,
+      "label": "preflight: login + model"
+    },
+    {
+      "id": "ok",
+      "from": "cli",
+      "to": "runner",
+      "y": 356,
+      "label": "passed",
+      "variant": "return"
+    },
+    {
+      "id": "call",
+      "from": "runner",
+      "to": "cli",
+      "y": 384,
+      "label": "one model call, read-only",
+      "variant": "emphasis",
+      "note": "no retry, no other model"
+    },
+    {
+      "id": "reply",
+      "from": "cli",
+      "to": "runner",
+      "y": 412,
+      "label": "final message",
+      "variant": "return"
+    },
+    {
+      "id": "record",
+      "from": "runner",
+      "to": "receipts",
+      "y": 440,
+      "label": "complete + model proof"
+    },
+    {
+      "id": "native-done",
+      "from": "native",
+      "to": "parent",
+      "y": 468,
+      "label": "review (transcript)",
+      "variant": "return"
+    },
+    {
+      "id": "exit",
+      "from": "runner",
+      "to": "parent",
+      "y": 496,
+      "label": "exit code + receipt",
+      "variant": "return",
+      "note": "missing grok CLI: unavailable-cli 69"
+    },
+    {
+      "id": "collect",
+      "from": "parent",
+      "to": "receipts",
+      "y": 524,
+      "label": "read results after all are terminal"
+    },
+    {
+      "id": "verdict",
+      "from": "parent",
+      "to": "operator",
+      "y": 580,
+      "label": "act on · consider · noted · dismissed",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "parent",
+      "from": 156,
+      "to": 586,
+      "type": "frontend"
+    },
+    {
+      "participant": "native",
+      "from": 240,
+      "to": 472,
+      "type": "backend"
+    },
+    {
+      "participant": "runner",
+      "from": 268,
+      "to": 500,
+      "type": "backend"
+    },
+    {
+      "participant": "cli",
+      "from": 324,
+      "to": 416,
+      "type": "external"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "One fan-out phase",
+      "items": [
+        "native and external lanes start together as background work with handles",
+        "nothing reads a candidate until every lane is terminal"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "A lane counts with proof",
+      "items": [
+        "external: a complete receipt with provider-report, or Codex's pinned argv",
+        "native: the assigned model's transcript"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Dropouts stay dropouts",
+      "items": [
+        "a missing CLI, login or model is recorded; the panel runs with N-1",
+        "the closest model is never substituted: that would fake cross-provider agreement"
+      ]
+    }
+  ]
+}

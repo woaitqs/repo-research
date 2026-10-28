@@ -1,0 +1,341 @@
+{
+  "schema_version": 2,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "open-pstack — the loop poteto-mode asks a parent to run (Feature playbook)",
+    "output": "diagrams/open-pstack/agent-loop.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/ericlitman/open-pstack.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "b4c5e3d63318308b7e11f26b2bc156e7793d834a"
+    }
+  },
+  "lanes": [
+    {
+      "id": "main",
+      "label": "Playbook"
+    },
+    {
+      "id": "waiting",
+      "label": "Detours"
+    },
+    {
+      "id": "terminal",
+      "label": "End"
+    }
+  ],
+  "states": [
+    {
+      "id": "entry",
+      "type": "start",
+      "label": "task arrives",
+      "sublabel": "mandate or /pstack:poteto-mode",
+      "lane": "main",
+      "col": 0,
+      "step": "01",
+      "sources": [
+        {
+          "path": "plugins/pstack/hooks/session-start-context.md",
+          "line": 4,
+          "end_line": 6,
+          "label": "route non-trivial work"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/SKILL.md",
+          "line": 1,
+          "end_line": 8,
+          "label": "entry skill"
+        }
+      ]
+    },
+    {
+      "id": "playbook",
+      "type": "active",
+      "label": "match playbook",
+      "sublabel": "todolist = steps verbatim",
+      "lane": "main",
+      "col": 1,
+      "step": "02",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/SKILL.md",
+          "line": 122,
+          "end_line": 126,
+          "label": "open the todolist"
+        }
+      ]
+    },
+    {
+      "id": "design",
+      "type": "active",
+      "label": "ground + design",
+      "sublabel": "how · why · architect",
+      "lane": "main",
+      "col": 2,
+      "step": "03",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/playbooks/feature.md",
+          "line": 5,
+          "end_line": 11,
+          "label": "steps 1-3"
+        },
+        {
+          "path": "plugins/pstack/skills/how/SKILL.md",
+          "line": 12,
+          "end_line": 27,
+          "label": "explore, then explain"
+        },
+        {
+          "path": "plugins/pstack/skills/architect/SKILL.md",
+          "line": 28,
+          "end_line": 40,
+          "label": "design it twice"
+        }
+      ]
+    },
+    {
+      "id": "delegate",
+      "type": "active",
+      "label": "delegate",
+      "sublabel": "writer lane, own worktree",
+      "lane": "main",
+      "col": 3,
+      "step": "04",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/playbooks/feature.md",
+          "line": 12,
+          "end_line": 12,
+          "label": "delegate through provider dispatch"
+        }
+      ]
+    },
+    {
+      "id": "verify",
+      "type": "decision",
+      "label": "verified?",
+      "sublabel": "real surface",
+      "lane": "main",
+      "col": 4,
+      "step": "05",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/playbooks/feature.md",
+          "line": 13,
+          "end_line": 13,
+          "label": "verify on the matching surface"
+        },
+        {
+          "path": "plugins/pstack/skills/principle-prove-it-works/SKILL.md",
+          "line": 9,
+          "end_line": 22,
+          "label": "prove it works"
+        }
+      ]
+    },
+    {
+      "id": "prototype",
+      "type": "waiting",
+      "label": "prototype",
+      "sublabel": "instead of asking",
+      "lane": "waiting",
+      "col": 1,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/SKILL.md",
+          "line": 21,
+          "end_line": 21,
+          "label": "observable forks"
+        }
+      ]
+    },
+    {
+      "id": "scrap",
+      "type": "waiting",
+      "label": "scrap the sketch",
+      "sublabel": "friction pattern",
+      "lane": "waiting",
+      "col": 2,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/architect/SKILL.md",
+          "line": 56,
+          "end_line": 76,
+          "label": "scrap when wrong"
+        }
+      ]
+    },
+    {
+      "id": "dropout",
+      "type": "waiting",
+      "label": "dropout",
+      "sublabel": "recorded, N-1",
+      "lane": "waiting",
+      "col": 3,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/arena/SKILL.md",
+          "line": 25,
+          "end_line": 25,
+          "label": "never replace silently"
+        }
+      ]
+    },
+    {
+      "id": "done",
+      "type": "success",
+      "label": "reply + PR",
+      "sublabel": "Opening a PR",
+      "lane": "terminal",
+      "col": 4,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/playbooks/feature.md",
+          "line": 16,
+          "end_line": 21,
+          "label": "interrogate, open PR, reply"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/SKILL.md",
+          "line": 104,
+          "end_line": 116,
+          "label": "writing the reply"
+        }
+      ]
+    },
+    {
+      "id": "pause",
+      "type": "failure",
+      "label": "human gate",
+      "sublabel": "irreversible only",
+      "lane": "terminal",
+      "col": 3,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/SKILL.md",
+          "line": 82,
+          "end_line": 90,
+          "label": "always pause list"
+        }
+      ]
+    }
+  ],
+  "transitions": [
+    {
+      "id": "route",
+      "from": "entry",
+      "to": "playbook",
+      "label": "route"
+    },
+    {
+      "id": "steps",
+      "from": "playbook",
+      "to": "design",
+      "label": "steps 1-3"
+    },
+    {
+      "id": "hand-off",
+      "from": "design",
+      "to": "delegate",
+      "label": "step 4",
+      "variant": "emphasis"
+    },
+    {
+      "id": "check",
+      "from": "delegate",
+      "to": "verify",
+      "label": "diff",
+      "variant": "emphasis"
+    },
+    {
+      "id": "pass",
+      "from": "verify",
+      "to": "done",
+      "label": "pass",
+      "variant": "emphasis"
+    },
+    {
+      "id": "retry",
+      "from": "verify",
+      "to": "delegate",
+      "label": "fresh subagent",
+      "route": "top-channel"
+    },
+    {
+      "id": "fork",
+      "from": "playbook",
+      "to": "prototype",
+      "label": "observable fork",
+      "variant": "dashed"
+    },
+    {
+      "id": "decided",
+      "from": "prototype",
+      "to": "playbook",
+      "label": "result decides"
+    },
+    {
+      "id": "friction",
+      "from": "design",
+      "to": "scrap",
+      "label": "friction",
+      "variant": "dashed"
+    },
+    {
+      "id": "reground",
+      "from": "scrap",
+      "to": "design",
+      "label": "re-ground"
+    },
+    {
+      "id": "lane-fail",
+      "from": "delegate",
+      "to": "dropout",
+      "label": "lane failed",
+      "variant": "dashed"
+    },
+    {
+      "id": "continue",
+      "from": "dropout",
+      "to": "delegate",
+      "label": "no substitute"
+    },
+    {
+      "id": "gate",
+      "from": "delegate",
+      "to": "pause",
+      "label": "irreversible",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "The parent keeps the lead",
+      "items": [
+        "it owns the design and reviews every delegate's diff",
+        "a fix round goes to a fresh subagent with consolidated scope"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Ask less, observe more",
+      "items": [
+        "a fork you could observe by running something is a prototype, not a question",
+        "only irreversible writes pause for the operator"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Measured: often skipped",
+      "items": [
+        "in 6 explicit headless sessions no parent opened the playbook todolist",
+        "see the study's Verification section"
+      ]
+    }
+  ]
+}

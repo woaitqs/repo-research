@@ -328,3 +328,82 @@
       question:
         en: "Sub-agent delegation: `Agent` tool → child `letta` process"
         zh: 子 Agent 委托：`Agent` 工具 → 子 `letta` 进程
+
+- id: open-pstack
+  number: "05"
+  name: open-pstack
+  category:
+    en: Agent skill pack & cross-model runner
+    zh: Agent 技能包与跨模型 runner
+  pins:
+    - label: ericlitman/open-pstack
+      rev: b4c5e3d
+      url: https://github.com/ericlitman/open-pstack/tree/b4c5e3d63318308b7e11f26b2bc156e7793d834a
+    - label: cursor/plugins pstack
+      rev: 88d4751
+      url: https://github.com/cursor/plugins/tree/88d47514b82e7c44f00f2b2a72ff6dd12158038c/pstack
+  studied: 2026-10-28
+  tagline:
+    en: >-
+      open-pstack has no agent loop of its own: it ports Cursor's pstack skill pack to Claude Code
+      and Codex and steers the host's loop with prose. Its owned code is a runner that calls another
+      vendor's model as a lane: one model call, model proof in every receipt, and a dropout instead of
+      a fallback. Measured: the prose layer is followed loosely.
+    zh: "open-pstack 自己没有 agent 循环：它把 Cursor 的 pstack 技能包移植到 Claude Code 和 Codex，用文字引导宿主的循环。它自己的代码是一个把其他厂商模型当作 lane 调用的 runner：只调用一次模型，每份回执都带模型证明，失败时记为掉队而不是降级。实测：文字层的指令被遵守得很松。"
+  status: "505 upstream tests pass · probe 20/20 · real CLIs 9 scenarios × 3 · 33 real Claude Code sessions · 40 tests + demo 12/12 · mutations 21/21"
+  pages:
+    en: /research/open-pstack.html
+    zh: /research/open-pstack.zh.html
+  diagrams_url: /diagrams/open-pstack/
+  experiment:
+    en: https://github.com/woaitqs/repo-research/tree/main/experiments/open-pstack
+    zh: https://github.com/woaitqs/repo-research/blob/main/experiments/open-pstack/README.zh.md
+  diagrams:
+    - slug: architecture
+      title: Architecture
+      type: architecture
+      question:
+        en: How one skill tree, two parent harnesses and the external runner fit together
+        zh: 一棵技能树、两个父 harness 与外部 runner 如何组合
+    - slug: execution-flow
+      title: Execution flow
+      type: sequence
+      question:
+        en: One interrogate panel from a Claude Code parent (Opus native, Sol and Grok external)
+        zh: 从 Claude Code 父会话发起的一次 interrogate 评审（Opus 原生，Sol 和 Grok 外部）
+    - slug: core-abstractions
+      title: Core abstractions
+      type: architecture
+      question:
+        en: Which object owns what (skill, role pointer, catalog, sheet, family, Lane, Access, adapter, runLane, receipt)
+        zh: 每个对象分别负责什么（技能、角色指针、模型目录、配置表、家族、Lane、Access、适配器、runLane、回执）
+    - slug: context-flow
+      title: Context flow
+      type: dataflow
+      question:
+        en: What reaches a model's context, and when
+        zh: 什么在什么时候进入模型的上下文
+    - slug: memory-flow
+      title: Memory flow
+      type: dataflow
+      question:
+        en: What outlives a session, and the gate in front of each write
+        zh: 什么能跨会话保留，以及每次写入前的关卡
+    - slug: tool-runtime
+      title: Tool runtime
+      type: workflow
+      question:
+        en: "One external lane: refuse early, call once, prove the model, always leave a receipt"
+        zh: 一条外部 lane：尽早拒绝、只调用一次、证明模型、总留回执
+    - slug: agent-loop
+      title: Agent loop
+      type: lifecycle
+      question:
+        en: The loop poteto-mode asks a parent to run (Feature playbook)
+        zh: poteto-mode 要求父会话运行的循环（Feature playbook）
+    - slug: sub-agent-flow
+      title: Sub-agent flow
+      type: sequence
+      question:
+        en: "Arena: N candidates, a cross-judge after all are terminal, then a hand graft"
+        zh: Arena：N 个候选，全部结束后交叉评审，再手工嫁接

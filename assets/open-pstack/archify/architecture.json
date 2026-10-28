@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "open-pstack — one skill tree, two parent harnesses, a runner for every other provider",
+    "output": "diagrams/open-pstack/architecture.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/ericlitman/open-pstack.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "b4c5e3d63318308b7e11f26b2bc156e7793d834a"
+    }
+  },
+  "components": [
+    { "id": "operator", "type": "external", "label": "Operator", "sublabel": "task in plain language", "pos": [40, 240], "size": [160, 64] },
+    { "id": "hook", "type": "security", "label": "SessionStart hook", "sublabel": "11-line mandate", "pos": [40, 60], "size": [160, 64], "tag": "Claude Code only",
+      "sources": [
+        { "path": "plugins/pstack/hooks/hooks.json", "line": 3, "end_line": 15, "label": "startup|clear|compact" },
+        { "path": "plugins/pstack/hooks/session-start-context.md", "line": 1, "end_line": 11, "label": "the mandate" }
+      ] },
+    { "id": "parent", "type": "frontend", "label": "Parent harness", "sublabel": "Claude Code or Codex", "pos": [290, 240], "size": [170, 64], "tag": "resolves every route once",
+      "sources": [
+        { "path": "plugins/pstack/skills/poteto-mode/references/provider-dispatch.md", "line": 27, "end_line": 33, "label": "the parent owns the route" },
+        { "path": "AGENTS.md", "line": 5, "label": "children do not reroute" }
+      ] },
+    { "id": "skills", "type": "database", "label": "Skill tree", "sublabel": "63 skills · playbooks · principles", "pos": [40, 420], "size": [160, 64],
+      "sources": [
+        { "path": "plugins/pstack/skills/poteto-mode/SKILL.md", "line": 122, "end_line": 150, "label": "playbooks index" },
+        { "path": "plugins/pstack/skills/poteto-mode/SKILL.md", "line": 39, "end_line": 80, "label": "principles index" }
+      ] },
+    { "id": "sheet", "type": "database", "label": "Sheet + catalog", "sublabel": "operator roles · generated facts", "pos": [290, 420], "size": [170, 64],
+      "sources": [
+        { "path": "plugins/pstack/skills/setup-pstack/SKILL.md", "line": 12, "end_line": 26, "label": "sheet + CLAUDE.md import / AGENTS.md block" },
+        { "path": "plugins/pstack/skills/poteto-mode/references/model-catalog.md", "line": 211, "end_line": 235, "label": "role defaults" }
+      ] },
+    { "id": "native", "type": "backend", "label": "Native lane", "sublabel": "pstack-<family>-<effort> · spawn_agent", "pos": [550, 60], "size": [190, 64],
+      "sources": [
+        { "path": "plugins/pstack/skills/poteto-mode/references/provider-dispatch.md", "line": 35, "end_line": 42, "label": "native lanes" },
+        { "path": "plugins/pstack/agents/pstack-opus-max.md", "line": 1, "end_line": 11, "label": "generated agent" }
+      ] },
+    { "id": "runner", "type": "backend", "label": "pstack-runner", "sublabel": "one lane, one receipt", "pos": [550, 240], "size": [190, 64], "tag": "no fallback · no implicit timeout",
+      "sources": [
+        { "path": "plugins/pstack/skills/poteto-mode/scripts/runner/pstack-runner", "line": 1, "end_line": 4, "label": "launcher" },
+        { "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts", "line": 619, "end_line": 1003, "label": "executeLane" },
+        { "path": "plugins/pstack/skills/poteto-mode/scripts/runner/registry/index.ts", "line": 62, "end_line": 121, "label": "resolveLane" }
+      ] },
+    { "id": "registry", "type": "backend", "label": "Registry", "sublabel": "families · role defaults · adapters", "pos": [550, 420], "size": [190, 64],
+      "sources": [
+        { "path": "plugins/pstack/skills/poteto-mode/scripts/runner/registry/models.ts", "line": 6, "end_line": 188, "label": "FAMILIES · ROLE_DEFAULTS" },
+        { "path": "plugins/pstack/skills/poteto-mode/scripts/runner/registry/providers.ts", "line": 11, "label": "ADAPTERS" },
+        { "path": "plugins/pstack/skills/poteto-mode/scripts/runner/registry/render.ts", "line": 56, "end_line": 80, "label": "renderCatalog" }
+      ] },
+    { "id": "adapters", "type": "backend", "label": "Provider adapters", "sublabel": "9 · argv · preflight · parse · proof", "pos": [830, 240], "size": [190, 64],
+      "sources": [
+        { "path": "plugins/pstack/skills/poteto-mode/scripts/runner/registry/contract.ts", "line": 117, "end_line": 150, "label": "ProviderAdapter" },
+        { "path": "plugins/pstack/skills/poteto-mode/scripts/runner/providers/claude.ts", "line": 92, "end_line": 139, "label": "claude adapter" }
+      ] },
+    { "id": "clis", "type": "external", "label": "Provider CLIs", "sublabel": "claude · codex · grok · 6 read-only", "pos": [1100, 240], "size": [180, 64],
+      "sources": [
+        { "path": "plugins/pstack/skills/poteto-mode/references/model-catalog.md", "line": 63, "end_line": 77, "label": "route table" }
+      ] },
+    { "id": "receipts", "type": "database", "label": "Receipts", "sublabel": "output · receipt · .stdout · .stderr", "pos": [830, 420], "size": [190, 64], "tag": "0600, never overwritten",
+      "sources": [
+        { "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts", "line": 94, "end_line": 129, "label": "reserveOutputs" },
+        { "path": "plugins/pstack/skills/poteto-mode/scripts/runner/types.ts", "line": 56, "end_line": 93, "label": "RunnerReceipt" }
+      ] },
+    { "id": "worktree", "type": "database", "label": "Lane worktree", "sublabel": "writer cwd", "pos": [1100, 420], "size": [180, 64], "tag": "shared .git denied (Claude)",
+      "sources": [
+        { "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts", "line": 421, "end_line": 508, "label": "discoverSharedGitDir" },
+        { "path": "plugins/pstack/skills/poteto-mode/scripts/runner/providers/claude.ts", "line": 27, "end_line": 41, "label": "sandbox denyWrite" }
+      ] }
+  ],
+  "connections": [
+    { "id": "task", "from": "operator", "to": "parent", "label": "task", "variant": "emphasis" },
+    { "id": "mandate", "from": "hook", "to": "parent", "label": "mandate", "fromSide": "right", "toSide": "top" },
+    { "id": "load", "from": "parent", "to": "skills", "label": "invoke · read by path", "fromSide": "bottom", "toSide": "right" },
+    { "id": "role", "from": "sheet", "to": "parent", "label": "role → descriptor", "fromSide": "top", "toSide": "bottom" },
+    { "id": "spawn", "from": "parent", "to": "native", "label": "same provider", "fromSide": "top", "toSide": "left" },
+    { "id": "launch", "from": "parent", "to": "runner", "label": "other provider", "variant": "emphasis" },
+    { "id": "lane", "from": "runner", "to": "adapters", "label": "Lane", "variant": "emphasis" },
+    { "id": "spawn-cli", "from": "adapters", "to": "clis", "label": "spawn", "variant": "emphasis" },
+    { "id": "registry-lane", "from": "registry", "to": "runner", "label": "resolveLane", "fromSide": "top", "toSide": "bottom" },
+    { "id": "render", "from": "registry", "to": "sheet", "label": "renders catalog", "variant": "dashed", "fromSide": "left", "toSide": "right" },
+    { "id": "receipt", "from": "adapters", "to": "receipts", "label": "parse · proof", "fromSide": "bottom", "toSide": "top" },
+    { "id": "cwd", "from": "clis", "to": "worktree", "label": "writes", "fromSide": "bottom", "toSide": "top" }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "One shared skill tree", "items": ["Claude Code and Codex read the same plugins/pstack/skills", "harness names resolve through codex-tools.md; models through provider-dispatch.md"] },
+    { "dot": "cyan", "title": "The parent routes, children never do", "items": ["same provider: the parent's own subagent primitive", "every other provider: pstack-runner, one model call, a receipt"] },
+    { "dot": "rose", "title": "A dropout is not a fallback", "items": ["missing CLI, login, model or proof ends the lane with a named status", "no weaker model, no other provider, no implicit timeout"] }
+  ]
+}
