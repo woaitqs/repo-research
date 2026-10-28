@@ -1,0 +1,377 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "open-pstack — one external lane: refuse early, call once, prove the model, always leave a receipt",
+    "output": "diagrams/open-pstack/tool-runtime.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "viewBox": [
+      1016,
+      652
+    ],
+    "repository": {
+      "url": "https://github.com/ericlitman/open-pstack.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "b4c5e3d63318308b7e11f26b2bc156e7793d834a"
+    }
+  },
+  "lanes": [
+    {
+      "id": "parent",
+      "label": "Parent harness"
+    },
+    {
+      "id": "runner",
+      "label": "pstack-runner"
+    },
+    {
+      "id": "gate",
+      "label": "Refusals and dropouts",
+      "variant": "exception"
+    },
+    {
+      "id": "cli",
+      "label": "Provider CLI"
+    }
+  ],
+  "phases": [
+    {
+      "id": "resolve",
+      "label": "Resolve",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "prepare",
+      "label": "Preflight",
+      "fromCol": 2,
+      "toCol": 2
+    },
+    {
+      "id": "execute",
+      "label": "One call",
+      "fromCol": 3,
+      "toCol": 4,
+      "variant": "emphasis"
+    },
+    {
+      "id": "record",
+      "label": "Record",
+      "fromCol": 5,
+      "toCol": 5
+    }
+  ],
+  "mainPath": [
+    "descriptor",
+    "resolve",
+    "preflight",
+    "model",
+    "proof",
+    "receipt"
+  ],
+  "nodes": [
+    {
+      "id": "descriptor",
+      "lane": "parent",
+      "col": 0,
+      "type": "frontend",
+      "label": "Descriptor",
+      "sublabel": "sheet line or default",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/references/provider-dispatch.md",
+          "line": 46,
+          "end_line": 61,
+          "label": "launcher argv"
+        }
+      ]
+    },
+    {
+      "id": "resolve",
+      "lane": "runner",
+      "col": 1,
+      "type": "backend",
+      "label": "Resolve",
+      "sublabel": "refuse · reserve",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/registry/index.ts",
+          "line": 62,
+          "end_line": 121,
+          "label": "resolveLane refusals"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts",
+          "line": 94,
+          "end_line": 129,
+          "label": "reserveOutputs"
+        }
+      ]
+    },
+    {
+      "id": "usage",
+      "lane": "gate",
+      "col": 1,
+      "type": "security",
+      "label": "Usage error",
+      "sublabel": "64 · none reserved",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/cli.ts",
+          "line": 107,
+          "end_line": 112,
+          "label": "exit 64"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/registry/index.ts",
+          "line": 74,
+          "end_line": 84,
+          "label": "same provider · pin"
+        }
+      ]
+    },
+    {
+      "id": "preflight",
+      "lane": "cli",
+      "col": 2,
+      "type": "external",
+      "label": "Preflight",
+      "sublabel": "login · model",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts",
+          "line": 172,
+          "end_line": 186,
+          "label": "childEnvironment"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts",
+          "line": 783,
+          "end_line": 827,
+          "label": "preflight + one retry"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/providers/grok.ts",
+          "line": 89,
+          "end_line": 103,
+          "label": "grok classifier"
+        }
+      ]
+    },
+    {
+      "id": "dropout",
+      "lane": "gate",
+      "col": 2,
+      "type": "security",
+      "label": "Dropout",
+      "sublabel": "77 · 69",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts",
+          "line": 843,
+          "end_line": 884,
+          "label": "preflight failure receipt"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts",
+          "line": 688,
+          "end_line": 714,
+          "label": "executable not found"
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "lane": "cli",
+      "col": 3,
+      "type": "external",
+      "label": "Model call",
+      "sublabel": "once · bounded",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts",
+          "line": 893,
+          "end_line": 902,
+          "label": "the only model execution"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/providers/claude.ts",
+          "line": 108,
+          "end_line": 125,
+          "label": "claude argv"
+        }
+      ]
+    },
+    {
+      "id": "proof",
+      "lane": "runner",
+      "col": 4,
+      "type": "backend",
+      "label": "Proof",
+      "sublabel": "report or argv",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts",
+          "line": 543,
+          "end_line": 570,
+          "label": "modelProof"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts",
+          "line": 962,
+          "end_line": 981,
+          "label": "complete only with proof"
+        }
+      ]
+    },
+    {
+      "id": "failed",
+      "lane": "gate",
+      "col": 4,
+      "type": "security",
+      "label": "Failure",
+      "sublabel": "70 · 65 · 124 · 130",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts",
+          "line": 915,
+          "end_line": 960,
+          "label": "failure receipt"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts",
+          "line": 523,
+          "end_line": 541,
+          "label": "status exit codes"
+        }
+      ]
+    },
+    {
+      "id": "receipt",
+      "lane": "runner",
+      "col": 5,
+      "type": "database",
+      "label": "Receipt",
+      "sublabel": "complete + answer",
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/types.ts",
+          "line": 56,
+          "end_line": 93,
+          "label": "RunnerReceipt"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts",
+          "line": 1001,
+          "end_line": 1002,
+          "label": "writeReceipt"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "argv",
+      "from": "descriptor",
+      "to": "resolve",
+      "label": "argv",
+      "variant": "emphasis"
+    },
+    {
+      "id": "refuse",
+      "from": "resolve",
+      "to": "usage",
+      "label": "refused",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "check",
+      "from": "resolve",
+      "to": "preflight",
+      "label": "Lane",
+      "variant": "emphasis"
+    },
+    {
+      "id": "nopass",
+      "from": "preflight",
+      "to": "dropout",
+      "label": "fails",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "passed",
+      "from": "preflight",
+      "to": "model",
+      "label": "passed",
+      "variant": "emphasis"
+    },
+    {
+      "id": "stdout",
+      "from": "model",
+      "to": "proof",
+      "label": "stdout",
+      "variant": "emphasis"
+    },
+    {
+      "id": "crash",
+      "from": "model",
+      "to": "failed",
+      "label": "exit · signal",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "mismatch",
+      "from": "proof",
+      "to": "failed",
+      "label": "no proof",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "ok",
+      "from": "proof",
+      "to": "receipt",
+      "label": "complete",
+      "variant": "emphasis"
+    },
+    {
+      "id": "kept",
+      "from": "failed",
+      "to": "receipt",
+      "label": "receipt kept",
+      "variant": "dashed",
+      "role": "branch"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Refuse before launch",
+      "items": [
+        "same provider, unnormalized pin, unlisted effort, unbounded access",
+        "a clash with an existing output or receipt path"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Exactly one model call",
+      "items": [
+        "at most one preflight retry, only after unauthenticated (grok)",
+        "no model retry, no other model, no other provider"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Always a receipt",
+      "items": [
+        "status, argv, preflight evidence, model proof, usage, cost",
+        "the answer file exists only when the status is complete"
+      ]
+    }
+  ]
+}

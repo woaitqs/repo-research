@@ -1,0 +1,879 @@
+{
+  "claude": "2.1.312 (Claude Code)",
+  "prompts": {
+    "bug": "In this repository, stats.mean([]) raises ZeroDivisionError. Fix it so the mean of an empty list is 0.0, and add a regression test.",
+    "feature": "Add a percentile(values, p) function to stats.py that uses linear interpolation, rejects p outside 0..100 and empty input with ValueError, and add tests for it.",
+    "trivial": "What does `git stash` do? Answer in one sentence."
+  },
+  "sessions": [
+    {
+      "model": "haiku",
+      "prompt": "bug",
+      "run": 1,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": "Grep",
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [
+        "<fixture>/stats.py",
+        "<fixture>/test_stats.py"
+      ],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [
+        "Grep",
+        "Glob",
+        "Read",
+        "Read",
+        "Bash",
+        "Edit",
+        "Edit",
+        "ToolSearch"
+      ],
+      "result_subtype": "success",
+      "num_turns": 9,
+      "cost_usd": 0.0053285300000000015,
+      "models": [
+        "claude-haiku-5-5"
+      ]
+    },
+    {
+      "model": "haiku",
+      "prompt": "bug",
+      "run": 2,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": "Grep",
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [
+        "<fixture>/stats.py",
+        "<fixture>/test_stats.py"
+      ],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [
+        "Grep",
+        "Read",
+        "Read",
+        "Edit",
+        "Bash"
+      ],
+      "result_subtype": "success",
+      "num_turns": 6,
+      "cost_usd": 0.00428489,
+      "models": [
+        "claude-haiku-5-5"
+      ]
+    },
+    {
+      "model": "haiku",
+      "prompt": "bug",
+      "run": 3,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": "Grep",
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [
+        "<fixture>/stats.py",
+        "<fixture>/test_stats.py"
+      ],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [
+        "Grep",
+        "Glob",
+        "Read",
+        "Read",
+        "Edit",
+        "Bash",
+        "ToolSearch"
+      ],
+      "result_subtype": "success",
+      "num_turns": 8,
+      "cost_usd": 0.006244340000000001,
+      "models": [
+        "claude-haiku-5-5"
+      ]
+    },
+    {
+      "model": "haiku",
+      "prompt": "feature",
+      "run": 1,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": "Skill",
+      "skills_invoked": [
+        "pstack:poteto-mode"
+      ],
+      "routed": true,
+      "routed_to_poteto_mode": true,
+      "plugin_files_read": [],
+      "fixture_files_read": [
+        "<fixture>/stats.py",
+        "<fixture>/test_stats.py",
+        "<fixture>/test_stats.py"
+      ],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [
+        "Skill",
+        "Glob",
+        "Read",
+        "Read",
+        "Read",
+        "Edit",
+        "ToolSearch"
+      ],
+      "result_subtype": "success",
+      "num_turns": 9,
+      "cost_usd": 0.00823552,
+      "models": [
+        "claude-haiku-5-5"
+      ]
+    },
+    {
+      "model": "haiku",
+      "prompt": "feature",
+      "run": 2,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": "Skill",
+      "skills_invoked": [
+        "pstack:poteto-mode"
+      ],
+      "routed": true,
+      "routed_to_poteto_mode": true,
+      "plugin_files_read": [],
+      "fixture_files_read": [
+        "<fixture>/stats.py",
+        "<fixture>/test_stats.py",
+        "<fixture>/README.md"
+      ],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [
+        "Skill",
+        "Glob",
+        "Grep",
+        "Read",
+        "Read",
+        "Read",
+        "Edit",
+        "Edit",
+        "ToolSearch"
+      ],
+      "result_subtype": "success",
+      "num_turns": 11,
+      "cost_usd": 0.009938930000000002,
+      "models": [
+        "claude-haiku-5-5"
+      ]
+    },
+    {
+      "model": "haiku",
+      "prompt": "feature",
+      "run": 3,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": "Skill",
+      "skills_invoked": [
+        "pstack:poteto-mode"
+      ],
+      "routed": true,
+      "routed_to_poteto_mode": true,
+      "plugin_files_read": [],
+      "fixture_files_read": [
+        "<fixture>/stats.py",
+        "<fixture>/test_stats.py"
+      ],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [
+        "Skill",
+        "Glob",
+        "Bash",
+        "Read",
+        "Read",
+        "ToolSearch"
+      ],
+      "result_subtype": "success",
+      "num_turns": 8,
+      "cost_usd": 0.00699245,
+      "models": [
+        "claude-haiku-5-5"
+      ]
+    },
+    {
+      "model": "haiku",
+      "prompt": "trivial",
+      "run": 1,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": null,
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [],
+      "result_subtype": "success",
+      "num_turns": 1,
+      "cost_usd": 0.00232631,
+      "models": [
+        "claude-haiku-5-5"
+      ]
+    },
+    {
+      "model": "haiku",
+      "prompt": "trivial",
+      "run": 2,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": null,
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [],
+      "result_subtype": "success",
+      "num_turns": 1,
+      "cost_usd": 0.00233511,
+      "models": [
+        "claude-haiku-5-5"
+      ]
+    },
+    {
+      "model": "haiku",
+      "prompt": "trivial",
+      "run": 3,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": null,
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [],
+      "result_subtype": "success",
+      "num_turns": 1,
+      "cost_usd": 0.00232411,
+      "models": [
+        "claude-haiku-5-5"
+      ]
+    },
+    {
+      "model": "sonnet",
+      "prompt": "bug",
+      "run": 1,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": "Grep",
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [
+        "<fixture>/stats.py",
+        "<fixture>/test_stats.py"
+      ],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [
+        "Grep",
+        "Glob",
+        "Read",
+        "Read",
+        "Edit",
+        "Edit"
+      ],
+      "result_subtype": "success",
+      "num_turns": 7,
+      "cost_usd": 0.0700407,
+      "models": [
+        "claude-sonnet-5-5"
+      ]
+    },
+    {
+      "model": "sonnet",
+      "prompt": "bug",
+      "run": 2,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": "Grep",
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [
+        "<fixture>/stats.py",
+        "<fixture>/test_stats.py"
+      ],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [
+        "Grep",
+        "Glob",
+        "Read",
+        "Read",
+        "Edit",
+        "Edit"
+      ],
+      "result_subtype": "success",
+      "num_turns": 7,
+      "cost_usd": 0.0706889,
+      "models": [
+        "claude-sonnet-5-5"
+      ]
+    },
+    {
+      "model": "sonnet",
+      "prompt": "bug",
+      "run": 3,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": "Grep",
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [
+        "<fixture>/stats.py",
+        "<fixture>/test_stats.py"
+      ],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [
+        "Grep",
+        "Glob",
+        "Read",
+        "Read",
+        "Edit",
+        "Edit"
+      ],
+      "result_subtype": "success",
+      "num_turns": 7,
+      "cost_usd": 0.0726971,
+      "models": [
+        "claude-sonnet-5-5"
+      ]
+    },
+    {
+      "model": "sonnet",
+      "prompt": "feature",
+      "run": 1,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": "Glob",
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [
+        "<fixture>/stats.py",
+        "<fixture>/test_stats.py"
+      ],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [
+        "Glob",
+        "Read",
+        "Read",
+        "Write",
+        "Write"
+      ],
+      "result_subtype": "success",
+      "num_turns": 6,
+      "cost_usd": 0.0792147,
+      "models": [
+        "claude-sonnet-5-5"
+      ]
+    },
+    {
+      "model": "sonnet",
+      "prompt": "feature",
+      "run": 2,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": "Glob",
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [
+        "<fixture>/stats.py",
+        "<fixture>/test_stats.py"
+      ],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [
+        "Glob",
+        "Read",
+        "Read",
+        "Write",
+        "Write",
+        "Bash"
+      ],
+      "result_subtype": "success",
+      "num_turns": 7,
+      "cost_usd": 0.0854522,
+      "models": [
+        "claude-sonnet-5-5"
+      ]
+    },
+    {
+      "model": "sonnet",
+      "prompt": "feature",
+      "run": 3,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": "Glob",
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [
+        "<fixture>/stats.py",
+        "<fixture>/test_stats.py"
+      ],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [
+        "Glob",
+        "Read",
+        "Read",
+        "Write",
+        "Write"
+      ],
+      "result_subtype": "success",
+      "num_turns": 6,
+      "cost_usd": 0.08386569999999999,
+      "models": [
+        "claude-sonnet-5-5"
+      ]
+    },
+    {
+      "model": "sonnet",
+      "prompt": "trivial",
+      "run": 1,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": null,
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [],
+      "result_subtype": "success",
+      "num_turns": 1,
+      "cost_usd": 0.0413701,
+      "models": [
+        "claude-sonnet-5-5"
+      ]
+    },
+    {
+      "model": "sonnet",
+      "prompt": "trivial",
+      "run": 2,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": null,
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [],
+      "result_subtype": "success",
+      "num_turns": 1,
+      "cost_usd": 0.0413781,
+      "models": [
+        "claude-sonnet-5-5"
+      ]
+    },
+    {
+      "model": "sonnet",
+      "prompt": "trivial",
+      "run": 3,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": null,
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [],
+      "result_subtype": "success",
+      "num_turns": 1,
+      "cost_usd": 0.0413621,
+      "models": [
+        "claude-sonnet-5-5"
+      ]
+    },
+    {
+      "model": "opus",
+      "prompt": "bug",
+      "run": 1,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": "Skill",
+      "skills_invoked": [
+        "pstack:tdd"
+      ],
+      "routed": true,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [
+        "<fixture>/stats.py",
+        "<fixture>/test_stats.py"
+      ],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [
+        "Skill",
+        "Glob",
+        "Read",
+        "Read"
+      ],
+      "result_subtype": "success",
+      "num_turns": 6,
+      "cost_usd": 0.1404988,
+      "models": [
+        "claude-opus-5-5"
+      ]
+    },
+    {
+      "model": "opus",
+      "prompt": "bug",
+      "run": 2,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": "Glob",
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [
+        "<fixture>/stats.py",
+        "<fixture>/test_stats.py",
+        "<fixture>/README.md"
+      ],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [
+        "Glob",
+        "Read",
+        "Read",
+        "Read",
+        "ToolSearch"
+      ],
+      "result_subtype": "success",
+      "num_turns": 6,
+      "cost_usd": 0.14569419999999997,
+      "models": [
+        "claude-opus-5-5"
+      ]
+    },
+    {
+      "model": "opus",
+      "prompt": "bug",
+      "run": 3,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": "Glob",
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [
+        "<fixture>/stats.py",
+        "<fixture>/test_stats.py"
+      ],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [
+        "Glob",
+        "Read",
+        "Read",
+        "ToolSearch"
+      ],
+      "result_subtype": "success",
+      "num_turns": 5,
+      "cost_usd": 0.134754,
+      "models": [
+        "claude-opus-5-5"
+      ]
+    },
+    {
+      "model": "opus",
+      "prompt": "feature",
+      "run": 1,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": "Glob",
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [
+        "<fixture>/stats.py",
+        "<fixture>/test_stats.py",
+        "<fixture>/README.md"
+      ],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [
+        "Glob",
+        "Read",
+        "Read",
+        "Read",
+        "ToolSearch"
+      ],
+      "result_subtype": "success",
+      "num_turns": 6,
+      "cost_usd": 0.15571100000000002,
+      "models": [
+        "claude-opus-5-5"
+      ]
+    },
+    {
+      "model": "opus",
+      "prompt": "feature",
+      "run": 2,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": "Glob",
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [
+        "<fixture>/stats.py",
+        "<fixture>/test_stats.py",
+        "<fixture>/README.md"
+      ],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [
+        "Glob",
+        "Read",
+        "Read",
+        "Read",
+        "ToolSearch"
+      ],
+      "result_subtype": "success",
+      "num_turns": 6,
+      "cost_usd": 0.2240094,
+      "models": [
+        "claude-opus-5-5"
+      ]
+    },
+    {
+      "model": "opus",
+      "prompt": "feature",
+      "run": 3,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": "Skill",
+      "skills_invoked": [
+        "pstack:poteto-mode"
+      ],
+      "routed": true,
+      "routed_to_poteto_mode": true,
+      "plugin_files_read": [],
+      "fixture_files_read": [
+        "<fixture>/stats.py",
+        "<fixture>/test_stats.py",
+        "<fixture>/README.md"
+      ],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [
+        "Skill",
+        "Glob",
+        "Read",
+        "Read",
+        "Read",
+        "ToolSearch",
+        "ToolSearch"
+      ],
+      "result_subtype": "success",
+      "num_turns": 9,
+      "cost_usd": 0.2949104,
+      "models": [
+        "claude-opus-5-5"
+      ]
+    },
+    {
+      "model": "opus",
+      "prompt": "trivial",
+      "run": 1,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": null,
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [],
+      "result_subtype": "success",
+      "num_turns": 1,
+      "cost_usd": 0.0825682,
+      "models": [
+        "claude-opus-5-5"
+      ]
+    },
+    {
+      "model": "opus",
+      "prompt": "trivial",
+      "run": 2,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": null,
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [],
+      "result_subtype": "success",
+      "num_turns": 1,
+      "cost_usd": 0.0827682,
+      "models": [
+        "claude-opus-5-5"
+      ]
+    },
+    {
+      "model": "opus",
+      "prompt": "trivial",
+      "run": 3,
+      "fixture_unchanged": true,
+      "hook_fired": true,
+      "pstack_skills_listed": 39,
+      "principle_skills_listed": 0,
+      "first_tool": null,
+      "skills_invoked": [],
+      "routed": false,
+      "routed_to_poteto_mode": false,
+      "plugin_files_read": [],
+      "fixture_files_read": [],
+      "playbook_read": false,
+      "principle_leaves_read": [],
+      "first_todolist": [],
+      "tool_sequence": [],
+      "result_subtype": "success",
+      "num_turns": 1,
+      "cost_usd": 0.0825682,
+      "models": [
+        "claude-opus-5-5"
+      ]
+    }
+  ]
+}

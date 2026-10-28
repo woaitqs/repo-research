@@ -1,0 +1,361 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "open-pstack — what reaches a model's context, and when",
+    "output": "diagrams/open-pstack/context-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/ericlitman/open-pstack.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "b4c5e3d63318308b7e11f26b2bc156e7793d834a"
+    },
+    "viewBox": [
+      1080,
+      640
+    ],
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "dashed": {
+          "label": "read when needed"
+        }
+      }
+    }
+  },
+  "stages": [
+    {
+      "label": "Files"
+    },
+    {
+      "label": "Session start"
+    },
+    {
+      "label": "On invoke"
+    },
+    {
+      "label": "By path"
+    },
+    {
+      "label": "Context"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "mandatefile",
+      "type": "database",
+      "label": "Mandate file",
+      "sublabel": "11 lines",
+      "stage": 0,
+      "row": 0,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/hooks/session-start-context.md",
+          "line": 1,
+          "end_line": 11,
+          "label": "the mandate"
+        }
+      ]
+    },
+    {
+      "id": "hook",
+      "type": "security",
+      "label": "SessionStart hook",
+      "sublabel": "startup · clear · compact",
+      "stage": 1,
+      "row": 0,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/hooks/hooks.json",
+          "line": 3,
+          "end_line": 15,
+          "label": "matcher"
+        },
+        {
+          "path": "plugins/pstack/hooks/session-start",
+          "line": 10,
+          "end_line": 15,
+          "label": "prints the file"
+        }
+      ]
+    },
+    {
+      "id": "front",
+      "type": "database",
+      "label": "Skill frontmatter",
+      "sublabel": "name · description",
+      "stage": 0,
+      "row": 1,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/principle-prove-it-works/SKILL.md",
+          "line": 1,
+          "end_line": 5,
+          "label": "user-invocable: false"
+        }
+      ]
+    },
+    {
+      "id": "listing",
+      "type": "frontend",
+      "label": "Skill list",
+      "sublabel": "39 skills; 24 leaves hidden",
+      "stage": 1,
+      "row": 1,
+      "width": 150,
+      "sources": [
+        {
+          "path": "tests/skill-collision-repro.sh",
+          "line": 18,
+          "end_line": 34,
+          "label": "principle invariant"
+        }
+      ]
+    },
+    {
+      "id": "bodies",
+      "type": "database",
+      "label": "Skill bodies",
+      "sublabel": "SKILL.md text",
+      "stage": 0,
+      "row": 2,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/SKILL.md",
+          "line": 1,
+          "end_line": 16,
+          "label": "poteto-mode head"
+        }
+      ]
+    },
+    {
+      "id": "invoked",
+      "type": "backend",
+      "label": "Invoked skill",
+      "sublabel": "e.g. poteto-mode, ~7k tokens",
+      "stage": 2,
+      "row": 2,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/SKILL.md",
+          "line": 10,
+          "end_line": 12,
+          "label": "platform adaptation"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/SKILL.md",
+          "line": 122,
+          "end_line": 126,
+          "label": "open the playbook"
+        }
+      ]
+    },
+    {
+      "id": "bypath",
+      "type": "database",
+      "label": "Playbook · leaf · refs",
+      "sublabel": "read by relative path",
+      "stage": 3,
+      "row": 2,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/SKILL.md",
+          "line": 41,
+          "end_line": 41,
+          "label": "leaf naming rule"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/SKILL.md",
+          "line": 8,
+          "end_line": 8,
+          "label": "../<name>/SKILL.md"
+        }
+      ]
+    },
+    {
+      "id": "parentctx",
+      "type": "external",
+      "label": "Parent context",
+      "sublabel": "the working session",
+      "stage": 4,
+      "row": 1,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/SKILL.md",
+          "line": 16,
+          "end_line": 16,
+          "label": "cite only leaves you read"
+        }
+      ]
+    },
+    {
+      "id": "prompt",
+      "type": "database",
+      "label": "Lane prompt file",
+      "sublabel": "written by the parent",
+      "stage": 0,
+      "row": 3,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/references/provider-dispatch.md",
+          "line": 46,
+          "end_line": 46,
+          "label": "complete prompt in a file"
+        }
+      ]
+    },
+    {
+      "id": "shape",
+      "type": "security",
+      "label": "Runner shaping",
+      "sublabel": "env · settings · tools",
+      "stage": 2,
+      "row": 3,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/run.ts",
+          "line": 172,
+          "end_line": 186,
+          "label": "childEnvironment"
+        },
+        {
+          "path": "plugins/pstack/skills/poteto-mode/scripts/runner/providers/claude.ts",
+          "line": 108,
+          "end_line": 125,
+          "label": "claude argv"
+        }
+      ]
+    },
+    {
+      "id": "lanectx",
+      "type": "external",
+      "label": "External lane",
+      "sublabel": "prompt only, no parent MCP",
+      "stage": 4,
+      "row": 3,
+      "width": 150,
+      "sources": [
+        {
+          "path": "plugins/pstack/skills/poteto-mode/references/provider-dispatch.md",
+          "line": 63,
+          "end_line": 63,
+          "label": "no parent MCP surface"
+        }
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "id": "print",
+      "from": "mandatefile",
+      "to": "hook",
+      "label": "printf"
+    },
+    {
+      "id": "inject",
+      "from": "hook",
+      "to": "parentctx",
+      "label": "mandate",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "top",
+      "via": [
+        [
+          960,
+          157
+        ]
+      ]
+    },
+    {
+      "id": "list",
+      "from": "front",
+      "to": "listing",
+      "label": "frontmatter"
+    },
+    {
+      "id": "names",
+      "from": "listing",
+      "to": "parentctx",
+      "label": "names",
+      "variant": "emphasis"
+    },
+    {
+      "id": "invoke",
+      "from": "bodies",
+      "to": "invoked",
+      "label": "on invoke"
+    },
+    {
+      "id": "follow",
+      "from": "invoked",
+      "to": "bypath",
+      "label": "path",
+      "variant": "dashed"
+    },
+    {
+      "id": "body",
+      "from": "bypath",
+      "to": "parentctx",
+      "label": "when needed",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "bottom",
+      "via": [
+        [
+          960,
+          385
+        ]
+      ]
+    },
+    {
+      "id": "write",
+      "from": "prompt",
+      "to": "shape",
+      "label": "argv array"
+    },
+    {
+      "id": "clean",
+      "from": "shape",
+      "to": "lanectx",
+      "label": "clean start",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Always present",
+      "items": [
+        "the 11-line mandate (Claude Code only, on startup, clear and compact)",
+        "39 skill names and descriptions; principle leaves stay out"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Loaded on demand",
+      "items": [
+        "a skill body when invoked (poteto-mode added 7,251 prompt tokens, measured)",
+        "playbooks, principle leaves and dispatch references, read by path"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "External lanes start clean",
+      "items": [
+        "prompt file only; project-only settings; strict MCP config",
+        "no parent MCP, transcript or identity markers"
+      ]
+    }
+  ]
+}
