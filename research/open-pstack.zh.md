@@ -719,7 +719,7 @@ PYTHONPATH=src python3 real_model/run_mini_real.py --runs 3   # 每次运行两�
 
 **验证的已知局限：**
 - 本机只有 Claude 和 Codex 两个 CLI。Grok、Devin、OpenCode、dsh、Amp、agy 和 Cursor 的 lane 只用脚本化的 CLI 检查过，它们的提供方说明是读过而没有重新测量。
-- 没有用 Codex 作为父 harness。Codex 父会话的行为（`spawn_agent`、`AGENTS.md` 镜像块）只在源码中读过。
+- 插件从未以 Codex 作为父 harness 运行过。Codex 父会话的行为（`spawn_agent`、`AGENTS.md` 镜像块）只在源码中读过。复现里的 Codex 父进程评审组合虽然调用了真实的 Codex CLI，但只是模拟它的路由。
 - 线上门禁本身（`verify.sh run`）没有运行：它会向目标仓库的 PR 发布内容。
 - `watch-pr`、Shipping 和 Autopilot 类 playbook，以及上游同步脚本只读了一部分。
 

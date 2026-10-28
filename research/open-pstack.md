@@ -716,7 +716,7 @@ The first run of this panel found a bug in the reproduction, not in the CLIs. `m
 
 **Known limitations of the verification:**
 - Only the Claude and Codex CLIs exist on this host. Grok, Devin, OpenCode, dsh, Amp, agy and Cursor lanes were checked with scripted CLIs only, and their provider notes were read, not re-measured.
-- Codex was not used as the parent harness. Codex-parent behaviour (`spawn_agent`, the `AGENTS.md` mirror block) was read in source.
+- The plugin never ran with Codex as its parent harness. Codex-parent behaviour (`spawn_agent`, the `AGENTS.md` mirror block) was read in source. The reproduction's Codex-parent panel calls the real Codex CLI, but only stands in for its routing.
 - The live gate itself (`verify.sh run`) was not run: it publishes to the target's pull requests.
 - `watch-pr`, the Shipping and Autopilot playbooks, and the upstream sync scripts were read only in part.
 
