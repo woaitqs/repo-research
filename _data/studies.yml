@@ -482,3 +482,79 @@
       question:
         en: "task tool: isolated messages, shared sandbox"
         zh: task 工具：隔离的消息，共享的沙箱
+
+- id: llm-space
+  number: "07"
+  name: llm-space
+  category:
+    en: Agent workbench
+    zh: Agent 工作台
+  pins:
+    - label: deer-flow/llm-space
+      rev: 342c9f5
+      url: https://github.com/deer-flow/llm-space/tree/342c9f5761f969247e971eb36317aadf0bcc9daf
+  studied: 2026-11-10
+  tagline:
+    en: >-
+      llm-space is a desktop workbench for agent builders. It asks Pi Agent Core for one
+      model step, then the playground decides whether a human, a single tool batch, or a
+      capped ReAct loop comes next. Templates stay in the thread file; compaction writes
+      a sibling; run bodies live beside the workspace.
+    zh: "llm-space 是给 agent 构建者用的桌面工作台。它向 Pi Agent Core 只要一步模型调用，然后由 playground 决定接下来是人来填、只跑一批工具，还是一个有上限的 ReAct 循环。模板留在线程文件里；压缩写出一个兄弟文件；run 正文放在工作区旁边。"
+  status: "25 tests + demo 21/21 · mutations 9/9 · upstream suite not run (source read at 342c9f5)"
+  pages:
+    en: /research/llm-space.html
+    zh: /research/llm-space.zh.html
+  diagrams_url: /diagrams/llm-space/
+  experiment:
+    en: https://github.com/woaitqs/repo-research/tree/main/experiments/llm-space
+    zh: https://github.com/woaitqs/repo-research/blob/main/experiments/llm-space/README.zh.md
+  diagrams:
+    - slug: architecture
+      title: Architecture
+      type: architecture
+      question:
+        en: "Desktop workbench: playground, one Pi step, tools beside the file"
+        zh: 桌面工作台：playground、一步 Pi、工具放在文件旁边
+    - slug: execution-flow
+      title: Execution flow
+      type: sequence
+      question:
+        en: One run that stops when the model asks for a tool
+        zh: 一次 run，在模型请求工具时停下
+    - slug: core-abstractions
+      title: Core abstractions
+      type: architecture
+      question:
+        en: Which object owns the step, the file, and the side effect
+        zh: 哪个对象分别拥有这一步、这份文件和副作用
+    - slug: context-flow
+      title: Context flow
+      type: dataflow
+      question:
+        en: Templates stay stored; the model sees a snapshot
+        zh: 模板留在存档里；模型看到的是快照
+    - slug: memory-flow
+      title: Memory flow
+      type: dataflow
+      question:
+        en: Run bodies leave the workspace and outlive a delete
+        zh: run 正文离开工作区，并且比删除活得更久
+    - slug: tool-runtime
+      title: Tool runtime
+      type: workflow
+      question:
+        en: The model asks; the workbench decides who runs it
+        zh: 模型提出请求；工作台决定谁来执行
+    - slug: agent-loop
+      title: Agent loop
+      type: lifecycle
+      question:
+        en: Default is one model step; ReAct is a capped flag
+        zh: 默认是一步模型调用；ReAct 是一个有上限的开关
+    - slug: sub-agent-flow
+      title: Sub-agent flow
+      type: sequence
+      question:
+        en: spawn_agent writes a sibling thread and does not run it
+        zh: spawn_agent 写出一个兄弟线程，并且不运行它

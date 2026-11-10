@@ -1,0 +1,299 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "llm-space — which object owns the step, the file, and the side effect",
+    "output": "diagrams/llm-space/core-abstractions.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/deer-flow/llm-space.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "342c9f5761f969247e971eb36317aadf0bcc9daf"
+    },
+    "viewBox": [1180, 640]
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [36, 48],
+    "cols": 4,
+    "gapX": 36,
+    "gapY": 36,
+    "cellW": 250,
+    "cellH": 96
+  },
+  "components": [
+    {
+      "id": "thread",
+      "type": "database",
+      "label": "Thread file",
+      "sublabel": "the experiment",
+      "row": 0,
+      "col": 0,
+      "sources": [
+        {
+          "path": "packages/core/src/server/storage/local/file-system.ts",
+          "line": 56,
+          "end_line": 57,
+          "label": "user content"
+        },
+        {
+          "path": "packages/runtime/src/storage/index.ts",
+          "line": 6,
+          "end_line": 8,
+          "label": "workspace/"
+        }
+      ]
+    },
+    {
+      "id": "store",
+      "type": "frontend",
+      "label": "Thread store",
+      "sublabel": "run clock",
+      "row": 0,
+      "col": 1,
+      "sources": [
+        {
+          "path": "packages/ui/src/components/thread-playground/stores/thread-store.ts",
+          "line": 106,
+          "end_line": 106,
+          "label": "cap 50"
+        },
+        {
+          "path": "packages/ui/src/components/thread-playground/stores/run-mode.ts",
+          "line": 47,
+          "end_line": 48,
+          "label": "react flag"
+        }
+      ]
+    },
+    {
+      "id": "transport",
+      "type": "messagebus",
+      "label": "AgentTransport",
+      "sublabel": "HTTP or RPC",
+      "row": 0,
+      "col": 2,
+      "sources": [
+        {
+          "path": "packages/core/src/client/api.ts",
+          "line": 38,
+          "end_line": 43,
+          "label": "the only seam"
+        }
+      ]
+    },
+    {
+      "id": "stream",
+      "type": "backend",
+      "label": "streamAgent",
+      "sublabel": "Pi clock",
+      "row": 0,
+      "col": 3,
+      "sources": [
+        {
+          "path": "packages/core/src/server/agent/stream.ts",
+          "line": 29,
+          "end_line": 59,
+          "label": "one stream"
+        },
+        {
+          "path": "packages/core/src/server/agent/stream.ts",
+          "line": 231,
+          "end_line": 242,
+          "label": "does not execute"
+        }
+      ]
+    },
+    {
+      "id": "reducer",
+      "type": "backend",
+      "label": "reduceMessages",
+      "sublabel": "events to a message",
+      "row": 1,
+      "col": 0,
+      "sources": [
+        {
+          "path": "packages/core/src/client/reducer.ts",
+          "line": 35,
+          "end_line": 46,
+          "label": "fold events"
+        },
+        {
+          "path": "packages/core/src/client/reducer.ts",
+          "line": 111,
+          "end_line": 120,
+          "label": "agent_end / ignore tool start"
+        }
+      ]
+    },
+    {
+      "id": "tool",
+      "type": "backend",
+      "label": "Tool",
+      "sublabel": "five kinds",
+      "row": 1,
+      "col": 1,
+      "sources": [
+        {
+          "path": "packages/core/src/types/tools/index.ts",
+          "line": 165,
+          "end_line": 177,
+          "label": "union"
+        },
+        {
+          "path": "packages/core/src/types/tools/index.ts",
+          "line": 250,
+          "end_line": 261,
+          "label": "isExecutableTool"
+        }
+      ]
+    },
+    {
+      "id": "registry",
+      "type": "security",
+      "label": "ToolRegistry",
+      "sublabel": "frozen",
+      "row": 1,
+      "col": 2,
+      "sources": [
+        {
+          "path": "packages/runtime/src/tools/tool-registry.ts",
+          "line": 49,
+          "end_line": 60,
+          "label": "register"
+        },
+        {
+          "path": "apps/desktop/src/bun/host/desktop-host.ts",
+          "line": 41,
+          "end_line": 45,
+          "label": "freeze"
+        }
+      ]
+    },
+    {
+      "id": "plugin",
+      "type": "security",
+      "label": "PluginManager",
+      "sublabel": "subprocess",
+      "row": 1,
+      "col": 3,
+      "sources": [
+        {
+          "path": "packages/runtime/src/plugins/plugin-manager.ts",
+          "line": 94,
+          "end_line": 102,
+          "label": "hosts"
+        },
+        {
+          "path": "packages/runtime/src/plugins/plugin-subprocess-host.ts",
+          "line": 19,
+          "end_line": 19,
+          "label": "class"
+        }
+      ]
+    },
+    {
+      "id": "history",
+      "type": "database",
+      "label": "RunHistoryStore",
+      "sublabel": "outside workspace",
+      "row": 2,
+      "col": 0,
+      "sources": [
+        {
+          "path": "packages/core/src/server/storage/local/run-history-store.ts",
+          "line": 30,
+          "end_line": 40,
+          "label": "hashed folder"
+        },
+        {
+          "path": "packages/core/src/server/storage/local/file-system.ts",
+          "line": 434,
+          "end_line": 455,
+          "label": "externalize"
+        }
+      ]
+    },
+    {
+      "id": "trace",
+      "type": "database",
+      "label": "TraceManager",
+      "sublabel": "workbench.json",
+      "row": 2,
+      "col": 1,
+      "sources": [
+        {
+          "path": "packages/runtime/src/traces/trace-manager.ts",
+          "line": 152,
+          "end_line": 157,
+          "label": "class"
+        },
+        {
+          "path": "packages/runtime/src/traces/trace-manager.ts",
+          "line": 535,
+          "end_line": 536,
+          "label": "raw.json untouched"
+        }
+      ]
+    },
+    {
+      "id": "compact",
+      "type": "backend",
+      "label": "Compaction plan",
+      "sublabel": "new message list",
+      "row": 2,
+      "col": 2,
+      "sources": [
+        {
+          "path": "packages/core/src/thread/compaction.ts",
+          "line": 93,
+          "end_line": 136,
+          "label": "planCompaction"
+        },
+        {
+          "path": "packages/ui/src/lib/thread-file.ts",
+          "line": 62,
+          "end_line": 83,
+          "label": "sibling path"
+        }
+      ]
+    },
+    {
+      "id": "router",
+      "type": "cloud",
+      "label": "RuntimeRouter",
+      "sublabel": "local cannot leave",
+      "row": 2,
+      "col": 3,
+      "sources": [
+        {
+          "path": "packages/runtime/src/runtime/runtime-router.ts",
+          "line": 11,
+          "end_line": 18,
+          "label": "unregister guard"
+        },
+        {
+          "path": "packages/runtime/src/runtime/runtime-router.ts",
+          "line": 34,
+          "end_line": 40,
+          "label": "get"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    { "from": "thread", "to": "store", "label": "open tab" },
+    { "from": "store", "to": "transport", "label": "each turn" },
+    { "from": "transport", "to": "stream", "label": "request" },
+    { "from": "thread", "to": "reducer", "label": "events fold back" },
+    { "from": "store", "to": "tool", "label": "after terminate" },
+    { "from": "transport", "to": "registry", "label": "builtin dispatch" },
+    { "from": "stream", "to": "plugin", "label": "not inside Pi" },
+    { "from": "reducer", "to": "history", "label": "successful run" },
+    { "from": "tool", "to": "trace", "label": "debug shape" },
+    { "from": "registry", "to": "compact", "label": "separate from tools" },
+    { "from": "plugin", "to": "router", "label": "local only" }
+  ]
+}

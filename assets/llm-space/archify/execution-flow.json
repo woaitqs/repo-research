@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "llm-space — one run that stops at the tool call",
+    "output": "diagrams/llm-space/execution-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/deer-flow/llm-space.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "342c9f5761f969247e971eb36317aadf0bcc9daf"
+    },
+    "viewBox": [1040, 660]
+  },
+  "participants": [
+    {
+      "id": "user",
+      "type": "external",
+      "label": "User",
+      "sublabel": "thread tab"
+    },
+    {
+      "id": "store",
+      "type": "frontend",
+      "label": "Thread store",
+      "sublabel": "run()",
+      "sources": [
+        {
+          "path": "packages/ui/src/components/thread-playground/stores/thread-store.ts",
+          "line": 1078,
+          "end_line": 1093,
+          "label": "claim the run"
+        },
+        {
+          "path": "packages/ui/src/components/thread-playground/stores/thread-store.ts",
+          "line": 1452,
+          "end_line": 1486,
+          "label": "continuation"
+        }
+      ]
+    },
+    {
+      "id": "rpc",
+      "type": "messagebus",
+      "label": "RPC transport",
+      "sublabel": "streamId",
+      "sources": [
+        {
+          "path": "apps/desktop/src/client/rpc-transport.ts",
+          "line": 18,
+          "end_line": 70,
+          "label": "messages, not a stream"
+        }
+      ]
+    },
+    {
+      "id": "ctrl",
+      "type": "backend",
+      "label": "Stream controller",
+      "sublabel": "Bun",
+      "sources": [
+        {
+          "path": "packages/runtime/src/streaming/stream-thread.ts",
+          "line": 22,
+          "end_line": 54,
+          "label": "run"
+        }
+      ]
+    },
+    {
+      "id": "pi",
+      "type": "external",
+      "label": "streamAgent",
+      "sublabel": "Pi, then stop",
+      "sources": [
+        {
+          "path": "packages/core/src/server/agent/stream.ts",
+          "line": 105,
+          "end_line": 108,
+          "label": "agentLoopContinue"
+        },
+        {
+          "path": "packages/core/src/server/agent/stream.ts",
+          "line": 231,
+          "end_line": 242,
+          "label": "terminate"
+        }
+      ]
+    }
+  ],
+  "segments": [
+    { "from": 150, "to": 230, "label": "Prepare" },
+    { "from": 246, "to": 400, "label": "One model step" },
+    { "from": 416, "to": 560, "label": "Workbench decides" }
+  ],
+  "messages": [
+    {
+      "id": "run",
+      "from": "user",
+      "to": "store",
+      "y": 160,
+      "label": "run()",
+      "variant": "emphasis"
+    },
+    {
+      "id": "send",
+      "from": "store",
+      "to": "rpc",
+      "y": 270,
+      "label": "streamThread"
+    },
+    {
+      "id": "rpcmsg",
+      "from": "rpc",
+      "to": "ctrl",
+      "y": 310,
+      "label": "sendStreamThreadRequest"
+    },
+    {
+      "id": "call",
+      "from": "ctrl",
+      "to": "pi",
+      "y": 350,
+      "label": "streamAgent"
+    },
+    {
+      "id": "events",
+      "from": "pi",
+      "to": "ctrl",
+      "y": 390,
+      "label": "events, tools terminated"
+    },
+    {
+      "id": "back",
+      "from": "ctrl",
+      "to": "rpc",
+      "y": 440,
+      "label": "event, then done"
+    },
+    {
+      "id": "reduce",
+      "from": "rpc",
+      "to": "store",
+      "y": 470,
+      "label": "reduceMessages"
+    },
+    {
+      "id": "wait",
+      "from": "store",
+      "to": "user",
+      "y": 520,
+      "label": "tool call waiting (default)",
+      "variant": "emphasis"
+    }
+  ]
+}
