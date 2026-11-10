@@ -1,0 +1,254 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "deer-flow \u2014 what reaches the model, and what is stored instead",
+    "output": "diagrams/deer-flow/context-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/bytedance/deer-flow.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "cf8c29c6b6920671075bd9010b94d89df2a273a8"
+    },
+    "viewBox": [
+      1080,
+      640
+    ]
+  },
+  "stages": [
+    {
+      "label": "Input"
+    },
+    {
+      "label": "Thread"
+    },
+    {
+      "label": "Bounded"
+    },
+    {
+      "label": "This call"
+    },
+    {
+      "label": "Model"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "user",
+      "type": "frontend",
+      "label": "User text",
+      "stage": 0,
+      "row": 0,
+      "sources": [
+        {
+          "path": "backend/app/gateway/routers/thread_runs.py",
+          "line": 1054,
+          "end_line": 1067,
+          "label": "run input"
+        }
+      ]
+    },
+    {
+      "id": "tool",
+      "type": "backend",
+      "label": "Tool output",
+      "stage": 0,
+      "row": 1,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/tool_output_budget_middleware.py",
+          "line": 532,
+          "end_line": 540,
+          "label": "budget"
+        }
+      ]
+    },
+    {
+      "id": "skills",
+      "type": "backend",
+      "label": "Skill files",
+      "stage": 0,
+      "row": 2,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/skill_activation_middleware.py",
+          "line": 566,
+          "end_line": 580,
+          "label": "slash body"
+        }
+      ]
+    },
+    {
+      "id": "messages",
+      "type": "database",
+      "label": "messages",
+      "sublabel": "checkpoint",
+      "stage": 1,
+      "row": 0,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/summarization_middleware.py",
+          "line": 1040,
+          "end_line": 1050,
+          "label": "may be replaced"
+        }
+      ]
+    },
+    {
+      "id": "files",
+      "type": "database",
+      "label": "Sandbox file",
+      "sublabel": "full text",
+      "stage": 1,
+      "row": 1,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/config/tool_output_config.py",
+          "line": 42,
+          "end_line": 44,
+          "label": "12000 chars"
+        }
+      ]
+    },
+    {
+      "id": "index",
+      "type": "backend",
+      "label": "Skill index",
+      "sublabel": "names only",
+      "stage": 1,
+      "row": 2,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/dynamic_context_middleware.py",
+          "line": 1,
+          "end_line": 7,
+          "label": "prompt stays static"
+        }
+      ]
+    },
+    {
+      "id": "kept",
+      "type": "backend",
+      "label": "Kept tail",
+      "sublabel": "plus summary_text",
+      "stage": 2,
+      "row": 0,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/summarization_middleware.py",
+          "line": 1044,
+          "end_line": 1049,
+          "label": "preserved tail"
+        }
+      ]
+    },
+    {
+      "id": "stub",
+      "type": "backend",
+      "label": "Tool stub",
+      "sublabel": "path remains",
+      "stage": 2,
+      "row": 1,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/tool_output_budget_middleware.py",
+          "line": 1,
+          "end_line": 6,
+          "label": "externalize"
+        }
+      ]
+    },
+    {
+      "id": "request",
+      "type": "backend",
+      "label": "This request",
+      "sublabel": "prompt + durable + slash",
+      "stage": 3,
+      "row": 0,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/durable_context_middleware.py",
+          "line": 1,
+          "end_line": 9,
+          "label": "not written back"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/skill_activation_middleware.py",
+          "line": 577,
+          "end_line": 580,
+          "label": "one model call"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/lead_agent/agent.py",
+          "line": 1427,
+          "end_line": 1443,
+          "label": "static prompt"
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "type": "external",
+      "label": "Model",
+      "stage": 4,
+      "row": 0
+    }
+  ],
+  "flows": [
+    {
+      "from": "user",
+      "to": "messages",
+      "label": "append"
+    },
+    {
+      "from": "messages",
+      "to": "kept",
+      "label": "compact"
+    },
+    {
+      "from": "kept",
+      "to": "request",
+      "label": "history"
+    },
+    {
+      "from": "request",
+      "to": "model",
+      "label": "send"
+    },
+    {
+      "from": "tool",
+      "to": "files",
+      "label": "full text"
+    },
+    {
+      "from": "files",
+      "to": "stub",
+      "label": "replace"
+    },
+    {
+      "from": "skills",
+      "to": "index",
+      "label": "metadata"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Stable prefix",
+      "items": [
+        "the skill index is the prompt",
+        "the body is one model call"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Deleted, then shown",
+      "items": [
+        "compaction removes old messages",
+        "summary_text returns only on the request"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "deer-flow \u2014 memory is queued after the run and injected once",
+    "output": "diagrams/deer-flow/memory-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/bytedance/deer-flow.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "cf8c29c6b6920671075bd9010b94d89df2a273a8"
+    },
+    "viewBox": [
+      1080,
+      620
+    ]
+  },
+  "stages": [
+    {
+      "label": "Turn"
+    },
+    {
+      "label": "Queue"
+    },
+    {
+      "label": "Store"
+    },
+    {
+      "label": "Inject"
+    },
+    {
+      "label": "Prompt"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "turns",
+      "type": "frontend",
+      "label": "User + final AI",
+      "stage": 0,
+      "row": 0,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/memory_middleware.py",
+          "line": 163,
+          "end_line": 167,
+          "label": "what is queued"
+        }
+      ]
+    },
+    {
+      "id": "after",
+      "type": "backend",
+      "label": "after_agent",
+      "sublabel": "then redact",
+      "stage": 1,
+      "row": 0,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/memory_middleware.py",
+          "line": 236,
+          "end_line": 253,
+          "label": "enqueue"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/memory_middleware.py",
+          "line": 29,
+          "end_line": 45,
+          "label": "redact first"
+        }
+      ]
+    },
+    {
+      "id": "store",
+      "type": "database",
+      "label": "DeerMem",
+      "sublabel": "per user",
+      "stage": 2,
+      "row": 0,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/config/memory_config.py",
+          "line": 146,
+          "end_line": 157,
+          "label": "default backend"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/paths.py",
+          "line": 5,
+          "end_line": 7,
+          "label": "user memory.json"
+        }
+      ]
+    },
+    {
+      "id": "search",
+      "type": "backend",
+      "label": "memory_search",
+      "sublabel": "tool mode only",
+      "stage": 2,
+      "row": 1,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/config/memory_config.py",
+          "line": 194,
+          "end_line": 196,
+          "label": "tool mode"
+        }
+      ]
+    },
+    {
+      "id": "reminder",
+      "type": "backend",
+      "label": "Full reminder",
+      "sublabel": "first turn",
+      "stage": 3,
+      "row": 0,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/dynamic_context_middleware.py",
+          "line": 582,
+          "end_line": 609,
+          "label": "once, then same day"
+        }
+      ]
+    },
+    {
+      "id": "date",
+      "type": "backend",
+      "label": "Midnight line",
+      "sublabel": "date only",
+      "stage": 3,
+      "row": 1,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/dynamic_context_middleware.py",
+          "line": 611,
+          "end_line": 618,
+          "label": "no memory reload"
+        }
+      ]
+    },
+    {
+      "id": "prompt",
+      "type": "external",
+      "label": "System prompt",
+      "sublabel": "unchanged",
+      "stage": 4,
+      "row": 0,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/dynamic_context_middleware.py",
+          "line": 1,
+          "end_line": 7,
+          "label": "kept static"
+        }
+      ]
+    }
+  ],
+  "flows": [
+    {
+      "from": "turns",
+      "to": "after",
+      "label": "end of run"
+    },
+    {
+      "from": "after",
+      "to": "store",
+      "label": "queue"
+    },
+    {
+      "from": "store",
+      "to": "reminder",
+      "label": "recall"
+    },
+    {
+      "from": "reminder",
+      "to": "prompt",
+      "label": "does not enter",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Stale inside a thread",
+      "items": [
+        "turn 2 does not reload memory",
+        "a new day adds a date line only"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Tool mode",
+      "items": [
+        "facts stay in the store",
+        "the model calls memory_search"
+      ]
+    }
+  ]
+}

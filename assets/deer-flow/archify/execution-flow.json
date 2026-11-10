@@ -1,0 +1,269 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "deer-flow \u2014 one Gateway run with a tool call",
+    "output": "diagrams/deer-flow/execution-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/bytedance/deer-flow.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "cf8c29c6b6920671075bd9010b94d89df2a273a8"
+    },
+    "viewBox": [
+      1040,
+      640
+    ]
+  },
+  "participants": [
+    {
+      "id": "user",
+      "type": "external",
+      "label": "User",
+      "sublabel": "web or channel"
+    },
+    {
+      "id": "gw",
+      "type": "backend",
+      "label": "Gateway",
+      "sublabel": "start_run",
+      "sources": [
+        {
+          "path": "backend/app/gateway/routers/thread_runs.py",
+          "line": 1054,
+          "end_line": 1067,
+          "label": "create_run"
+        },
+        {
+          "path": "backend/app/gateway/services.py",
+          "line": 2424,
+          "end_line": 2425,
+          "label": "resume command"
+        }
+      ]
+    },
+    {
+      "id": "worker",
+      "type": "backend",
+      "label": "run_agent",
+      "sublabel": "astream",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/runtime/runs/worker.py",
+          "line": 1004,
+          "end_line": 1020,
+          "label": "run_agent"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/runtime/runs/worker.py",
+          "line": 1679,
+          "end_line": 1680,
+          "label": "astream"
+        }
+      ]
+    },
+    {
+      "id": "asm",
+      "type": "backend",
+      "label": "Assembly",
+      "sublabel": "lead stack",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/lead_agent/agent.py",
+          "line": 1446,
+          "end_line": 1453,
+          "label": "create_agent"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/lead_agent/agent.py",
+          "line": 485,
+          "end_line": 503,
+          "label": "build_middlewares"
+        }
+      ]
+    },
+    {
+      "id": "graph",
+      "type": "backend",
+      "label": "Agent graph",
+      "sublabel": "LangChain",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/lead_agent/agent.py",
+          "line": 1446,
+          "end_line": 1453,
+          "label": "compiled graph"
+        }
+      ]
+    },
+    {
+      "id": "sbx",
+      "type": "database",
+      "label": "Sandbox",
+      "sublabel": "thread id",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/sandbox/middleware.py",
+          "line": 59,
+          "end_line": 64,
+          "label": "lazy_init default"
+        }
+      ]
+    }
+  ],
+  "segments": [
+    {
+      "from": 150,
+      "to": 250,
+      "label": "Admit"
+    },
+    {
+      "from": 256,
+      "to": 430,
+      "label": "One graph invocation"
+    },
+    {
+      "from": 436,
+      "to": 520,
+      "label": "Finish the run"
+    }
+  ],
+  "messages": [
+    {
+      "id": "post",
+      "from": "user",
+      "to": "gw",
+      "y": 160,
+      "label": "POST /runs",
+      "variant": "emphasis"
+    },
+    {
+      "id": "admit",
+      "from": "gw",
+      "to": "worker",
+      "y": 196,
+      "label": "start_run"
+    },
+    {
+      "id": "build",
+      "from": "worker",
+      "to": "asm",
+      "y": 232,
+      "label": "assemble_lead_agent"
+    },
+    {
+      "id": "compiled",
+      "from": "asm",
+      "to": "graph",
+      "y": 268,
+      "label": "create_agent(...)",
+      "variant": "return"
+    },
+    {
+      "id": "stream",
+      "from": "worker",
+      "to": "graph",
+      "y": 304,
+      "label": "astream(input)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "model",
+      "from": "worker",
+      "to": "graph",
+      "y": 340,
+      "label": "model step inside astream"
+    },
+    {
+      "id": "tool",
+      "from": "graph",
+      "to": "sbx",
+      "y": 376,
+      "label": "first tool acquires"
+    },
+    {
+      "id": "obs",
+      "from": "sbx",
+      "to": "graph",
+      "y": 408,
+      "label": "output or stub",
+      "variant": "return"
+    },
+    {
+      "id": "end",
+      "from": "graph",
+      "to": "worker",
+      "y": 448,
+      "label": "final AIMessage",
+      "variant": "return"
+    },
+    {
+      "id": "status",
+      "from": "worker",
+      "to": "gw",
+      "y": 484,
+      "label": "RunStatus.success",
+      "variant": "return"
+    },
+    {
+      "id": "done",
+      "from": "gw",
+      "to": "user",
+      "y": 516,
+      "label": "SSE terminal",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "gw",
+      "from": 156,
+      "to": 520,
+      "type": "backend"
+    },
+    {
+      "participant": "worker",
+      "from": 192,
+      "to": 488,
+      "type": "backend"
+    },
+    {
+      "participant": "asm",
+      "from": 228,
+      "to": 272,
+      "type": "backend"
+    },
+    {
+      "participant": "graph",
+      "from": 300,
+      "to": 452,
+      "type": "backend"
+    },
+    {
+      "participant": "sbx",
+      "from": 372,
+      "to": 412,
+      "type": "database"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "One run",
+      "items": [
+        "a chat turn is one RunRecord",
+        "the thread checkpoint outlives it"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Approval",
+      "items": [
+        "interrupt pauses this same run",
+        "resume is Command, not a new user text"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,337 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "deer-flow \u2014 which object owns the run, the thread, and the request",
+    "output": "diagrams/deer-flow/core-abstractions.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/bytedance/deer-flow.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "cf8c29c6b6920671075bd9010b94d89df2a273a8"
+    },
+    "viewBox": [
+      1180,
+      700
+    ]
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [
+      32,
+      32
+    ],
+    "cols": 4,
+    "gapX": 32,
+    "gapY": 26,
+    "cellW": 250,
+    "cellH": 90
+  },
+  "components": [
+    {
+      "id": "assembly",
+      "type": "backend",
+      "label": "LeadAgentAssembly",
+      "sublabel": "graph + descriptor",
+      "row": 0,
+      "col": 0,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/lead_agent/agent.py",
+          "line": 96,
+          "end_line": 105,
+          "label": "dataclass"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/lead_agent/agent.py",
+          "line": 878,
+          "end_line": 888,
+          "label": "returned to Gateway"
+        }
+      ]
+    },
+    {
+      "id": "thread",
+      "type": "database",
+      "label": "ThreadState",
+      "sublabel": "checkpoint channels",
+      "row": 0,
+      "col": 1,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/thread_state.py",
+          "line": 36,
+          "end_line": 41,
+          "label": "SandboxState"
+        }
+      ]
+    },
+    {
+      "id": "run",
+      "type": "backend",
+      "label": "RunStatus",
+      "sublabel": "Gateway clock",
+      "row": 0,
+      "col": 2,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/runtime/runs/schemas.py",
+          "line": 21,
+          "end_line": 30,
+          "label": "seven statuses"
+        }
+      ]
+    },
+    {
+      "id": "prompt",
+      "type": "backend",
+      "label": "System prompt",
+      "sublabel": "static skill index",
+      "row": 0,
+      "col": 3,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/lead_agent/agent.py",
+          "line": 1427,
+          "end_line": 1443,
+          "label": "apply_prompt_template"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/dynamic_context_middleware.py",
+          "line": 1,
+          "end_line": 7,
+          "label": "prompt stays static"
+        }
+      ]
+    },
+    {
+      "id": "remind",
+      "type": "backend",
+      "label": "DynamicContext",
+      "sublabel": "frozen reminder",
+      "row": 1,
+      "col": 0,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/dynamic_context_middleware.py",
+          "line": 582,
+          "end_line": 609,
+          "label": "once, then same-day no-op"
+        }
+      ]
+    },
+    {
+      "id": "summary",
+      "type": "backend",
+      "label": "Summarization",
+      "sublabel": "deletes messages",
+      "row": 1,
+      "col": 1,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/summarization_middleware.py",
+          "line": 1040,
+          "end_line": 1050,
+          "label": "REMOVE_ALL_MESSAGES"
+        }
+      ]
+    },
+    {
+      "id": "durable",
+      "type": "backend",
+      "label": "DurableContext",
+      "sublabel": "request only",
+      "row": 1,
+      "col": 2,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/durable_context_middleware.py",
+          "line": 1,
+          "end_line": 9,
+          "label": "not written back"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/durable_context_middleware.py",
+          "line": 43,
+          "end_line": 64,
+          "label": "authority contract"
+        }
+      ]
+    },
+    {
+      "id": "sandbox",
+      "type": "database",
+      "label": "Sandbox",
+      "sublabel": "shared with children",
+      "row": 1,
+      "col": 3,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/sandbox/sandbox.py",
+          "line": 45,
+          "end_line": 48,
+          "label": "ABC"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/subagents/executor.py",
+          "line": 1686,
+          "end_line": 1687,
+          "label": "copied into child"
+        }
+      ]
+    },
+    {
+      "id": "child",
+      "type": "backend",
+      "label": "SubagentExecutor",
+      "sublabel": "checkpointer false",
+      "row": 2,
+      "col": 0,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/subagents/executor.py",
+          "line": 1281,
+          "end_line": 1288,
+          "label": "create_agent"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/subagents/executor.py",
+          "line": 1666,
+          "end_line": 1677,
+          "label": "fresh messages"
+        }
+      ]
+    },
+    {
+      "id": "hitl",
+      "type": "security",
+      "label": "HitlApproval",
+      "sublabel": "interrupt()",
+      "row": 2,
+      "col": 1,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/hitl_approval_middleware.py",
+          "line": 131,
+          "end_line": 137,
+          "label": "class"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/hitl_approval_middleware.py",
+          "line": 249,
+          "end_line": 249,
+          "label": "interrupt"
+        }
+      ]
+    },
+    {
+      "id": "ask",
+      "type": "security",
+      "label": "Clarification",
+      "sublabel": "goto END",
+      "row": 2,
+      "col": 2,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/clarification_middleware.py",
+          "line": 546,
+          "end_line": 554,
+          "label": "ends the graph"
+        }
+      ]
+    },
+    {
+      "id": "mem",
+      "type": "database",
+      "label": "MemoryMiddleware",
+      "sublabel": "queue after the run",
+      "row": 2,
+      "col": 3,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/memory_middleware.py",
+          "line": 236,
+          "end_line": 253,
+          "label": "after_agent"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "assembly",
+      "to": "prompt",
+      "label": "renders once"
+    },
+    {
+      "from": "assembly",
+      "to": "thread",
+      "label": "state schema"
+    },
+    {
+      "from": "remind",
+      "to": "thread",
+      "label": "writes reminder"
+    },
+    {
+      "from": "summary",
+      "to": "thread",
+      "label": "drops messages"
+    },
+    {
+      "from": "summary",
+      "to": "durable",
+      "label": "summary_text"
+    },
+    {
+      "from": "durable",
+      "to": "prompt",
+      "label": "beside, not inside"
+    },
+    {
+      "from": "child",
+      "to": "sandbox",
+      "label": "same id"
+    },
+    {
+      "from": "child",
+      "to": "thread",
+      "label": "does not share messages"
+    },
+    {
+      "from": "hitl",
+      "to": "run",
+      "label": "waiting"
+    },
+    {
+      "from": "ask",
+      "to": "run",
+      "label": "run ends"
+    },
+    {
+      "from": "mem",
+      "to": "remind",
+      "label": "next injection"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Request vs state",
+      "items": [
+        "durable context is per call",
+        "the reminder is stored"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Two stops",
+      "items": [
+        "approval resumes the run",
+        "clarification does not"
+      ]
+    }
+  ]
+}
