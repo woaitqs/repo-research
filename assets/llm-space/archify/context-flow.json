@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "llm-space — templates stay stored, the model sees a snapshot",
+    "output": "diagrams/llm-space/context-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/deer-flow/llm-space.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "342c9f5761f969247e971eb36317aadf0bcc9daf"
+    },
+    "viewBox": [1068, 680]
+  },
+  "stages": [
+    { "label": "Editor" },
+    { "label": "Frozen" },
+    { "label": "This call" },
+    { "label": "Model" },
+    { "label": "After" }
+  ],
+  "nodes": [
+    {
+      "id": "template",
+      "type": "frontend",
+      "label": "Stored template",
+      "sublabel": "system + messages",
+      "stage": 0,
+      "row": 0,
+      "sources": [
+        {
+          "path": "packages/core/src/thread/prompt-variables.ts",
+          "line": 289,
+          "end_line": 300,
+          "label": "templates kept"
+        }
+      ]
+    },
+    {
+      "id": "skills",
+      "type": "backend",
+      "label": "Skill index",
+      "sublabel": "bodies stay on disk",
+      "stage": 0,
+      "row": 1,
+      "sources": [
+        {
+          "path": "packages/runtime/src/skills/skills-manager.ts",
+          "line": 39,
+          "end_line": 46,
+          "label": "SKILL.md"
+        },
+        {
+          "path": "packages/runtime/src/tools/built-in/fs.ts",
+          "line": 731,
+          "end_line": 759,
+          "label": "skill tool loads one"
+        }
+      ]
+    },
+    {
+      "id": "snapshot",
+      "type": "database",
+      "label": "Snapshot places",
+      "sublabel": "old bytes win",
+      "stage": 1,
+      "row": 0,
+      "sources": [
+        {
+          "path": "packages/core/src/thread/prompt-variables.ts",
+          "line": 463,
+          "end_line": 467,
+          "label": "existing values win"
+        },
+        {
+          "path": "packages/core/src/thread/prompt-variables.ts",
+          "line": 521,
+          "end_line": 531,
+          "label": "returned snapshot"
+        }
+      ]
+    },
+    {
+      "id": "meta",
+      "type": "backend",
+      "label": "Meta user message",
+      "sublabel": "scored, not a flag",
+      "stage": 4,
+      "row": 1,
+      "sources": [
+        {
+          "path": "packages/core/src/thread/meta-user-message.ts",
+          "line": 5,
+          "end_line": 8,
+          "label": "no schema flag"
+        },
+        {
+          "path": "packages/core/src/thread/meta-user-message.ts",
+          "line": 17,
+          "end_line": 29,
+          "label": "score"
+        }
+      ]
+    },
+    {
+      "id": "request",
+      "type": "backend",
+      "label": "Rendered request",
+      "sublabel": "not written back",
+      "stage": 2,
+      "row": 0,
+      "sources": [
+        {
+          "path": "packages/core/src/thread/prompt-variables.ts",
+          "line": 468,
+          "end_line": 510,
+          "label": "renderThreadPromptVariables"
+        },
+        {
+          "path": "packages/core/src/client/converters.ts",
+          "line": 12,
+          "end_line": 28,
+          "label": "convertToPiContext"
+        }
+      ]
+    },
+    {
+      "id": "hosted",
+      "type": "external",
+      "label": "Hosted tools",
+      "sublabel": "payload only",
+      "stage": 2,
+      "row": 1,
+      "sources": [
+        {
+          "path": "packages/core/src/server/agent/stream.ts",
+          "line": 134,
+          "end_line": 154,
+          "label": "onPayload"
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "type": "external",
+      "label": "Model",
+      "sublabel": "one assistant message",
+      "stage": 3,
+      "row": 0,
+      "sources": [
+        {
+          "path": "packages/core/src/server/agent/stream.ts",
+          "line": 105,
+          "end_line": 108,
+          "label": "one Pi call"
+        }
+      ]
+    },
+    {
+      "id": "checkpoint",
+      "type": "database",
+      "label": "Compaction sibling",
+      "sublabel": "source file remains",
+      "stage": 4,
+      "row": 0,
+      "sources": [
+        {
+          "path": "packages/core/src/thread/compaction.ts",
+          "line": 231,
+          "end_line": 249,
+          "label": "apply preview"
+        },
+        {
+          "path": "packages/ui/src/lib/thread-file.ts",
+          "line": 62,
+          "end_line": 83,
+          "label": "compact-N"
+        },
+        {
+          "path": "docs/compaction.md",
+          "line": 12,
+          "end_line": 14,
+          "label": "never overwrite"
+        }
+      ]
+    }
+  ],
+  "flows": [
+    { "from": "skills", "to": "template", "label": "index in the prompt" },
+    { "from": "template", "to": "snapshot", "label": "first render" },
+    { "from": "snapshot", "to": "request", "label": "reuse or fill" },
+    { "from": "hosted", "to": "request", "label": "native tools" },
+    { "from": "request", "to": "model", "label": "this call" },
+    { "from": "model", "to": "checkpoint", "label": "summarizer text" },
+    { "from": "meta", "to": "checkpoint", "label": "kept ahead" }
+  ]
+}

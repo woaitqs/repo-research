@@ -1,0 +1,218 @@
+{
+  "schema_version": 3,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "llm-space — default is one model step; ReAct is a capped flag",
+    "output": "diagrams/llm-space/agent-loop.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/deer-flow/llm-space.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "342c9f5761f969247e971eb36317aadf0bcc9daf"
+    }
+  },
+  "mainPath": ["prepare", "render", "model", "gate", "done"],
+  "states": [
+    {
+      "id": "prepare",
+      "type": "start",
+      "label": "Preparing",
+      "sublabel": "claimed before await",
+      "step": "01",
+      "sources": [
+        {
+          "path": "packages/ui/src/components/thread-playground/stores/thread-store.ts",
+          "line": 1090,
+          "end_line": 1093,
+          "label": "activeRunId"
+        },
+        {
+          "path": "packages/core/src/client/run-eligibility.ts",
+          "line": 13,
+          "end_line": 21,
+          "label": "can this list run"
+        }
+      ]
+    },
+    {
+      "id": "render",
+      "type": "active",
+      "label": "Render",
+      "sublabel": "snapshot wins",
+      "step": "02",
+      "sources": [
+        {
+          "path": "packages/ui/src/components/thread-playground/stores/thread-store.ts",
+          "line": 1143,
+          "end_line": 1151,
+          "label": "render variables"
+        },
+        {
+          "path": "packages/core/src/thread/prompt-variables.ts",
+          "line": 463,
+          "end_line": 467,
+          "label": "frozen places"
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "type": "active",
+      "label": "Model step",
+      "sublabel": "Pi then terminate",
+      "step": "03",
+      "sources": [
+        {
+          "path": "packages/core/src/server/agent/stream.ts",
+          "line": 105,
+          "end_line": 108,
+          "label": "agentLoopContinue"
+        },
+        {
+          "path": "packages/core/src/server/agent/stream.ts",
+          "line": 231,
+          "end_line": 242,
+          "label": "terminate"
+        }
+      ]
+    },
+    {
+      "id": "gate",
+      "type": "decision",
+      "label": "Mode",
+      "sublabel": "step, auto, or react",
+      "step": "04",
+      "sources": [
+        {
+          "path": "packages/ui/src/components/thread-playground/stores/run-mode.ts",
+          "line": 15,
+          "end_line": 22,
+          "label": "two flags"
+        },
+        {
+          "path": "packages/ui/src/components/thread-playground/stores/thread-store.ts",
+          "line": 1466,
+          "end_line": 1486,
+          "label": "branch"
+        }
+      ]
+    },
+    {
+      "id": "done",
+      "type": "success",
+      "label": "Idle",
+      "sublabel": "snapshot if it started",
+      "step": "05",
+      "sources": [
+        {
+          "path": "packages/ui/src/components/thread-playground/stores/thread-store.ts",
+          "line": 1235,
+          "end_line": 1252,
+          "label": "recordRun"
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "type": "active",
+      "label": "Tools",
+      "sublabel": "whole batch or none",
+      "sources": [
+        {
+          "path": "packages/ui/src/components/thread-playground/stores/thread-store.ts",
+          "line": 542,
+          "end_line": 549,
+          "label": "pending calls"
+        },
+        {
+          "path": "packages/ui/src/components/thread-playground/stores/thread-store.ts",
+          "line": 617,
+          "end_line": 640,
+          "label": "Promise.all"
+        }
+      ]
+    },
+    {
+      "id": "human",
+      "type": "waiting",
+      "label": "Waiting",
+      "sublabel": "fill the result",
+      "sources": [
+        {
+          "path": "packages/core/src/types/tools/index.ts",
+          "line": 250,
+          "end_line": 261,
+          "label": "not executable"
+        },
+        {
+          "path": "packages/runtime/src/tools/built-in/misc.ts",
+          "line": 85,
+          "end_line": 91,
+          "label": "ask_user_question"
+        }
+      ]
+    },
+    {
+      "id": "cap",
+      "type": "neutral",
+      "label": "Cap",
+      "sublabel": "50 model turns",
+      "sources": [
+        {
+          "path": "packages/ui/src/components/thread-playground/stores/thread-store.ts",
+          "line": 106,
+          "end_line": 106,
+          "label": "MAX_AUTO_TOOL_TURNS"
+        }
+      ]
+    },
+    {
+      "id": "failed",
+      "type": "failure",
+      "label": "Failed",
+      "sublabel": "not recorded",
+      "sources": [
+        {
+          "path": "packages/ui/src/components/thread-playground/stores/thread-store.ts",
+          "line": 1199,
+          "end_line": 1204,
+          "label": "failed skips history"
+        },
+        {
+          "path": "packages/core/src/client/reducer.ts",
+          "line": 111,
+          "end_line": 116,
+          "label": "errorMessage throws"
+        }
+      ]
+    }
+  ],
+  "transitions": [
+    { "from": "prepare", "to": "render", "label": "list can run" },
+    { "from": "prepare", "to": "failed", "label": "no model", "variant": "dashed" },
+    { "from": "render", "to": "model", "label": "request" },
+    { "from": "model", "to": "gate", "label": "assistant committed" },
+    { "from": "model", "to": "failed", "label": "provider error", "variant": "dashed" },
+    { "from": "gate", "to": "done", "label": "step, the default", "variant": "emphasis" },
+    { "from": "gate", "to": "human", "label": "needs a person", "variant": "security" },
+    { "from": "gate", "to": "tools", "label": "auto or react" },
+    { "from": "tools", "to": "done", "label": "auto runs once" },
+    { "from": "tools", "to": "model", "label": "react continues" },
+    { "from": "tools", "to": "cap", "label": "turn 50" },
+    { "from": "human", "to": "prepare", "label": "user runs again" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Two clocks",
+      "items": ["Pi stops at the tool call", "the store decides the next step"]
+    },
+    {
+      "dot": "amber",
+      "title": "Default",
+      "items": ["both flags are false", "the call waits on the message"]
+    }
+  ]
+}

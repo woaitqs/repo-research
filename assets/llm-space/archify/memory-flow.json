@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "llm-space — run bodies leave the workspace and outlive a delete",
+    "output": "diagrams/llm-space/memory-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/deer-flow/llm-space.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "342c9f5761f969247e971eb36317aadf0bcc9daf"
+    },
+    "viewBox": [1068, 680]
+  },
+  "stages": [
+    { "label": "Run" },
+    { "label": "File" },
+    { "label": "Beside it" },
+    { "label": "Later" },
+    { "label": "Debug" }
+  ],
+  "nodes": [
+    {
+      "id": "run",
+      "type": "frontend",
+      "label": "Successful run",
+      "sublabel": "saw an event",
+      "stage": 0,
+      "row": 0,
+      "sources": [
+        {
+          "path": "packages/ui/src/components/thread-playground/stores/thread-store.ts",
+          "line": 1195,
+          "end_line": 1204,
+          "label": "failures stay out"
+        },
+        {
+          "path": "packages/core/src/thread/history.ts",
+          "line": 605,
+          "end_line": 621,
+          "label": "recordRun"
+        }
+      ]
+    },
+    {
+      "id": "eval",
+      "type": "frontend",
+      "label": "Evaluation",
+      "sublabel": "human scores",
+      "stage": 1,
+      "row": 1,
+      "sources": [
+        {
+          "path": "packages/ui/src/components/thread-playground/stores/thread-store.ts",
+          "line": 1613,
+          "end_line": 1628,
+          "label": "saveEvaluation"
+        },
+        {
+          "path": "packages/core/src/thread/history.ts",
+          "line": 28,
+          "end_line": 28,
+          "label": "cap 50"
+        },
+        {
+          "path": "docs/core-concepts.md",
+          "line": 33,
+          "end_line": 33,
+          "label": "rubric snapshot"
+        }
+      ]
+    },
+    {
+      "id": "thread",
+      "type": "database",
+      "label": "Thread JSON",
+      "sublabel": "workspace/",
+      "stage": 1,
+      "row": 0,
+      "sources": [
+        {
+          "path": "packages/core/src/server/storage/local/file-system.ts",
+          "line": 434,
+          "end_line": 455,
+          "label": "index only"
+        }
+      ]
+    },
+    {
+      "id": "history",
+      "type": "database",
+      "label": "History folder",
+      "sublabel": "sha256 of the path",
+      "stage": 2,
+      "row": 0,
+      "sources": [
+        {
+          "path": "packages/core/src/server/storage/local/run-history-store.ts",
+          "line": 30,
+          "end_line": 40,
+          "label": "index.json + refs"
+        },
+        {
+          "path": "packages/runtime/src/storage/index.ts",
+          "line": 6,
+          "end_line": 9,
+          "label": "history/"
+        }
+      ]
+    },
+    {
+      "id": "orphan",
+      "type": "database",
+      "label": "Orphan",
+      "sublabel": "30 days",
+      "stage": 3,
+      "row": 0,
+      "sources": [
+        {
+          "path": "packages/core/src/server/storage/local/file-system.ts",
+          "line": 139,
+          "end_line": 146,
+          "label": "rm keeps history"
+        },
+        {
+          "path": "packages/core/src/server/storage/local/run-history-store.ts",
+          "line": 17,
+          "end_line": 17,
+          "label": "retention"
+        }
+      ]
+    },
+    {
+      "id": "restore",
+      "type": "frontend",
+      "label": "Restore",
+      "sublabel": "edit and run again",
+      "stage": 3,
+      "row": 1,
+      "sources": [
+        {
+          "path": "packages/ui/src/components/thread-playground/run-history-list-view.tsx",
+          "line": 202,
+          "end_line": 205,
+          "label": "restoreThread"
+        }
+      ]
+    },
+    {
+      "id": "raw",
+      "type": "external",
+      "label": "Langfuse raw.json",
+      "sublabel": "immutable",
+      "stage": 4,
+      "row": 0,
+      "sources": [
+        {
+          "path": "packages/runtime/src/traces/trace-manager.ts",
+          "line": 535,
+          "end_line": 536,
+          "label": "never rewritten"
+        }
+      ]
+    },
+    {
+      "id": "bench",
+      "type": "frontend",
+      "label": "workbench.json",
+      "sublabel": "a normal thread",
+      "stage": 4,
+      "row": 1,
+      "sources": [
+        {
+          "path": "packages/runtime/src/traces/trace-manager.ts",
+          "line": 462,
+          "end_line": 478,
+          "label": "derived once"
+        },
+        {
+          "path": "packages/runtime/src/traces/trace-manager.ts",
+          "line": 145,
+          "end_line": 146,
+          "label": "playground shape"
+        }
+      ]
+    }
+  ],
+  "flows": [
+    { "from": "run", "to": "thread", "label": "reference only" },
+    { "from": "thread", "to": "eval", "label": "scores stay", "labelDy": 36 },
+    { "from": "thread", "to": "history", "label": "snapshot body" },
+    { "from": "history", "to": "orphan", "label": "thread deleted" },
+    { "from": "orphan", "to": "restore", "label": "comes back", "labelDy": 36 },
+    { "from": "raw", "to": "bench", "label": "first open", "labelDy": 36 }
+  ]
+}

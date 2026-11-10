@@ -33,6 +33,7 @@ It is not a collection of README summaries. Each study pins the target to one co
 | 04 | [letta-ai/letta-code](https://github.com/letta-ai/letta-code)<br><sub>Stateful agent harness</sub> | `4b028fa`<br><sub>v0.34.4</sub> | [English](research/letta-code.md)&nbsp;·&nbsp;[web](https://woaitqs.github.io/repo-research/research/letta-code.html)<br>[中文](research/letta-code.zh.md)&nbsp;·&nbsp;[web](https://woaitqs.github.io/repo-research/research/letta-code.zh.html) | [8 diagrams](diagrams/letta-code/) | [reproduction](experiments/letta-code/) |
 | 05 | [ericlitman/open-pstack](https://github.com/ericlitman/open-pstack)<br>+ upstream [cursor/plugins pstack](https://github.com/cursor/plugins/tree/main/pstack)<br><sub>Agent skill pack & cross-model runner</sub> | `b4c5e3d` + `88d4751`<br><sub>Open Pstack 1.16.0 · pstack 0.15.29</sub> | [English](research/open-pstack.md)&nbsp;·&nbsp;[web](https://woaitqs.github.io/repo-research/research/open-pstack.html)<br>[中文](research/open-pstack.zh.md)&nbsp;·&nbsp;[web](https://woaitqs.github.io/repo-research/research/open-pstack.zh.html) | [8 diagrams](diagrams/open-pstack/) | [reproduction](experiments/open-pstack/) |
 | 06 | [bytedance/deer-flow](https://github.com/bytedance/deer-flow)<br><sub>Super agent harness</sub> | `cf8c29c`<br><sub>harness 2.3.0-dev</sub> | [English](research/deer-flow.md)&nbsp;·&nbsp;[web](https://woaitqs.github.io/repo-research/research/deer-flow.html)<br>[中文](research/deer-flow.zh.md)&nbsp;·&nbsp;[web](https://woaitqs.github.io/repo-research/research/deer-flow.zh.html) | [8 diagrams](diagrams/deer-flow/) | [reproduction](experiments/deer-flow/) |
+| 07 | [deer-flow/llm-space](https://github.com/deer-flow/llm-space)<br><sub>Agent workbench</sub> | `342c9f5`<br><sub>desktop 4.20.0</sub> | [English](research/llm-space.md)&nbsp;·&nbsp;[web](https://woaitqs.github.io/repo-research/research/llm-space.html)<br>[中文](research/llm-space.zh.md)&nbsp;·&nbsp;[web](https://woaitqs.github.io/repo-research/research/llm-space.zh.html) | [8 diagrams](diagrams/llm-space/) | [reproduction](experiments/llm-space/) |
 
 ### What each study found
 
@@ -48,6 +49,8 @@ It is not a collection of README summaries. Each study pins the target to one co
   <sub>Verified: 505 upstream tests pass · probe 20/20 · real CLIs 9 scenarios × 3 · 33 real Claude Code sessions · 40 tests + demo 12/12 · mutations 21/21</sub>
 - **deer-flow** assembles a long-horizon lead agent around LangChain's `create_agent`. The Gateway owns the run; the system prompt stays static; compaction deletes messages and re-injects the summary per call; sub-agents share the sandbox and not the transcript.<br>
   <sub>Verified: 20 tests + demo 14/14 · mutations 8/8 · upstream suite not run (source read at cf8c29c)</sub>
+- **llm-space** is the desktop workbench beside that harness. It asks Pi Agent Core for one model step and stops there; the playground then leaves the tool call for a person, runs the batch once, or continues a ReAct loop capped at 50. Compaction writes a sibling file, and run snapshots live outside the workspace.<br>
+  <sub>Verified: 25 tests + demo 21/21 · mutations 9/9 · upstream suite not run (source read at 342c9f5)</sub>
 
 <a name="anatomy"></a>
 
@@ -238,6 +241,7 @@ Every study is bilingual: `research/<project-name>.md` (English) and `research/<
   - `real_model/` drives the real launcher, the plugin itself (in headless Claude Code) and the reproduction against the operator's existing `claude` and `codex` logins. It never reads credential files.
   - `python3 mutation_check.py` injects 21 architectural regressions and checks that the tests catch each one.
 - **deer-flow** (`minideer`) is stdlib-only. `./run.sh` installs, tests and runs the scripted demo. `python3 mutation_check.py` injects 8 architectural regressions and checks that the tests catch each one. It does not call a model and does not read API keys.
+- **llm-space** (`minispace`) is stdlib-only. `./run.sh` installs, tests and runs the scripted demo. `python3 mutation_check.py` injects 9 architectural regressions and checks that the tests catch each one. It does not call a model and does not read API keys.
 
 Experiments that call real models read API keys from environment variables only. Never commit keys: `.env` files are git-ignored, and published logs and reports are sanitized.
 
