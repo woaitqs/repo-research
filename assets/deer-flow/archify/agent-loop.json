@@ -1,0 +1,265 @@
+{
+  "schema_version": 3,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "deer-flow \u2014 one run, from admission to a terminal status",
+    "output": "diagrams/deer-flow/agent-loop.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/bytedance/deer-flow.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "cf8c29c6b6920671075bd9010b94d89df2a273a8"
+    }
+  },
+  "mainPath": [
+    "admit",
+    "assemble",
+    "model",
+    "tools",
+    "success"
+  ],
+  "states": [
+    {
+      "id": "admit",
+      "type": "start",
+      "label": "Admitted",
+      "sublabel": "RunStatus.running",
+      "step": "01",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/runtime/runs/worker.py",
+          "line": 1233,
+          "end_line": 1235,
+          "label": "try_start"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/runtime/runs/schemas.py",
+          "line": 24,
+          "end_line": 25,
+          "label": "pending, running"
+        }
+      ]
+    },
+    {
+      "id": "assemble",
+      "type": "active",
+      "label": "Assemble",
+      "sublabel": "middleware + prompt",
+      "step": "02",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/lead_agent/agent.py",
+          "line": 878,
+          "end_line": 888,
+          "label": "assemble_lead_agent"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/lead_agent/agent.py",
+          "line": 1446,
+          "end_line": 1453,
+          "label": "create_agent"
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "type": "active",
+      "label": "Model",
+      "sublabel": "wrap_model_call",
+      "step": "03",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/dynamic_context_middleware.py",
+          "line": 1,
+          "end_line": 7,
+          "label": "static prompt"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/durable_context_middleware.py",
+          "line": 1,
+          "end_line": 9,
+          "label": "request view"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/summarization_middleware.py",
+          "line": 1040,
+          "end_line": 1050,
+          "label": "may compact first"
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "type": "active",
+      "label": "Tools",
+      "sublabel": "sandbox + budget",
+      "step": "04",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/sandbox/middleware.py",
+          "line": 59,
+          "end_line": 64,
+          "label": "lazy acquire"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/config/tool_output_config.py",
+          "line": 42,
+          "end_line": 44,
+          "label": "externalize"
+        }
+      ]
+    },
+    {
+      "id": "success",
+      "type": "success",
+      "label": "Success",
+      "sublabel": "after_agent queues memory",
+      "step": "05",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/runtime/runs/schemas.py",
+          "line": 26,
+          "end_line": 26,
+          "label": "success"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/memory_middleware.py",
+          "line": 236,
+          "end_line": 244,
+          "label": "queue memory"
+        }
+      ]
+    },
+    {
+      "id": "waiting",
+      "type": "waiting",
+      "label": "Waiting",
+      "sublabel": "hitl interrupt",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/hitl_approval_middleware.py",
+          "line": 249,
+          "end_line": 249,
+          "label": "interrupt"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/runtime/runs/schemas.py",
+          "line": 27,
+          "end_line": 27,
+          "label": "waiting_for_input"
+        }
+      ]
+    },
+    {
+      "id": "clarify",
+      "type": "neutral",
+      "label": "Clarified",
+      "sublabel": "run ended, not paused",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/clarification_middleware.py",
+          "line": 551,
+          "end_line": 554,
+          "label": "goto END"
+        }
+      ]
+    },
+    {
+      "id": "stopped",
+      "type": "failure",
+      "label": "Interrupted",
+      "sublabel": "cancel + sandbox lease",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/runtime/runs/worker.py",
+          "line": 1131,
+          "end_line": 1137,
+          "label": "cancel lease"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/runtime/runs/schemas.py",
+          "line": 30,
+          "end_line": 30,
+          "label": "interrupted"
+        }
+      ]
+    }
+  ],
+  "transitions": [
+    {
+      "from": "admit",
+      "to": "assemble",
+      "label": "build"
+    },
+    {
+      "from": "assemble",
+      "to": "model",
+      "label": "astream"
+    },
+    {
+      "from": "model",
+      "to": "tools",
+      "label": "tool calls",
+      "variant": "emphasis"
+    },
+    {
+      "from": "tools",
+      "to": "success",
+      "label": "no more calls"
+    },
+    {
+      "from": "tools",
+      "to": "model",
+      "label": "observations"
+    },
+    {
+      "from": "model",
+      "to": "waiting",
+      "label": "interrupt",
+      "variant": "security"
+    },
+    {
+      "from": "waiting",
+      "to": "tools",
+      "label": "resume",
+      "variant": "security"
+    },
+    {
+      "from": "tools",
+      "to": "clarify",
+      "label": "ask",
+      "variant": "dashed"
+    },
+    {
+      "from": "model",
+      "to": "success",
+      "label": "final text"
+    },
+    {
+      "from": "admit",
+      "to": "stopped",
+      "label": "cancel",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Loop rule",
+      "items": [
+        "the cycle is LangChain's",
+        "DeerFlow's states are the run row"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Clarification",
+      "items": [
+        "the run succeeds and stops",
+        "the next user message is a new run"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,344 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "deer-flow \u2014 tool path: approve in after_model, run in the sandbox",
+    "output": "diagrams/deer-flow/tool-runtime.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/bytedance/deer-flow.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "cf8c29c6b6920671075bd9010b94d89df2a273a8"
+    },
+    "viewBox": [
+      1080,
+      680
+    ]
+  },
+  "lanes": [
+    {
+      "id": "reasoning",
+      "label": "Model"
+    },
+    {
+      "id": "gate",
+      "label": "Human gate",
+      "variant": "exception"
+    },
+    {
+      "id": "chain",
+      "label": "wrap_tool_call"
+    },
+    {
+      "id": "runtime",
+      "label": "Sandbox"
+    }
+  ],
+  "phases": [
+    {
+      "id": "decide",
+      "label": "Decide",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "execute",
+      "label": "Execute",
+      "fromCol": 2,
+      "toCol": 4,
+      "variant": "emphasis"
+    },
+    {
+      "id": "observe",
+      "label": "Observe",
+      "fromCol": 5,
+      "toCol": 5
+    }
+  ],
+  "mainPath": [
+    "model",
+    "limit",
+    "hitl",
+    "sandbox",
+    "tool",
+    "budget",
+    "observe"
+  ],
+  "nodes": [
+    {
+      "id": "model",
+      "lane": "reasoning",
+      "col": 0,
+      "type": "external",
+      "label": "Model",
+      "sublabel": "tool_calls",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/lead_agent/agent.py",
+          "line": 1446,
+          "end_line": 1453,
+          "label": "create_agent"
+        }
+      ]
+    },
+    {
+      "id": "limit",
+      "lane": "reasoning",
+      "col": 1,
+      "type": "backend",
+      "label": "Subagent limit",
+      "sublabel": "trim task calls",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/subagent_limit_middleware.py",
+          "line": 95,
+          "end_line": 100,
+          "label": "class"
+        }
+      ]
+    },
+    {
+      "id": "hitl",
+      "lane": "gate",
+      "col": 1,
+      "type": "security",
+      "label": "after_model",
+      "sublabel": "interrupt or deny",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/hitl_approval_middleware.py",
+          "line": 188,
+          "end_line": 189,
+          "label": "after_model"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/hitl_approval_middleware.py",
+          "line": 249,
+          "end_line": 249,
+          "label": "interrupt"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/hitl_approval_middleware.py",
+          "line": 173,
+          "end_line": 180,
+          "label": "cannot resume"
+        }
+      ]
+    },
+    {
+      "id": "deny",
+      "lane": "gate",
+      "col": 2,
+      "type": "security",
+      "label": "Denied",
+      "sublabel": "error ToolMessage",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/hitl_approval_middleware.py",
+          "line": 99,
+          "end_line": 104,
+          "label": "deny message"
+        }
+      ]
+    },
+    {
+      "id": "pause",
+      "lane": "gate",
+      "col": 3,
+      "type": "security",
+      "label": "Paused",
+      "sublabel": "waiting_for_input",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/runtime/runs/schemas.py",
+          "line": 27,
+          "end_line": 27,
+          "label": "waiting_for_input"
+        },
+        {
+          "path": "backend/app/gateway/services.py",
+          "line": 2424,
+          "end_line": 2425,
+          "label": "resume"
+        }
+      ]
+    },
+    {
+      "id": "sandbox",
+      "lane": "chain",
+      "col": 2,
+      "type": "backend",
+      "label": "Lazy acquire",
+      "sublabel": "first tool call",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/sandbox/middleware.py",
+          "line": 59,
+          "end_line": 64,
+          "label": "lazy_init"
+        }
+      ]
+    },
+    {
+      "id": "clarify",
+      "lane": "chain",
+      "col": 3,
+      "type": "security",
+      "label": "Clarification",
+      "sublabel": "goto END",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/clarification_middleware.py",
+          "line": 546,
+          "end_line": 554,
+          "label": "ends the graph"
+        }
+      ]
+    },
+    {
+      "id": "tool",
+      "lane": "runtime",
+      "col": 3,
+      "type": "database",
+      "label": "Tool body",
+      "sublabel": "bash, read, task",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/sandbox/sandbox.py",
+          "line": 45,
+          "end_line": 48,
+          "label": "Sandbox"
+        }
+      ]
+    },
+    {
+      "id": "budget",
+      "lane": "chain",
+      "col": 4,
+      "type": "backend",
+      "label": "Output budget",
+      "sublabel": "12k chars",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/config/tool_output_config.py",
+          "line": 42,
+          "end_line": 44,
+          "label": "threshold"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/tool_output_budget_middleware.py",
+          "line": 502,
+          "end_line": 511,
+          "label": "does not acquire"
+        }
+      ]
+    },
+    {
+      "id": "observe",
+      "lane": "reasoning",
+      "col": 5,
+      "type": "external",
+      "label": "Observation",
+      "sublabel": "ToolMessage",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/tool_error_handling_middleware.py",
+          "line": 72,
+          "end_line": 80,
+          "label": "errors as results"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "model",
+      "to": "limit",
+      "label": "tool_calls",
+      "role": "main"
+    },
+    {
+      "from": "limit",
+      "to": "hitl",
+      "label": "remaining",
+      "role": "main"
+    },
+    {
+      "from": "hitl",
+      "to": "sandbox",
+      "label": "allowed",
+      "role": "main"
+    },
+    {
+      "from": "sandbox",
+      "to": "tool",
+      "label": "run",
+      "role": "main"
+    },
+    {
+      "from": "tool",
+      "to": "budget",
+      "label": "raw",
+      "role": "main"
+    },
+    {
+      "from": "budget",
+      "to": "observe",
+      "label": "stub",
+      "role": "main"
+    },
+    {
+      "from": "hitl",
+      "to": "deny",
+      "label": "non-interactive",
+      "role": "branch",
+      "variant": "security"
+    },
+    {
+      "from": "deny",
+      "to": "observe",
+      "label": "no execution",
+      "role": "branch"
+    },
+    {
+      "from": "hitl",
+      "to": "pause",
+      "label": "interrupt",
+      "role": "branch",
+      "variant": "security"
+    },
+    {
+      "from": "pause",
+      "to": "sandbox",
+      "label": "resume",
+      "role": "return"
+    },
+    {
+      "from": "sandbox",
+      "to": "clarify",
+      "label": "ask_clarification",
+      "role": "branch",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "Wrong hook",
+      "items": [
+        "approval is after_model",
+        "the file says wrap_tool_call is bypassed"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Clarification",
+      "items": [
+        "not an interrupt",
+        "the graph goes to END"
+      ]
+    }
+  ]
+}

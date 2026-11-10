@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "deer-flow \u2014 task tool: isolated messages, shared sandbox",
+    "output": "diagrams/deer-flow/sub-agent-flow.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/bytedance/deer-flow.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "cf8c29c6b6920671075bd9010b94d89df2a273a8"
+    },
+    "viewBox": [
+      1080,
+      620
+    ]
+  },
+  "participants": [
+    {
+      "id": "parent",
+      "type": "external",
+      "label": "Lead model",
+      "sublabel": "task call"
+    },
+    {
+      "id": "tool",
+      "type": "backend",
+      "label": "task tool",
+      "sublabel": "SubagentExecutor",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/tools/builtins/task_tool.py",
+          "line": 756,
+          "end_line": 760,
+          "label": "task_tool"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/tools/tools.py",
+          "line": 43,
+          "end_line": 46,
+          "label": "SUBAGENT_TOOLS"
+        }
+      ]
+    },
+    {
+      "id": "child",
+      "type": "backend",
+      "label": "Child graph",
+      "sublabel": "checkpointer false",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/subagents/executor.py",
+          "line": 1281,
+          "end_line": 1288,
+          "label": "create_agent"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/subagents/executor.py",
+          "line": 1666,
+          "end_line": 1677,
+          "label": "fresh messages"
+        }
+      ]
+    },
+    {
+      "id": "cmodel",
+      "type": "external",
+      "label": "Child model",
+      "sublabel": "brief only"
+    },
+    {
+      "id": "sandbox",
+      "type": "database",
+      "label": "Lead sandbox",
+      "sublabel": "same id",
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/subagents/executor.py",
+          "line": 1686,
+          "end_line": 1687,
+          "label": "sandbox copied"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/sandbox/middleware.py",
+          "line": 82,
+          "end_line": 85,
+          "label": "do not rebuild skills"
+        }
+      ]
+    }
+  ],
+  "segments": [
+    {
+      "from": 150,
+      "to": 230,
+      "label": "Delegate"
+    },
+    {
+      "from": 236,
+      "to": 420,
+      "label": "Child runs alone"
+    },
+    {
+      "from": 426,
+      "to": 510,
+      "label": "Report"
+    }
+  ],
+  "messages": [
+    {
+      "id": "call",
+      "from": "parent",
+      "to": "tool",
+      "y": 160,
+      "label": "task(prompt)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "build",
+      "from": "tool",
+      "to": "child",
+      "y": 200,
+      "label": "messages = [task]",
+      "variant": "security",
+      "note": "checkpointer=False; no parent transcript"
+    },
+    {
+      "id": "ask",
+      "from": "child",
+      "to": "cmodel",
+      "y": 244,
+      "label": "system + brief"
+    },
+    {
+      "id": "calls",
+      "from": "cmodel",
+      "to": "child",
+      "y": 280,
+      "label": "tool calls",
+      "variant": "return"
+    },
+    {
+      "id": "write",
+      "from": "child",
+      "to": "sandbox",
+      "y": 316,
+      "label": "write on shared id"
+    },
+    {
+      "id": "wrote",
+      "from": "sandbox",
+      "to": "child",
+      "y": 348,
+      "label": "file",
+      "variant": "return"
+    },
+    {
+      "id": "final",
+      "from": "cmodel",
+      "to": "child",
+      "y": 384,
+      "label": "final text",
+      "variant": "return"
+    },
+    {
+      "id": "back",
+      "from": "child",
+      "to": "tool",
+      "y": 432,
+      "label": "final text only",
+      "variant": "return"
+    },
+    {
+      "id": "obs",
+      "from": "tool",
+      "to": "parent",
+      "y": 472,
+      "label": "ToolMessage",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "tool",
+      "from": 156,
+      "to": 476,
+      "type": "backend"
+    },
+    {
+      "participant": "child",
+      "from": 196,
+      "to": 436,
+      "type": "backend"
+    },
+    {
+      "participant": "cmodel",
+      "from": 240,
+      "to": 284,
+      "type": "external"
+    },
+    {
+      "participant": "sandbox",
+      "from": 312,
+      "to": 352,
+      "type": "database"
+    },
+    {
+      "participant": "cmodel",
+      "from": 380,
+      "to": 388,
+      "type": "external"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "violet",
+      "title": "Isolation",
+      "items": [
+        "child starts from the brief",
+        "parent sees only the final text"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Shared sandbox",
+      "items": [
+        "files are the collaboration channel",
+        "general-purpose disallows task"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "No resume",
+      "items": [
+        "checkpointer is false",
+        "gated tools are denied, not paused"
+      ]
+    }
+  ]
+}

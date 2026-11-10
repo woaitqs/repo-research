@@ -1,0 +1,429 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "deer-flow \u2014 Gateway run around a create_agent lead graph",
+    "output": "diagrams/deer-flow/architecture.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/bytedance/deer-flow.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "cf8c29c6b6920671075bd9010b94d89df2a273a8"
+    },
+    "viewBox": [
+      1180,
+      720
+    ]
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [
+      36,
+      36
+    ],
+    "cols": 4,
+    "gapX": 36,
+    "gapY": 28,
+    "cellW": 250,
+    "cellH": 92
+  },
+  "components": [
+    {
+      "id": "user",
+      "type": "external",
+      "label": "User",
+      "sublabel": "web or IM",
+      "row": 0,
+      "col": 0
+    },
+    {
+      "id": "channels",
+      "type": "frontend",
+      "label": "IM channels",
+      "sublabel": "ten adapters",
+      "row": 0,
+      "col": 1,
+      "sources": [
+        {
+          "path": "backend/app/channels/service.py",
+          "line": 33,
+          "end_line": 44,
+          "label": "channel registry"
+        }
+      ]
+    },
+    {
+      "id": "gateway",
+      "type": "backend",
+      "label": "Gateway",
+      "sublabel": "start_run",
+      "row": 0,
+      "col": 2,
+      "sources": [
+        {
+          "path": "backend/app/gateway/routers/thread_runs.py",
+          "line": 1054,
+          "end_line": 1067,
+          "label": "create_run"
+        },
+        {
+          "path": "backend/app/gateway/services.py",
+          "line": 2277,
+          "end_line": 2280,
+          "label": "start_run"
+        },
+        {
+          "path": "backend/app/gateway/app.py",
+          "line": 1096,
+          "end_line": 1096,
+          "label": "create_app"
+        }
+      ]
+    },
+    {
+      "id": "runs",
+      "type": "backend",
+      "label": "RunManager",
+      "sublabel": "run row, not the thread",
+      "row": 0,
+      "col": 3,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/runtime/runs/schemas.py",
+          "line": 21,
+          "end_line": 30,
+          "label": "RunStatus"
+        }
+      ]
+    },
+    {
+      "id": "worker",
+      "type": "backend",
+      "label": "run_agent",
+      "sublabel": "agent.astream",
+      "row": 1,
+      "col": 0,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/runtime/runs/worker.py",
+          "line": 1004,
+          "end_line": 1020,
+          "label": "run_agent"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/runtime/runs/worker.py",
+          "line": 1679,
+          "end_line": 1680,
+          "label": "astream"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/runtime/runs/worker.py",
+          "line": 1596,
+          "end_line": 1600,
+          "label": "attach checkpointer"
+        }
+      ]
+    },
+    {
+      "id": "assemble",
+      "type": "backend",
+      "label": "assemble_lead_agent",
+      "sublabel": "tools, prompt, stack",
+      "row": 1,
+      "col": 1,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/lead_agent/agent.py",
+          "line": 878,
+          "end_line": 888,
+          "label": "assembly descriptor"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/__init__.py",
+          "line": 20,
+          "end_line": 31,
+          "label": "make_lead_agent"
+        },
+        {
+          "path": "backend/langgraph.json",
+          "line": 8,
+          "end_line": 9,
+          "label": "graph entry"
+        }
+      ]
+    },
+    {
+      "id": "graph",
+      "type": "backend",
+      "label": "create_agent",
+      "sublabel": "LangChain loop",
+      "row": 1,
+      "col": 2,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/lead_agent/agent.py",
+          "line": 1446,
+          "end_line": 1453,
+          "label": "lead create_agent"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/factory.py",
+          "line": 189,
+          "end_line": 197,
+          "label": "SDK create_agent"
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "type": "external",
+      "label": "Chat model",
+      "sublabel": "provider call",
+      "row": 1,
+      "col": 3
+    },
+    {
+      "id": "stack",
+      "type": "backend",
+      "label": "Middleware stack",
+      "sublabel": "context, tools, HITL",
+      "row": 2,
+      "col": 0,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/lead_agent/agent.py",
+          "line": 485,
+          "end_line": 503,
+          "label": "build_middlewares"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/tool_error_handling_middleware.py",
+          "line": 378,
+          "end_line": 415,
+          "label": "runtime layers"
+        }
+      ]
+    },
+    {
+      "id": "sandbox",
+      "type": "database",
+      "label": "SandboxProvider",
+      "sublabel": "one id per thread",
+      "row": 2,
+      "col": 1,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/sandbox/sandbox.py",
+          "line": 45,
+          "end_line": 48,
+          "label": "Sandbox"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/sandbox/sandbox_provider.py",
+          "line": 17,
+          "end_line": 36,
+          "label": "acquire"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/sandbox/middleware.py",
+          "line": 56,
+          "end_line": 64,
+          "label": "lazy acquire"
+        }
+      ]
+    },
+    {
+      "id": "memory",
+      "type": "database",
+      "label": "Memory store",
+      "sublabel": "DeerMem by default",
+      "row": 2,
+      "col": 2,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/memory_middleware.py",
+          "line": 160,
+          "end_line": 167,
+          "label": "queue after agent"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/config/memory_config.py",
+          "line": 146,
+          "end_line": 157,
+          "label": "manager_class"
+        }
+      ]
+    },
+    {
+      "id": "skills",
+      "type": "backend",
+      "label": "Skills",
+      "sublabel": "index, then body",
+      "row": 2,
+      "col": 3,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/skill_activation_middleware.py",
+          "line": 566,
+          "end_line": 580,
+          "label": "slash once"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/sandbox/middleware.py",
+          "line": 92,
+          "end_line": 99,
+          "label": "lead owns projection"
+        }
+      ]
+    },
+    {
+      "id": "cp",
+      "type": "database",
+      "label": "Checkpointer",
+      "sublabel": "thread graph state",
+      "row": 3,
+      "col": 1,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/runtime/runs/worker.py",
+          "line": 1596,
+          "end_line": 1600,
+          "label": "attached in worker"
+        }
+      ]
+    },
+    {
+      "id": "hitl",
+      "type": "security",
+      "label": "Two pauses",
+      "sublabel": "interrupt or goto END",
+      "row": 3,
+      "col": 2,
+      "sources": [
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/hitl_approval_middleware.py",
+          "line": 1,
+          "end_line": 7,
+          "label": "after_model interrupt"
+        },
+        {
+          "path": "backend/packages/harness/deerflow/agents/middlewares/clarification_middleware.py",
+          "line": 546,
+          "end_line": 554,
+          "label": "Command goto END"
+        },
+        {
+          "path": "backend/app/gateway/services.py",
+          "line": 2424,
+          "end_line": 2425,
+          "label": "Command resume"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "user",
+      "to": "channels",
+      "label": "IM message"
+    },
+    {
+      "from": "user",
+      "to": "gateway",
+      "label": "HTTP run"
+    },
+    {
+      "from": "channels",
+      "to": "gateway",
+      "label": "same start_run"
+    },
+    {
+      "from": "gateway",
+      "to": "runs",
+      "label": "admit"
+    },
+    {
+      "from": "runs",
+      "to": "worker",
+      "label": "one run"
+    },
+    {
+      "from": "worker",
+      "to": "assemble",
+      "label": "build"
+    },
+    {
+      "from": "assemble",
+      "to": "graph",
+      "label": "create_agent"
+    },
+    {
+      "from": "graph",
+      "to": "model",
+      "label": "model node"
+    },
+    {
+      "from": "graph",
+      "to": "stack",
+      "label": "middleware"
+    },
+    {
+      "from": "stack",
+      "to": "sandbox",
+      "label": "first tool"
+    },
+    {
+      "from": "stack",
+      "to": "memory",
+      "label": "after_agent"
+    },
+    {
+      "from": "stack",
+      "to": "skills",
+      "label": "index / slash"
+    },
+    {
+      "from": "worker",
+      "to": "cp",
+      "label": "attach"
+    },
+    {
+      "from": "stack",
+      "to": "hitl",
+      "label": "pause"
+    },
+    {
+      "from": "hitl",
+      "to": "runs",
+      "label": "waiting_for_input"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Borrowed loop",
+      "items": [
+        "create_agent owns model to tools",
+        "DeerFlow owns the run around it"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Two stores",
+      "items": [
+        "RunStatus is the run row",
+        "the checkpointer is the thread"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Shared machine",
+      "items": [
+        "sub-agents copy the sandbox id",
+        "they do not copy the transcript"
+      ]
+    }
+  ]
+}

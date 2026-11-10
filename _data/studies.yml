@@ -407,3 +407,78 @@
       question:
         en: "Arena: N candidates, a cross-judge after all are terminal, then a hand graft"
         zh: Arena：N 个候选，全部结束后交叉评审，再手工嫁接
+
+- id: deer-flow
+  number: "06"
+  name: deer-flow
+  category:
+    en: Super agent harness
+    zh: 超级 Agent 框架（harness）
+  pins:
+    - label: bytedance/deer-flow
+      rev: cf8c29c
+      url: https://github.com/bytedance/deer-flow/tree/cf8c29c6b6920671075bd9010b94d89df2a273a8
+  studied: 2026-11-10
+  tagline:
+    en: >-
+      deer-flow assembles a long-horizon lead agent around LangChain's `create_agent`.
+      The Gateway owns the run; the system prompt stays static; compaction deletes messages
+      and re-injects the summary per call; sub-agents share the sandbox and not the transcript.
+    zh: "deer-flow 把一个长程 lead agent 组装在 LangChain 的 `create_agent` 周围。Gateway 拥有 run；system prompt 保持静态；压缩会删掉消息并在每次调用时重新注入摘要；子 Agent 共享沙箱，不共享对话记录。"
+  status: "20 tests + demo 14/14 · mutations 8/8 · upstream suite not run (source read at cf8c29c)"
+  pages:
+    en: /research/deer-flow.html
+    zh: /research/deer-flow.zh.html
+  diagrams_url: /diagrams/deer-flow/
+  experiment:
+    en: https://github.com/woaitqs/repo-research/tree/main/experiments/deer-flow
+    zh: https://github.com/woaitqs/repo-research/blob/main/experiments/deer-flow/README.zh.md
+  diagrams:
+    - slug: architecture
+      title: Architecture
+      type: architecture
+      question:
+        en: "System architecture: Gateway run around a create_agent lead graph"
+        zh: 系统架构：包着 create_agent lead 图的 Gateway run
+    - slug: execution-flow
+      title: Execution flow
+      type: sequence
+      question:
+        en: One Gateway run with a tool call, end to end
+        zh: 一次带工具调用的 Gateway run，端到端
+    - slug: core-abstractions
+      title: Core abstractions
+      type: architecture
+      question:
+        en: Which object owns the run, the thread, and the request
+        zh: 哪个对象分别拥有 run、线程和这一次请求
+    - slug: context-flow
+      title: Context flow
+      type: dataflow
+      question:
+        en: What reaches the model, and what is stored instead
+        zh: 什么进入模型，什么被存到别处
+    - slug: memory-flow
+      title: Memory flow
+      type: dataflow
+      question:
+        en: Memory queued after the run and injected once
+        zh: 记忆在 run 结束后入队，并且只注入一次
+    - slug: tool-runtime
+      title: Tool runtime
+      type: workflow
+      question:
+        en: "Tool path: approve in after_model, run in the sandbox"
+        zh: 工具路径：在 after_model 里审批，在沙箱里执行
+    - slug: agent-loop
+      title: Agent loop
+      type: lifecycle
+      question:
+        en: One run, from admission to a terminal status
+        zh: 一次 run，从准入到终态
+    - slug: sub-agent-flow
+      title: Sub-agent flow
+      type: sequence
+      question:
+        en: "task tool: isolated messages, shared sandbox"
+        zh: task 工具：隔离的消息，共享的沙箱
